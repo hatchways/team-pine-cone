@@ -4,6 +4,17 @@ const { join } = require("path");
 const cookieParser = require("cookie-parser");
 const logger = require("morgan");
 
+require("dotenv").config();
+
+const mongodbUri = process.env.MONGODB_URI;
+const mongoose = require("mongoose");
+
+mongoose.connect(mongodbUri, {
+  useNewUrlParser: true,
+  useUnifiedTopology: true,
+  useCreateIndex: true
+});
+
 const indexRouter = require("./routes/index");
 const pingRouter = require("./routes/ping");
 

@@ -64,17 +64,29 @@ describe('Database Tests', () => {
         })
       })
 
-      it("Don't save without last name", (done) => {
+      it('Don\'t save without last name', (done) => {
         const testProfile = new db.Profile({
-          firstName: "John",
+          firstName: 'John',
         });
         testProfile.save((err) => {
           if (err) {
             return done();
           }
-          throw new Error("No last name should throw an error");
+          throw new Error('No last name should throw an error');
         });
       });
+
+      it('Retrieves data from the database', done => {
+        db.Profile.find({firstName: 'John'}, (err, profile) => {
+          if (err) {
+            throw err
+          }
+          if (!profile) {
+            throw new Error('No data found')
+          }
+          done()
+        })
+      })
     })
 
     after(function (done) {

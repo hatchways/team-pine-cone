@@ -23,7 +23,6 @@ const useStyles = makeStyles(theme => ({
   linkText: {
     textDecoration: "none",
     color: "#222222",
-    fontWeight: 700,
     marginRight: 5,
   },
   navbar: {

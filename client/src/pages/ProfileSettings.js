@@ -1,4 +1,4 @@
-import { Drawer, List, ListItem, ListItemIcon, ListItemText, withStyles } from '@material-ui/core';
+import { Drawer, List, ListItem, ListItemIcon, ListItemText, Toolbar, withStyles } from '@material-ui/core';
 import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
 import { AccountCircle, Photo, CreditCard, Security, Settings } from '@material-ui/icons'
@@ -8,7 +8,6 @@ const styles = (theme) => ({
   linkText: {
     textDecoration: "none",
     color: "#222222",
-    fontWeight: 700,
     marginRight: 5,
   },
   drawer: {
@@ -60,6 +59,7 @@ class ProfileSettings extends Component {
         return (
           <div>
             <Drawer variant="permanent" className={classes.drawer}>
+                <Toolbar />
               <List>
                 {this.links.map((link) => (
                   <Link className={classes.linkText} to={link.path}>

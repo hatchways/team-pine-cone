@@ -23,7 +23,7 @@ function App() {
       <div className={classes.root}>
         <Navbar />
           <Route exact path="/" component={LandingPage} />
-          <Route exact path="/me" component={ProfileSettings} />
+          <Route path="/me" component={ProfileSettings} />
           <Route exact path="/become-a-sitter" component={LandingPage} />
           <Route exact path="/my-sitters" component={LandingPage} />
           <Route exact path="/my-jobs" component={LandingPage} />

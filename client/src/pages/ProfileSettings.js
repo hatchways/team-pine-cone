@@ -1,4 +1,4 @@
-import { Drawer, List, ListItem, ListItemIcon, ListItemText, Toolbar, withStyles } from '@material-ui/core';
+import { Card, Drawer, List, ListItem, ListItemIcon, ListItemText, Toolbar, withStyles } from '@material-ui/core';
 import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
 import { AccountCircle, Photo, CreditCard, Security, Settings } from '@material-ui/icons'
@@ -20,6 +20,18 @@ const styles = (theme) => ({
   drawerContainer: {
     overflow: "auto",
   },
+  content: {
+    flexGrow: 1,
+    padding: theme.spacing(3),
+  },
+  root: {
+    display: "flex",
+    backgroundColor: '#fbfbfb',
+    height: '100vh'
+  },
+  card: {
+      padding: theme.spacing(3)
+  }
 });
 
 class ProfileSettings extends Component {
@@ -57,10 +69,10 @@ class ProfileSettings extends Component {
     render() {
         const { classes } = this.props;
         return (
-          <div>
-            <Drawer variant="permanent" className={classes.drawer}>
+          <div className={classes.root}>
+            <Drawer variant="permanent" className={classes.drawer} classes={{paper: classes.drawerPaper}}>
                 <Toolbar />
-              <List>
+              <List className={classes.drawerContainer}>
                 {this.links.map((link) => (
                   <Link className={classes.linkText} to={link.path}>
                     <ListItem>
@@ -71,6 +83,11 @@ class ProfileSettings extends Component {
                 ))}
               </List>
             </Drawer>
+            <div className={classes.content}>
+                <Card className={classes.card}>
+                    Content
+                </Card>
+            </div>
           </div>
         );
     }

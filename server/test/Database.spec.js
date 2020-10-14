@@ -35,7 +35,7 @@ describe('Database Tests', () => {
 
       it('Save with only first and last name filled', done => {
         const testProfile = new db.Profile({
-          firstName: 'John',
+          firstName: 'Joe',
           lastName: 'Smith'
         })
         testProfile.save(done)
@@ -43,7 +43,7 @@ describe('Database Tests', () => {
 
       it('Save gender as "prefer not to say" if none specified', done => {
         const testProfile = new db.Profile({
-          firstName: 'John',
+          firstName: 'Jane',
           lastName: 'Smith',
         });
         testProfile.save().then(profile => {
@@ -57,10 +57,24 @@ describe('Database Tests', () => {
           lastName: 'Smith'
         });
         testProfile.save(err => {
-          if (err) { return done() }
+          if (err) { 
+            return done() 
+          }
           throw new Error('No first name should throw an error');
         })
       })
+
+      it("Don't save without last name", (done) => {
+        const testProfile = new db.Profile({
+          firstName: "John",
+        });
+        testProfile.save((err) => {
+          if (err) {
+            return done();
+          }
+          throw new Error("No last name should throw an error");
+        });
+      });
     })
 
     after(function (done) {

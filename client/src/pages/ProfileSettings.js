@@ -3,21 +3,29 @@ import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
 import { AccountCircle, Photo, CreditCard, Security, Settings } from '@material-ui/icons'
 
-const styles = theme => ({
+const drawerWidth = 240;
+const styles = (theme) => ({
   linkText: {
     textDecoration: "none",
     color: "#222222",
     fontWeight: 700,
     marginRight: 5,
-  }
+  },
+  drawer: {
+    width: drawerWidth,
+    flexShrink: 0,
+  },
+  drawerPaper: {
+    width: drawerWidth,
+  },
+  drawerContainer: {
+    overflow: "auto",
+  },
 });
 
 class ProfileSettings extends Component {
     constructor(props) {
         super(props)
-        this.state = {
-            isSidebarOpen: true
-        }
         const origin = '/me'
         this.links = [
           {
@@ -51,7 +59,7 @@ class ProfileSettings extends Component {
         const { classes } = this.props;
         return (
           <div>
-            <Drawer open={this.state.isSidebarOpen}>
+            <Drawer variant="permanent" className={classes.drawer}>
               <List>
                 {this.links.map((link) => (
                   <Link className={classes.linkText} to={link.path}>

@@ -3,9 +3,10 @@ const express = require("express");
 const { join } = require("path");
 const cookieParser = require("cookie-parser");
 const logger = require("morgan");
-const { initializeAuthentication } = require('./middleware/authenticate');
 
 require("dotenv").config();
+
+const { initializeAuthentication } = require('./middleware/authenticate');
 
 const mongodbUri = process.env.MONGODB_URI;
 const mongoose = require("mongoose");

@@ -4,6 +4,6 @@ const { registerUser } = require('../controllers/register');
 
 const Router = express.Router();
 
-Router.post('/register', registerValidators, registerUser);
+Router.post('/', registerValidators, registerUser);
 
 module.exports = Router;

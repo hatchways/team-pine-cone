@@ -19,8 +19,8 @@ mongoose.connect(mongodbUri, {
 
 const indexRouter = require("./routes/index");
 const pingRouter = require("./routes/ping");
-const registerRoute = require('./routes/register');
-const loginRoute = require('./routes/login');
+const registerRouter = require('./routes/register');
+const loginRouter = require('./routes/login');
 
 const { json, urlencoded } = express;
 
@@ -35,8 +35,8 @@ app.use(initializeAuthentication());
 
 app.use("/", indexRouter);
 app.use("/ping", pingRouter);
-app.use("/register", registerRoute);
-app.use("/login", loginRoute);
+app.use("/register", registerRouter);
+app.use("/login", loginRouter);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

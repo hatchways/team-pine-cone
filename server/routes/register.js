@@ -1,6 +1,6 @@
 const express = require('express');
-const {check} = require('express-validator');
-const {registerUser} = require('../controllers/register');
+const { check } = require('express-validator');
+const { registerUser } = require('../controllers/register');
 
 const Router = express.Router();
 
@@ -9,7 +9,7 @@ const postRegisterValidator = [
 		.isEmail()
 		.normalizeEmail(),
 	check('password', 'Password is required.')
-		.isLength({min: 6})
+		.isLength({ min: 6 })
 		.withMessage('Password must contain at least 6 characters.')
 ];
 

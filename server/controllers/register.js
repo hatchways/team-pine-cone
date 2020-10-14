@@ -7,11 +7,8 @@ const registerUser = async (req, res, next) => {
 	const {email, password} = req.body;
 	const errors = validationResult(req);
 
-	//This should be parameters errors 422
 	if (!errors.isEmpty()) {
-		return res
-			.status(422)
-			.json({ errors: errors.array() });
+		return next(createError(422, 'Email and password are both required.'));
 	}
 
 	try {
@@ -23,8 +20,8 @@ const registerUser = async (req, res, next) => {
 			.status(201)
 			.json({ id: user.id, email: user.email });
 
-	} catch (e) {
-		next(createError(500, e.message));
+	} catch (err) {
+		next(createError(500, err.message));
 	}
 };
 

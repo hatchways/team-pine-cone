@@ -17,6 +17,8 @@ mongoose.connect(mongodbUri, {
 
 const indexRouter = require("./routes/index");
 const pingRouter = require("./routes/ping");
+const registerRoute = require('./routes/register');
+const loginRoute = require('./routes/login');
 
 const { json, urlencoded } = express;
 
@@ -30,6 +32,8 @@ app.use(express.static(join(__dirname, "public")));
 
 app.use("/", indexRouter);
 app.use("/ping", pingRouter);
+app.use("/register", registerRoute);
+app.use("/login", loginRoute);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

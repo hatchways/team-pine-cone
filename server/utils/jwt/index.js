@@ -1,5 +1,4 @@
 const jwt = require('jsonwebtoken');
-const jwtOptions = require('./jwtOptions');
 
 const SECRET = process.env.ACCESS_TOKEN_SECRET;
 const LIFE = process.env.ACCESS_TOKEN_LIFE;

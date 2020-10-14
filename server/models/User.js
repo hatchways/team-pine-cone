@@ -1,5 +1,6 @@
 const { Schema, model } = require('mongoose');
-const { hash } = require('bcryptjs');
+const { hash, compare } = require('bcryptjs');
+const createError = require('http-errors');
 
 //NOTE Schema will automatically lowercase email
 const userSchema = new Schema({
@@ -19,7 +20,19 @@ userSchema.statics.createUser = async function(email, password) {
 	const hashedPassword = await hash(password, 10);
 	const user = await User.create({ email, password: hashedPassword });
 	return user;
-}
+};
+
+userSchema.methods.verifyPassword = async function(password) {
+	try { 
+		const match = await compare(password, this.password);
+		return match;
+	} catch (err) {
+		throw createError(500, err.message);
+	}
+};
+
+//indexes
+userSchema.index({ email: 1 });
 
 const User = model('User', userSchema);
 

@@ -1,3 +1,4 @@
+const { expect } = require('chai');
 const chai = require('chai');
 const mongoose = require('mongoose');
 const db = require('../models');
@@ -7,13 +8,15 @@ chai.should();
 describe('Database Tests', () => {
     before(done => {
         mongoose.connect("mongodb://localhost/team-pine-cone");
-        db.on("error", console.error.bind(console, "connection error"));
-        db.once("open", function () {
+        const dbc = mongoose.connection
+        dbc.on("error", console.error.bind(console, "connection error"));
+        dbc.once("open", function () {
           done();
         });
     })
+    
     describe('Profile Model', () => {
-      it('Should save with all fields filled correctly', done => {
+      it('Save with all fields filled correctly', done => {
         const testProfile = new db.Profile({
           firstName: 'John',
           lastName: 'Smith',
@@ -30,12 +33,29 @@ describe('Database Tests', () => {
         testProfile.save(done)
       });
 
-      it ('Should save with only first and last name filled', done => {
+      it('Save with only first and last name filled', done => {
         const testProfile = new db.Profile({
           firstName: 'John',
           lastName: 'Smith'
         })
         testProfile.save(done)
       });
+
+      it('Save gender as "prefer not to say" if none specified', done => {
+        const testProfile = new db.Profile({
+          firstName: "John",
+          lastName: "Smith",
+        });
+        testProfile.save().then(profile => {
+          expect(profile.gender).to.eql('prefer not to say')
+          done()
+        })
+      })
     })
+
+    after(function (done) {
+      mongoose.connection.db.dropDatabase(function () {
+        mongoose.connection.close(done);
+      });
+    });
 })

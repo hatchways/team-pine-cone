@@ -43,12 +43,22 @@ describe('Database Tests', () => {
 
       it('Save gender as "prefer not to say" if none specified', done => {
         const testProfile = new db.Profile({
-          firstName: "John",
-          lastName: "Smith",
+          firstName: 'John',
+          lastName: 'Smith',
         });
         testProfile.save().then(profile => {
           expect(profile.gender).to.eql('prefer not to say')
           done()
+        })
+      })
+
+      it('Don\'t save without first name', done => {
+        const testProfile = new db.Profile({
+          lastName: 'Smith'
+        });
+        testProfile.save(err => {
+          if (err) { return done() }
+          throw new Error('No first name should throw an error');
         })
       })
     })

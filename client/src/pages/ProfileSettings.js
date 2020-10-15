@@ -5,11 +5,10 @@ import {
   ListItem,
   ListItemIcon,
   ListItemText,
-  Toolbar,
-  withStyles,
-  withWidth,
+  makeStyles,
+  Toolbar
 } from "@material-ui/core";
-import React, { Component } from "react";
+import React from "react";
 import { Link } from "react-router-dom";
 import {
   AccountCircle,
@@ -20,7 +19,7 @@ import {
 } from "@material-ui/icons";
 
 const drawerWidth = 240;
-const styles = (theme) => ({
+const useStyles = makeStyles((theme) => ({
   linkText: {
     textDecoration: "none",
     color: "#222222",
@@ -30,13 +29,19 @@ const styles = (theme) => ({
     width: drawerWidth,
     flexShrink: 0,
     [theme.breakpoints.between("xs", "sm")]: {
-      width: 50,
+      width: 75,
     },
   },
   drawerPaper: {
     width: drawerWidth,
     [theme.breakpoints.between("xs", "sm")]: {
-      width: 50,
+      width: 75,
+    },
+  },
+  noMobileText: {
+    display: 'auto',
+    [theme.breakpoints.between("xs", "sm")]: {
+      display: 'none'
     },
   },
   drawerContainer: {
@@ -54,70 +59,63 @@ const styles = (theme) => ({
   card: {
     padding: theme.spacing(3),
   },
-});
+}));
 
-class ProfileSettings extends Component {
-  constructor(props) {
-    super(props);
-    const origin = "/me";
-    this.links = [
-      {
-        title: "Edit Profile",
-        path: `${origin}/edit-profile`,
-        icon: <AccountCircle />,
-      },
-      {
-        title: "Profile Photo",
-        path: `${origin}/profile-photo`,
-        icon: <Photo />,
-      },
-      {
-        title: "Payment",
-        path: `${origin}/payment`,
-        icon: <CreditCard />,
-      },
-      {
-        title: "Security",
-        path: `${origin}/security`,
-        icon: <Security />,
-      },
-      {
-        title: "Settings",
-        path: `${origin}/settings`,
-        icon: <Settings />,
-      },
-    ];
-  }
-  render() {
-    const { classes } = this.props;
-    return (
-      <div className={classes.root}>
-        <Drawer
-          variant="permanent"
-          className={classes.drawer}
-          classes={{ paper: classes.drawerPaper }}
-        >
-          <Toolbar />
-          <List className={classes.drawerContainer}>
-            {this.links.map((link) => (
-              <Link key={link.path} className={classes.linkText} to={link.path}>
-                <ListItem>
-                  <ListItemIcon>{link.icon}</ListItemIcon>
-                  {this.props.width !== "xs" && this.props.width !== "sm" && (
-                    <ListItemText>{link.title}</ListItemText>
-                  )}
-                </ListItem>
-              </Link>
-            ))}
-          </List>
-        </Drawer>
-        <div className={classes.content}>
-          <Toolbar />
-          <Card className={classes.card}>Content</Card>
-        </div>
+function ProfileSettings(props) {
+  const origin = "/me";
+  const links = [
+    {
+      title: "Edit Profile",
+      path: `${origin}/edit-profile`,
+      icon: <AccountCircle />,
+    },
+    {
+      title: "Profile Photo",
+      path: `${origin}/profile-photo`,
+      icon: <Photo />,
+    },
+    {
+      title: "Payment",
+      path: `${origin}/payment`,
+      icon: <CreditCard />,
+    },
+    {
+      title: "Security",
+      path: `${origin}/security`,
+      icon: <Security />,
+    },
+    {
+      title: "Settings",
+      path: `${origin}/settings`,
+      icon: <Settings />,
+    },
+  ];
+  const classes = useStyles();
+  return (
+    <div className={classes.root}>
+      <Drawer
+        variant="permanent"
+        className={classes.drawer}
+        classes={{ paper: classes.drawerPaper }}
+      >
+        <Toolbar />
+        <List className={classes.drawerContainer}>
+          {links.map((link) => (
+            <Link key={link.path} className={classes.linkText} to={link.path}>
+              <ListItem>
+                <ListItemIcon>{link.icon}</ListItemIcon>
+                <ListItemText className={classes.noMobileText}>{link.title}</ListItemText>
+              </ListItem>
+            </Link>
+          ))}
+        </List>
+      </Drawer>
+      <div className={classes.content}>
+        <Toolbar />
+        <Card className={classes.card}>Content</Card>
       </div>
-    );
-  }
+    </div>
+  );
 }
 
-export default withStyles(styles)(withWidth()(ProfileSettings));
+export default ProfileSettings;

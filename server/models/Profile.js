@@ -1,43 +1,64 @@
 const { Schema, model } = require('mongoose');
 
 const profileSchema = new Schema({
-    firstName: {
-        type: String,
-        required: true
-    },
-    lastName: {
-        type: String,
-        required: true
-    },
-    gender: {
-        type: String,
-        enum: ['male', 'female', 'non-binary', 'other', 'prefer not to say'],
-        default: 'prefer not to say'
-    },
-    birthDate: {
+  firstName: {
+    type: String,
+    required: [true, "First name is required"],
+  },
+  lastName: {
+    type: String,
+    required: [true, "Last name is required"],
+  },
+  gender: {
+    type: String,
+    enum: ["male", "female", "non-binary", "other", "prefer not to say"],
+    default: "prefer not to say",
+  },
+  birthDate: {
+    type: Date,
+    required: [true, "Birthdate is required"],
+  },
+  description: {
+    type: String,
+  },
+  isSitter: {
+    type: Boolean,
+    default: false,
+  },
+  availability: [
+    {
+      start: {
         type: Date,
-        required: true
+        required: true,
+      },
+      end: {
+        type: Date,
+        required: true,
+      },
     },
-    description: {
-        type: String
+  ],
+  location: {
+    type: {
+      type: String,
+      enum: ["Point"],
+      required: true,
     },
-    isSitter: {
-        type: Boolean,
-        default: false
+    coordinates: {
+      type: [Number],
+      required: true,
     },
-    availability: [
-        {
-            start: {
-                type: Date,
-                required: true
-            },
-            end: {
-                type: Date,
-                required: true
-            }
-        }
-    ]
-})
+  },
+  phone: {
+    type: String,
+    validate: {
+      validator: function (v) {
+        return /\d{3}-\d{3}-\d{4}/.test(v);
+      },
+      message: (props) => `${props.value} is not a valid phone number!`,
+    },
+    required: [true, "Phone number required"],
+  },
+});
 
 profileSchema.pre('save', function(next) {
     if (this.availability) {
@@ -46,7 +67,7 @@ profileSchema.pre('save', function(next) {
             if (isNegativeRange) { throw new Error('Date ranges must have a start date before the end date') }
         })
     }
-    
+
     const today = new Date()
     const isUnderEighteen = today.getFullYear() - this.birthDate.getFullYear() < 18
     if (isUnderEighteen) { throw new Error('User must be 18 years old') }

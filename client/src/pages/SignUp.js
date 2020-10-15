@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import Button from '@material-ui/core/Button';
 import TextField from '@material-ui/core/TextField';
 import Link from '@material-ui/core/Link';
@@ -21,16 +21,12 @@ function Copyright() {
   );
 }
 
-const useStyles = makeStyles((theme) => ({
+const useStyles = makeStyles(theme => ({
   paper: {
     marginTop: theme.spacing(8),
     display: 'flex',
     flexDirection: 'column',
     alignItems: 'center',
-  },
-  avatar: {
-    margin: theme.spacing(1),
-    backgroundColor: theme.palette.secondary.main,
   },
   form: {
     width: '100%', // Fix IE 11 issue.
@@ -41,8 +37,28 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
+const initialFValues = {
+  firstName: '',
+  lastName: '',
+  email: '',
+  password: '',
+  confirmPassword: ''
+};
+
 export default function SignUp() {
+  
   const classes = useStyles();
+
+  
+
+  const handleInputChange = e => {
+    const { name, value } = e.target;
+    setValues({
+      ...values, // keeps the values of the other text fields the same
+      [name]:value
+    });
+  }
+
 
   return (
     <Container component="main" maxWidth="xs">
@@ -50,7 +66,7 @@ export default function SignUp() {
         <Typography component="h1" variant="h5">
           Sign up
         </Typography>
-        <form className={classes.form} noValidate>
+        <form className={classes.form} >
           <Grid container spacing={2}>
             <Grid item xs={12} sm={6}>
               <TextField
@@ -61,7 +77,11 @@ export default function SignUp() {
                 fullWidth
                 id="firstName"
                 label="First Name"
+                value={values.firstName}
+                onChange = {handleInputChange}
                 autoFocus
+                error
+                helperText="First Name Required"
               />
             </Grid>
             <Grid item xs={12} sm={6}>
@@ -71,6 +91,7 @@ export default function SignUp() {
                 fullWidth
                 id="lastName"
                 label="Last Name"
+                value={values.lastName}
                 name="lastName"
                 autoComplete="lname"
               />
@@ -82,6 +103,7 @@ export default function SignUp() {
                 fullWidth
                 id="email"
                 label="Email Address"
+                value={values.email}
                 name="email"
                 autoComplete="email"
               />
@@ -93,6 +115,7 @@ export default function SignUp() {
                 fullWidth
                 name="password"
                 label="Password"
+                value={values.password}
                 type="password"
                 id="password"
                 autoComplete="current-password"
@@ -105,6 +128,7 @@ export default function SignUp() {
                 fullWidth
                 name="password-confirm"
                 label="Confirm Password"
+                value={values.confirmPassword}
                 type="password-confirm"
                 id="password-confirm"
               />

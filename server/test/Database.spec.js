@@ -101,6 +101,25 @@ describe('Database Tests', () => {
           throw new Error("Under 18 should throw an error");
         });
       });
+
+      it("Rejects if availability contains a negative range", (done) => {
+        const testProfile = new db.Profile({
+          firstName: "John",
+          lastName: "Smith",
+          availability: [
+            {
+              start: new Date("11-01-2020"),
+              end: new Date("10-31-2020"),
+            },
+          ],
+        });
+        testProfile.save((err) => {
+          if (err) {
+            return done();
+          }
+          throw new Error("Negative date range should throw an error");
+        });
+      });
     })
 
     after(function (done) {

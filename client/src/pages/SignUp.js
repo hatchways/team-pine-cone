@@ -54,9 +54,24 @@ export default function SignUp() {
   
   const classes = useStyles();
 
+  const validate = () => {
+    let temp = {};
+    temp.firstName = values.firstName ? "" : "This field is required.";
+    temp.lastName = values.lastName ? "" : "This field is required.";
+    temp.email = (/.+@.+..+/).test(values.email) ? "" : "Email is not valid";
+    temp.password = values.password.length >= 6 ? "" : "Minimum of 6 charactes required.";
+    temp.confirmPassword = values.confirmPassword === values.password ? "" : "Password does not match.";
+
+    setErrors({
+      ...temp,
+    });
+  }
+
   const {
     values,
     setValues,
+    errors,
+    setErrors,
     handleInputChange
   } = useForm(initialFValues);
 
@@ -107,7 +122,7 @@ export default function SignUp() {
               />
             </Grid>
             <Grid item xs={12}>
-              <TextField
+              <Input
                 variant="outlined"
                 required
                 fullWidth
@@ -121,7 +136,7 @@ export default function SignUp() {
               />
             </Grid>
             <Grid item xs={12}>
-              <TextField
+              <Input
                 variant="outlined"
                 required
                 fullWidth

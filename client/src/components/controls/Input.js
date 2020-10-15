@@ -3,20 +3,23 @@ import { TextField } from '@material-ui/core';
 
 export default function Input(props) {
 
-  const { autoComplete, name, id, label, value, onChange } = props;
+  const { autoComplete, name, id, label, value, onChange, type } = props;
 
   return (
     <TextField
       autoComplete={autoComplete}
       name={name}
-      variant="outlined"
-      required
-      fullWidth
       id={id}
       label={label}
       value={value}
       onChange= {onChange}
+      type={type}
+      variant="outlined"
+      required
+      fullWidth
       autoFocus
+      error
+      helperText="error"
     />
   )
 }

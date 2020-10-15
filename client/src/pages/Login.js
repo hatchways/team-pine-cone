@@ -11,6 +11,7 @@ import { makeStyles } from '@material-ui/core/styles';
 import Container from '@material-ui/core/Container';
 import { Toolbar } from '@material-ui/core';
 import { NavLink } from 'react-router-dom';
+import useForm from '../components/useForm';
 
 function Copyright() {
   return (
@@ -39,10 +40,26 @@ const useStyles = makeStyles((theme) => ({
   submit: {
     margin: theme.spacing(3, 0, 2),
   },
+  link: {
+    color: "#DF1B1B",
+    fontSize: "0.75rem",
+    fontFamily: 'Roboto',
+    fontWeight: 400,
+    lineHeight: 1.43,
+    textDecoration: 'none'
+  }
 }));
+
+const initialFormValues = {
+  email: '',
+  password: '',
+  remember: false
+}
 
 export default function SignIn() {
   const classes = useStyles();
+
+  const { values, handleInputChange } = useForm(initialFormValues);
 
   return (
     <Fragment>
@@ -63,6 +80,8 @@ export default function SignIn() {
               name="email"
               autoComplete="email"
               autoFocus
+              value={values.email}
+              onChange={handleInputChange}
             />
             <TextField
               variant="outlined"
@@ -74,9 +93,11 @@ export default function SignIn() {
               type="password"
               id="password"
               autoComplete="current-password"
+              value={values.password}
+              onChange={handleInputChange}
             />
             <FormControlLabel
-              control={<Checkbox value="remember" color="primary" />}
+              control={<Checkbox name="remember" onChange={handleInputChange} checked={values.remember} color="primary" />}
               label="Remember me"
             />
             <Button
@@ -95,10 +116,8 @@ export default function SignIn() {
                 </Link>
               </Grid>
               <Grid item>
-                <NavLink to="/signup">
-                  <Link variant="body2">
+                <NavLink className={classes.link} to="/signup">
                     {"Don't have an account? Sign Up"}
-                  </Link>
                 </NavLink>
               </Grid>
             </Grid>

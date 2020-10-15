@@ -42,6 +42,7 @@ profileSchema.pre('save', next => {
     const today = new Date()
     const isUnderEighteen = today.getFullYear() - this.birthDate.getFullYear() < 18
     if (isUnderEighteen) { throw new Error('User must be 18 years old') }
+    next()
 })
 
 const Profile = model("Profile", profileSchema)

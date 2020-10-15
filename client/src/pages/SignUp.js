@@ -27,19 +27,27 @@ function Copyright() {
   );
 }
 
-const useStyles = makeStyles(theme => ({
+const useStyles = makeStyles((theme) => ({
   paper: {
     marginTop: theme.spacing(8),
-    display: 'flex',
-    flexDirection: 'column',
-    alignItems: 'center',
+    display: "flex",
+    flexDirection: "column",
+    alignItems: "center",
   },
   form: {
-    width: '100%', // Fix IE 11 issue.
+    width: "100%", // Fix IE 11 issue.
     marginTop: theme.spacing(3),
   },
   submit: {
     margin: theme.spacing(3, 0, 2),
+  },
+  link: {
+    color: "#DF1B1B",
+    fontSize: "0.75rem",
+    fontFamily: "Roboto",
+    fontWeight: 400,
+    lineHeight: 1.43,
+    textDecoration: "none",
   },
 }));
 
@@ -166,10 +174,8 @@ export default function SignUp() {
           </Button>
           <Grid container justify="flex-end">
             <Grid item>
-              <NavLink to="/login" >
-                <Link variant="body2">
-                  Already have an account? Sign in
-                </Link>
+              <NavLink className={classes.link} to="/login" >
+                Already have an account? Sign in
               </NavLink>
             </Grid>
           </Grid>

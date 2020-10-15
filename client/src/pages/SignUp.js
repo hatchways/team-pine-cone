@@ -1,7 +1,8 @@
 import React from 'react';
+import { NavLink } from 'react-router-dom'
 
 import Button from '@material-ui/core/Button';
-import Link from '@material-ui/core/Link';
+import Link from '@material-ui/core/Link'
 import Grid from '@material-ui/core/Grid';
 import Box from '@material-ui/core/Box';
 import Typography from '@material-ui/core/Typography';
@@ -10,6 +11,7 @@ import Container from '@material-ui/core/Container';
 
 import useForm from '../components/useForm';
 import Input from '../components/controls/Input';
+import { Toolbar } from '@material-ui/core';
 
 
 function Copyright() {
@@ -17,7 +19,7 @@ function Copyright() {
     <Typography variant="body2" color="textSecondary" align="center">
       {'Copyright © '}
       <Link color="inherit" href="#">
-        Doggo DayCare (Temp Name)
+        LovingSitter
       </Link>{' '}
       {new Date().getFullYear()}
       {'.'}
@@ -65,7 +67,7 @@ export default function SignUp() {
       ...temp
     });
 
-    return Object.values(temp).every(x => x == "");
+    return Object.values(temp).every(x => x === "");
   }
 
   const {
@@ -85,6 +87,7 @@ export default function SignUp() {
 
   return (
     <Container component="main" maxWidth="xs">
+      <Toolbar />
       <div className={classes.paper}>
         <Typography component="h1" variant="h5">
           Sign up
@@ -164,9 +167,11 @@ export default function SignUp() {
           </Button>
           <Grid container justify="flex-end">
             <Grid item>
-              <Link to="#" variant="body2">
-                Already have an account? Sign in
-              </Link>
+              <NavLink to="/login" >
+                <Link variant="body2">
+                  Already have an account? Sign in
+                </Link>
+              </NavLink>
             </Grid>
           </Grid>
         </form>

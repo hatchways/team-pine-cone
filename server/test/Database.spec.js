@@ -28,7 +28,8 @@ describe('Database Tests', () => {
               start: new Date('10-01-2020'),
               end: new Date('10-31-2020')
             }
-          ]
+          ],
+          isSitter: true
         })
         testProfile.save(done)
       });
@@ -53,6 +54,18 @@ describe('Database Tests', () => {
           done()
         })
       })
+
+      it('Save isSitter as false if not specified', (done) => {
+        const testProfile = new db.Profile({
+          firstName: "Jane",
+          lastName: "Smith",
+          birthDate: new Date("01-01-1990"),
+        });
+        testProfile.save().then((profile) => {
+          expect(profile.isSitter).to.eql(false);
+          done();
+        });
+      });
 
       it('Don\'t save without first name', done => {
         const testProfile = new db.Profile({

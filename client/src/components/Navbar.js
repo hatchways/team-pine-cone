@@ -1,5 +1,5 @@
 import React, { Fragment } from "react";
-import { Link } from "react-router-dom";
+import { NavLink } from "react-router-dom";
 import {
   AppBar,
   Toolbar,
@@ -69,13 +69,13 @@ function getNavigation({ width, classes, anchorEl, handleClick, handleClose }) {
           onClose={handleClose}
         >
           {navLinks.map(({ title, path }) => (
-            <Link className={classes.linkText} to={path} key={title}>
+            <NavLink className={classes.linkText} to={path} key={title}>
               <MenuItem onClick={handleClose}>{title}</MenuItem>
-            </Link>
+            </NavLink>
           ))}
-          <Link className={classes.linkText} to={"/me"} key="me">
+          <NavLink className={classes.linkText} to={"/me"} key="me">
             <MenuItem onClick={handleClose}>Me</MenuItem>
-          </Link>
+          </NavLink>
         </Menu>
       </Fragment>
     );
@@ -87,15 +87,15 @@ function getNavigation({ width, classes, anchorEl, handleClick, handleClose }) {
         aria-labelledby="main navigation"
       >
         {navLinks.map(({ title, path }) => (
-          <Link className={classes.linkText} to={path} key={title}>
+          <NavLink className={classes.linkText} to={path} key={title}>
             <ListItem button>
               <ListItemText primary={title} />
             </ListItem>
-          </Link>
+          </NavLink>
         ))}
-        <Link className={classes.linkText} to="/me">
+        <NavLink className={classes.linkText} to="/me">
           <Avatar>D</Avatar>
-        </Link>
+        </NavLink>
       </List>
     );
   }
@@ -124,9 +124,9 @@ function Navbar(props) {
   return (
     <AppBar position="fixed" className={classes.navbar}>
       <Toolbar className={classes.navDisplay}>
-        <Link to="/">
+        <NavLink to="/">
           <img alt="Loving Sitter" src={window.origin + "/assets/logo.png"} />
-        </Link>
+        </NavLink>
         {getNavigation(navOptions)}
       </Toolbar>
     </AppBar>

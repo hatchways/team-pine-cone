@@ -6,7 +6,10 @@ export default function useForm(initialFormValues) {
   const [errors, setErrors] = useState(initialFormValues);
 
   const handleInputChange = e => {
-    const { name, value } = e.target;
+    let { name, value, checked } = e.target;
+    if (!value) {
+      value = checked
+    }
     setValues({
       ...values,
       [name]: value

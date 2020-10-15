@@ -122,7 +122,7 @@ function Navbar(props) {
       width: props.width
   }
   return (
-    <AppBar  position="relative" className={classes.navbar}>
+    <AppBar position="fixed" className={classes.navbar}>
       <Toolbar className={classes.navDisplay}>
         <Link to="/">
           <img alt="Loving Sitter" src={window.origin + "/assets/logo.png"} />

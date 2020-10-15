@@ -112,6 +112,7 @@ class ProfileSettings extends Component {
           </List>
         </Drawer>
         <div className={classes.content}>
+          <Toolbar />
           <Card className={classes.card}>Content</Card>
         </div>
       </div>

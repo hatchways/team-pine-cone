@@ -18,27 +18,37 @@ describe('Database Tests', () => {
     describe('Profile Model', () => {
       it('Save with all fields filled correctly', done => {
         const testProfile = new db.Profile({
-          firstName: 'John',
-          lastName: 'Smith',
-          gender: 'male',
-          birthDate: new Date('01-01-1990'),
-          description: 'This is not a test',
+          firstName: "John",
+          lastName: "Smith",
+          gender: "male",
+          birthDate: new Date("01-01-1990"),
+          description: "This is not a test",
           availability: [
             {
-              start: new Date('10-01-2020'),
-              end: new Date('10-31-2020')
-            }
+              start: new Date("10-01-2020"),
+              end: new Date("10-31-2020"),
+            },
           ],
-          isSitter: true
-        })
+          isSitter: true,
+          location: {
+            type: "Point",
+            coordinates: [-122.5, 37.7],
+          },
+          phone: "555-555-5555"
+        });
         testProfile.save(done)
       });
 
-      it('Save with only first and last name and birth date filled', done => {
+      it('Save with only first name, last name, birth date, phone, and location filled', done => {
         const testProfile = new db.Profile({
           firstName: "Joe",
           lastName: "Smith",
           birthDate: new Date("01-01-1990"),
+          phone: "555-555-5555",
+          location: {
+            type: "Point",
+            coordinates: [-122.5, 37.7],
+          },
         });
         testProfile.save(done)
       });
@@ -48,6 +58,11 @@ describe('Database Tests', () => {
           firstName: "Jane",
           lastName: "Smith",
           birthDate: new Date("01-01-1990"),
+          phone: "555-555-5555",
+          location: {
+            type: "Point",
+            coordinates: [-122.5, 37.7],
+          },
         });
         testProfile.save().then(profile => {
           expect(profile.gender).to.eql('prefer not to say')
@@ -60,6 +75,11 @@ describe('Database Tests', () => {
           firstName: "Jane",
           lastName: "Smith",
           birthDate: new Date("01-01-1990"),
+          phone: "555-555-5555",
+          location: {
+            type: "Point",
+            coordinates: [-122.5, 37.7],
+          },
         });
         testProfile.save().then((profile) => {
           expect(profile.isSitter).to.eql(false);
@@ -69,8 +89,13 @@ describe('Database Tests', () => {
 
       it('Don\'t save without first name', done => {
         const testProfile = new db.Profile({
-          lastName: 'Smith',
-          birthDate: new Date('01-01-1990'),
+          lastName: "Smith",
+          birthDate: new Date("01-01-1990"),
+          phone: "555-555-5555",
+          location: {
+            type: "Point",
+            coordinates: [-122.5, 37.7],
+          },
         });
         testProfile.save(err => {
           if (err) { 
@@ -84,6 +109,11 @@ describe('Database Tests', () => {
         const testProfile = new db.Profile({
           firstName: "John",
           birthDate: new Date("01-01-1990"),
+          phone: "555-555-5555",
+          location: {
+            type: "Point",
+            coordinates: [-122.5, 37.7],
+          },
         });
         testProfile.save((err) => {
           if (err) {
@@ -93,16 +123,54 @@ describe('Database Tests', () => {
         });
       });
 
+      it("Don't save without phone number", (done) => {
+        const testProfile = new db.Profile({
+          firstName: "John",
+          lastName: "Smith",
+          birthDate: new Date("01-01-1990"),
+          location: {
+            type: "Point",
+            coordinates: [-122.5, 37.7],
+          },
+        });
+        testProfile.save((err) => {
+          if (err) {
+            return done();
+          }
+          throw new Error("No phone number should throw an error");
+        });
+      });
+
       it("Don't save without birth date", (done) => {
         const testProfile = new db.Profile({
           firstName: "John",
           lastName: "Smith",
+          phone: "555-555-5555",
+          location: {
+            type: "Point",
+            coordinates: [-122.5, 37.7],
+          },
         });
         testProfile.save((err) => {
           if (err) {
             return done();
           }
           throw new Error("No birth date should throw an error");
+        });
+      });
+
+      it("Don't save without location", (done) => {
+        const testProfile = new db.Profile({
+          firstName: "John",
+          lastName: "Smith",
+          phone: "555-555-5555",
+          birthDate: new Date("01-01-1990"),
+        });
+        testProfile.save((err) => {
+          if (err) {
+            return done();
+          }
+          throw new Error("No location should throw an error");
         });
       });
 

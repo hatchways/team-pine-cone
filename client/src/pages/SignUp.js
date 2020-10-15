@@ -1,7 +1,6 @@
 import React from 'react';
 
 import Button from '@material-ui/core/Button';
-import TextField from '@material-ui/core/TextField';
 import Link from '@material-ui/core/Link';
 import Grid from '@material-ui/core/Grid';
 import Box from '@material-ui/core/Box';
@@ -63,8 +62,10 @@ export default function SignUp() {
     temp.confirmPassword = values.confirmPassword === values.password ? "" : "Password does not match.";
 
     setErrors({
-      ...temp,
+      ...temp
     });
+
+    return Object.values(temp).every(x => x == "");
   }
 
   const {
@@ -75,28 +76,31 @@ export default function SignUp() {
     handleInputChange
   } = useForm(initialFValues);
 
+  const handleSubmit = e => {
+    e.preventDefault();
+    if (validate()) {
+      window.alert("testing...");
+    }
+  }
+
   return (
     <Container component="main" maxWidth="xs">
       <div className={classes.paper}>
         <Typography component="h1" variant="h5">
           Sign up
         </Typography>
-        <form className={classes.form} >
+        <form className={classes.form} onSubmit={handleSubmit} >
           <Grid container spacing={2}>
             <Grid item xs={12} sm={6}>
               <Input
                 autoComplete="fname"
                 name="firstName"
-                variant="outlined"
-                required
-                fullWidth
                 id="firstName"
                 label="First Name"
                 value={values.firstName}
                 onChange= {handleInputChange}
                 autoFocus
-                error
-                helperText="First Name Required"
+                error={errors.fullName}
               />
             </Grid>
             <Grid item xs={12} sm={6}>

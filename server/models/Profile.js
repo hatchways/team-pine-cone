@@ -15,10 +15,15 @@ const profileSchema = new Schema({
         default: 'prefer not to say'
     },
     birthDate: {
-        type: Date
+        type: Date,
+        required: true
     },
     description: {
         type: String
+    },
+    isSitter: {
+        type: Boolean,
+        default: false
     },
     availability: [
         {
@@ -41,11 +46,10 @@ profileSchema.pre('save', function(next) {
             if (isNegativeRange) { throw new Error('Date ranges must have a start date before the end date') }
         })
     }
-    if (this.birthDate) {
-        const today = new Date()
-        const isUnderEighteen = today.getFullYear() - this.birthDate.getFullYear() < 18
-        if (isUnderEighteen) { throw new Error('User must be 18 years old') }
-    }
+    
+    const today = new Date()
+    const isUnderEighteen = today.getFullYear() - this.birthDate.getFullYear() < 18
+    if (isUnderEighteen) { throw new Error('User must be 18 years old') }
     next()
 })
 

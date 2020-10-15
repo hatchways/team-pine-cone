@@ -8,7 +8,6 @@ import Box from '@material-ui/core/Box';
 import Typography from '@material-ui/core/Typography';
 import { makeStyles } from '@material-ui/core/styles';
 import Container from '@material-ui/core/Container';
-
 import useForm from '../components/useForm';
 import Input from '../components/controls/Input';
 import { Toolbar } from '@material-ui/core';
@@ -99,7 +98,7 @@ export default function SignUp() {
         <Typography component="h1" variant="h5">
           Sign up
         </Typography>
-        <form className={classes.form} onSubmit={handleSubmit} >
+        <form className={classes.form} onSubmit={handleSubmit}>
           <Grid container spacing={2}>
             <Grid item xs={12} sm={6}>
               <Input
@@ -108,9 +107,9 @@ export default function SignUp() {
                 id="firstName"
                 label="First Name"
                 value={values.firstName}
-                onChange= {handleInputChange}
+                onChange={handleInputChange}
                 autoFocus
-                error={errors.fullName}
+                error={errors.firstName}
               />
             </Grid>
             <Grid item xs={12} sm={6}>
@@ -119,9 +118,10 @@ export default function SignUp() {
                 id="lastName"
                 label="Last Name"
                 value={values.lastName}
-                onChange= {handleInputChange}
+                onChange={handleInputChange}
                 name="lastName"
                 autoComplete="lname"
+                error={errors.lastName}
               />
             </Grid>
             <Grid item xs={12}>
@@ -130,9 +130,10 @@ export default function SignUp() {
                 id="email"
                 label="Email Address"
                 value={values.email}
-                onChange= {handleInputChange}
+                onChange={handleInputChange}
                 name="email"
                 autoComplete="email"
+                error={errors.email}
               />
             </Grid>
             <Grid item xs={12}>
@@ -143,10 +144,11 @@ export default function SignUp() {
                 name="password"
                 label="Password"
                 value={values.password}
-                onChange= {handleInputChange}
+                onChange={handleInputChange}
                 type="password"
                 id="password"
                 autoComplete="current-password"
+                error={errors.password}
               />
             </Grid>
             <Grid item xs={12}>
@@ -157,9 +159,10 @@ export default function SignUp() {
                 name="confirmPassword"
                 label="Confirm Password"
                 value={values.confirmPassword}
-                onChange= {handleInputChange}
+                onChange={handleInputChange}
                 type="password"
                 id="password-confirm"
+                error={errors.confirmPassword}
               />
             </Grid>
           </Grid>
@@ -174,7 +177,7 @@ export default function SignUp() {
           </Button>
           <Grid container justify="flex-end">
             <Grid item>
-              <NavLink className={classes.link} to="/login" >
+              <NavLink className={classes.link} to="/login">
                 Already have an account? Sign in
               </NavLink>
             </Grid>

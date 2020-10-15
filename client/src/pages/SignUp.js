@@ -1,4 +1,6 @@
 import React, { useState, useEffect } from 'react';
+import useForm from '../components/useForm';
+
 import Button from '@material-ui/core/Button';
 import TextField from '@material-ui/core/TextField';
 import Link from '@material-ui/core/Link';
@@ -49,16 +51,11 @@ export default function SignUp() {
   
   const classes = useStyles();
 
-  
-
-  const handleInputChange = e => {
-    const { name, value } = e.target;
-    setValues({
-      ...values, // keeps the values of the other text fields the same
-      [name]:value
-    });
-  }
-
+  const {
+    values,
+    setValues,
+    handleInputChange
+  } = useForm(initialFValues);
 
   return (
     <Container component="main" maxWidth="xs">
@@ -78,7 +75,7 @@ export default function SignUp() {
                 id="firstName"
                 label="First Name"
                 value={values.firstName}
-                onChange = {handleInputChange}
+                onChange= {handleInputChange}
                 autoFocus
                 error
                 helperText="First Name Required"
@@ -92,6 +89,7 @@ export default function SignUp() {
                 id="lastName"
                 label="Last Name"
                 value={values.lastName}
+                onChange= {handleInputChange}
                 name="lastName"
                 autoComplete="lname"
               />
@@ -104,6 +102,7 @@ export default function SignUp() {
                 id="email"
                 label="Email Address"
                 value={values.email}
+                onChange= {handleInputChange}
                 name="email"
                 autoComplete="email"
               />
@@ -116,6 +115,7 @@ export default function SignUp() {
                 name="password"
                 label="Password"
                 value={values.password}
+                onChange= {handleInputChange}
                 type="password"
                 id="password"
                 autoComplete="current-password"
@@ -126,10 +126,11 @@ export default function SignUp() {
                 variant="outlined"
                 required
                 fullWidth
-                name="password-confirm"
+                name="confirmPassword"
                 label="Confirm Password"
                 value={values.confirmPassword}
-                type="password-confirm"
+                onChange= {handleInputChange}
+                type="password"
                 id="password-confirm"
               />
             </Grid>

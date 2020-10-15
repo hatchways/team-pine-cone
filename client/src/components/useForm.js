@@ -1,9 +1,9 @@
 import { useState } from 'react';
 
-export default function useForm(initialFValues) {
+export default function useForm(initialFormValues) {
 
-  const [values, setValues] = useState(initialFValues);
-  const [errors, setErrors] = useState(initialFValues);
+  const [values, setValues] = useState(initialFormValues);
+  const [errors, setErrors] = useState(initialFormValues);
 
   const handleInputChange = e => {
     const { name, value } = e.target;

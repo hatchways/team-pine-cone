@@ -43,7 +43,7 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-const initialFValues = {
+const initialFormValues = {
   firstName: '',
   lastName: '',
   email: '',
@@ -72,11 +72,10 @@ export default function SignUp() {
 
   const {
     values,
-    setValues,
     errors,
     setErrors,
     handleInputChange
-  } = useForm(initialFValues);
+  } = useForm(initialFormValues);
 
   const handleSubmit = e => {
     e.preventDefault();

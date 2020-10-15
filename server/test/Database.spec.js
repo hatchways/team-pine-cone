@@ -87,6 +87,20 @@ describe('Database Tests', () => {
           done()
         })
       })
+
+      it("Rejects user if under 18", (done) => {
+        const testProfile = new db.Profile({
+          firstName: "John",
+          lastName: "Smith",
+          birthDate: new Date(),
+        });
+        testProfile.save((err) => {
+          if (err) {
+            return done();
+          }
+          throw new Error("Under 18 should throw an error");
+        });
+      });
     })
 
     after(function (done) {

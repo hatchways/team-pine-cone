@@ -59,7 +59,7 @@ const initialFormValues = {
 export default function SignIn() {
   const classes = useStyles();
 
-  const { values, handleInputChange } = useForm(initialFormValues);
+  const { values, handleInputChange, handleCheckboxChange } = useForm(initialFormValues);
 
   return (
     <Fragment>
@@ -97,7 +97,7 @@ export default function SignIn() {
               onChange={handleInputChange}
             />
             <FormControlLabel
-              control={<Checkbox name="remember" onChange={handleInputChange} checked={values.remember} color="primary" />}
+              control={<Checkbox name="remember" onChange={handleCheckboxChange} checked={values.remember} color="primary" />}
               label="Remember me"
             />
             <Button

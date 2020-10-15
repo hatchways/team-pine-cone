@@ -100,7 +100,7 @@ class ProfileSettings extends Component {
           <Toolbar />
           <List className={classes.drawerContainer}>
             {this.links.map((link) => (
-              <Link className={classes.linkText} to={link.path}>
+              <Link key={link.path} className={classes.linkText} to={link.path}>
                 <ListItem>
                   <ListItemIcon>{link.icon}</ListItemIcon>
                   {this.props.width !== "xs" && this.props.width !== "sm" && (

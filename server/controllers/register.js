@@ -8,7 +8,7 @@ const registerUser = async (req, res, next) => {
 	const errors = validationResult(req);
 
 	if (!errors.isEmpty()) {
-		return next(createError(422, 'Email and password are both required.'));
+		return res.status(422).json({ errors });
 	}
 
 	try {
@@ -18,11 +18,7 @@ const registerUser = async (req, res, next) => {
 
 		return res
 			.status(201)
-			.json({ user: { 
-				id: user.id,
-				email: user.email
-			}});
-
+			.json({ user: user.toJSON() });
 	} catch (err) {
 		//check monggoose error code for email duplication
 		if (err.code === 11000) {

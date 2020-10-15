@@ -23,6 +23,8 @@ const strategy = new Strategy(params, function(payload, done) {
 		.catch(err => done(createError(500, err.message), false));
 });
 
+passport.use(strategy);
+
 const initializeAuthentication = () => passport.initialize();
 const authenticate = () => passport.authenticate('jwt', {
 	session: false

@@ -33,18 +33,20 @@ describe('Database Tests', () => {
         testProfile.save(done)
       });
 
-      it('Save with only first and last name filled', done => {
+      it('Save with only first and last name and birth date filled', done => {
         const testProfile = new db.Profile({
-          firstName: 'Joe',
-          lastName: 'Smith'
-        })
+          firstName: "Joe",
+          lastName: "Smith",
+          birthDate: new Date("01-01-1990"),
+        });
         testProfile.save(done)
       });
 
       it('Save gender as "prefer not to say" if none specified', done => {
         const testProfile = new db.Profile({
-          firstName: 'Jane',
-          lastName: 'Smith',
+          firstName: "Jane",
+          lastName: "Smith",
+          birthDate: new Date("01-01-1990"),
         });
         testProfile.save().then(profile => {
           expect(profile.gender).to.eql('prefer not to say')
@@ -54,7 +56,8 @@ describe('Database Tests', () => {
 
       it('Don\'t save without first name', done => {
         const testProfile = new db.Profile({
-          lastName: 'Smith'
+          lastName: 'Smith',
+          birthDate: new Date('01-01-1990'),
         });
         testProfile.save(err => {
           if (err) { 
@@ -66,13 +69,27 @@ describe('Database Tests', () => {
 
       it('Don\'t save without last name', (done) => {
         const testProfile = new db.Profile({
-          firstName: 'John',
+          firstName: "John",
+          birthDate: new Date("01-01-1990"),
         });
         testProfile.save((err) => {
           if (err) {
             return done();
           }
           throw new Error('No last name should throw an error');
+        });
+      });
+
+      it("Don't save without birth date", (done) => {
+        const testProfile = new db.Profile({
+          firstName: "John",
+          lastName: "Smith",
+        });
+        testProfile.save((err) => {
+          if (err) {
+            return done();
+          }
+          throw new Error("No birth date should throw an error");
         });
       });
 

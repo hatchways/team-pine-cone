@@ -13,18 +13,7 @@ import { Toolbar } from '@material-ui/core';
 import { NavLink } from 'react-router-dom';
 import useForm from '../components/useForm';
 
-function Copyright() {
-  return (
-    <Typography variant="body2" color="textSecondary" align="center">
-      {'Copyright © '}
-      <Link color="inherit" href="#">
-        Doggo DayCare (Temp)
-      </Link>{' '}
-      {new Date().getFullYear()}
-      {'.'}
-    </Typography>
-  );
-}
+import Copyright from "../components/Copyright";
 
 const useStyles = makeStyles((theme) => ({
   paper: {

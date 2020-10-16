@@ -5,7 +5,8 @@ import {
 	TextField,
 	MenuItem,
 	Button,
-	useMediaQuery
+	useMediaQuery,
+	useTheme
 } from '@material-ui/core';
 import { makeStyles } from '@material-ui/styles';
 import { months, genders, days, years } from './data';
@@ -20,7 +21,7 @@ const useStyles = makeStyles(theme => ({
 		textAlign: 'right'
 	},
 	mainContainer: { 
-		margin: 'auto',
+		margin: '2em auto',
 		maxWidth: '900px'
 	},
 	input: { 
@@ -94,6 +95,8 @@ const Label = function({children, id}) {
 
 const ProfileEdit = function() {
 	const classes = useStyles();
+	const theme = useTheme();
+	const matchesXS = useMediaQuery(theme.breakpoints.down('xs'));
 	const [form, setForm] = useState({});
 
 	const handle = eventProp => formProp => e => { 
@@ -161,7 +164,15 @@ const ProfileEdit = function() {
 				<Grid item xs={ 4 }>
 					<Label>BIRTH DATE</Label>
 				</Grid>
-				<Grid container justify="space-between" item xs={ 6 }>
+				<Grid 
+					container 
+					className={ classes.input }
+					direction={ matchesXS ? 'column' : 'row' } 
+					justify="space-between" 
+					spacing={ matchesXS ? 1 : 0 }
+					item 
+					xs={ 6 }
+				>
 					<Grid item  xs={ 5 }>
 						<TextField
 							id="month"
@@ -179,10 +190,11 @@ const ProfileEdit = function() {
 							}
 						</TextField>
 					</Grid>
-					<Grid item xs={ 3 }>
+					<Grid item xs={ matchesXS ? 5 : 3 }>
 						<TextField
 							id="day"
 							select
+							spacing={ matchesXS ? 1 : 0 }
 							className={ classes.select }
 							value={ form.day || '' }
 							onChange={ handleSelect('day') }
@@ -196,7 +208,7 @@ const ProfileEdit = function() {
 							}
 						</TextField>
 					</Grid>
-					<Grid item  xs={ 3 }>
+					<Grid item  xs={ matchesXS ? 5 : 3 }>
 						<TextField
 							id="year"
 							select

@@ -1,22 +1,22 @@
-const { expect } = require('chai');
-const chai = require('chai');
-const mongoose = require('mongoose');
-const db = require('../models');
+const { expect } = require("chai");
+const chai = require("chai");
+const mongoose = require("mongoose");
+const db = require("../models");
 
 chai.should();
 
-describe('Database Tests', () => {
+describe("Database Tests", () => {
     before(done => {
         mongoose.connect("mongodb://localhost/team-pine-cone");
-        const dbc = mongoose.connection
+        const dbc = mongoose.connection;
         dbc.on("error", console.error.bind(console, "connection error"));
         dbc.once("open", function () {
           done();
         });
-    })
+    });
     
-    describe('Profile Model', () => {
-      it('Save with all fields filled correctly', done => {
+    describe("Profile Model", () => {
+      it("Save with all fields filled correctly", done => {
         const testProfile = new db.Profile({
           firstName: "John",
           lastName: "Smith",
@@ -36,10 +36,10 @@ describe('Database Tests', () => {
           },
           phone: "555-555-5555"
         });
-        testProfile.save(done)
+        testProfile.save(done);
       });
 
-      it('Save with only first name, last name, birth date, phone, and location filled', done => {
+      it("Save with only first name, last name, birth date, phone, and location filled", done => {
         const testProfile = new db.Profile({
           firstName: "Joe",
           lastName: "Smith",
@@ -50,10 +50,10 @@ describe('Database Tests', () => {
             coordinates: [-122.5, 37.7],
           },
         });
-        testProfile.save(done)
+        testProfile.save(done);
       });
 
-      it('Save gender as "prefer not to say" if none specified', done => {
+      it("Save gender as \"prefer not to say\" if none specified", done => {
         const testProfile = new db.Profile({
           firstName: "Jane",
           lastName: "Smith",
@@ -65,12 +65,12 @@ describe('Database Tests', () => {
           },
         });
         testProfile.save().then(profile => {
-          expect(profile.gender).to.eql('prefer not to say')
-          done()
-        })
-      })
+          expect(profile.gender).to.eql("prefer not to say");
+          done();
+        });
+      });
 
-      it('Save isSitter as false if not specified', (done) => {
+      it("Save isSitter as false if not specified", (done) => {
         const testProfile = new db.Profile({
           firstName: "Jane",
           lastName: "Smith",
@@ -87,7 +87,7 @@ describe('Database Tests', () => {
         });
       });
 
-      it('Don\'t save without first name', done => {
+      it("Don't save without first name", done => {
         const testProfile = new db.Profile({
           lastName: "Smith",
           birthDate: new Date("01-01-1990"),
@@ -99,13 +99,13 @@ describe('Database Tests', () => {
         });
         testProfile.save(err => {
           if (err) { 
-            return done() 
+            return done(); 
           }
-          throw new Error('No first name should throw an error');
-        })
-      })
+          throw new Error("No first name should throw an error");
+        });
+      });
 
-      it('Don\'t save without last name', (done) => {
+      it("Don't save without last name", (done) => {
         const testProfile = new db.Profile({
           firstName: "John",
           birthDate: new Date("01-01-1990"),
@@ -119,7 +119,7 @@ describe('Database Tests', () => {
           if (err) {
             return done();
           }
-          throw new Error('No last name should throw an error');
+          throw new Error("No last name should throw an error");
         });
       });
 
@@ -174,17 +174,17 @@ describe('Database Tests', () => {
         });
       });
 
-      it('Retrieves data from the database', done => {
-        db.Profile.find({firstName: 'John'}, (err, profile) => {
+      it("Retrieves data from the database", done => {
+        db.Profile.find({firstName: "John"}, (err, profile) => {
           if (err) {
-            throw err
+            throw err;
           }
           if (!profile) {
-            throw new Error('No data found')
+            throw new Error("No data found");
           }
-          done()
-        })
-      })
+          done();
+        });
+      });
 
       it("Rejects user if under 18", (done) => {
         const testProfile = new db.Profile({
@@ -218,11 +218,11 @@ describe('Database Tests', () => {
           throw new Error("Negative date range should throw an error");
         });
       });
-    })
+    });
 
     after(function (done) {
       mongoose.connection.db.dropDatabase(function () {
         mongoose.connection.close(done);
       });
     });
-})
+});

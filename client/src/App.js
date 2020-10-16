@@ -13,12 +13,12 @@ function App() {
     <MuiThemeProvider theme={theme}>
       <BrowserRouter>
         <Navbar />
-          <Route exact path="/" component={ProfileSettings} />
-          <Route path="/me" component={ProfileSettings} />
-          <Route exact path="/become-a-sitter" component={ProfileSettings} />
-          <Route exact path="/my-sitters" component={ProfileSettings} />
-          <Route exact path="/my-jobs" component={ProfileSettings} />
-          <Route exact path="/messages" component={ProfileSettings} />
+        <Route exact path="/" component={ProfileSettings} />
+        <Route path="/me" component={ProfileSettings} />
+        <Route exact path="/become-a-sitter" component={ProfileSettings} />
+        <Route exact path="/my-sitters" component={ProfileSettings} />
+        <Route exact path="/my-jobs" component={ProfileSettings} />
+        <Route exact path="/messages" component={ProfileSettings} />
       </BrowserRouter>
     </MuiThemeProvider>
   );

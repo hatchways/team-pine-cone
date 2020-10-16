@@ -61,17 +61,17 @@ const profileSchema = new Schema({
 });
 
 profileSchema.pre("save", function(next) {
-    if (this.availability) {
-        this.availability.forEach(range => {
-            const isNegativeRange = range.end < range.start;
-            if (isNegativeRange) { throw new Error("Date ranges must have a start date before the end date"); }
-        });
-    }
+  if (this.availability) {
+    this.availability.forEach(range => {
+      const isNegativeRange = range.end < range.start;
+      if (isNegativeRange) { throw new Error("Date ranges must have a start date before the end date"); }
+    });
+  }
 
-    const today = new Date();
-    const isUnderEighteen = today.getFullYear() - this.birthDate.getFullYear() < 18;
-    if (isUnderEighteen) { throw new Error("User must be 18 years old"); }
-    next();
+  const today = new Date();
+  const isUnderEighteen = today.getFullYear() - this.birthDate.getFullYear() < 18;
+  if (isUnderEighteen) { throw new Error("User must be 18 years old"); }
+  next();
 });
 
 const Profile = model("Profile", profileSchema);

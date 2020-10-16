@@ -115,11 +115,11 @@ function Navbar(props) {
   };
 
   const navOptions = {
-      classes,
-      anchorEl,
-      handleClick,
-      handleClose,
-      width: props.width
+    classes,
+    anchorEl,
+    handleClick,
+    handleClose,
+    width: props.width
   };
   return (
     <AppBar position="fixed" className={classes.navbar}>

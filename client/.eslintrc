@@ -1,7 +1,9 @@
 {
     "env": {
         "es6": true,
-        "node": true
+        "node": true,
+        "browser": true,
+        
     },
     "rules": {
         "semi": [
@@ -14,5 +16,11 @@
         ],
         "no-var":"error"
     },
-    "extends": "eslint:recommended"
+    "extends": [
+        "eslint:recommended",
+        "plugin:react/recommended"
+    ],
+    "parserOptions": {
+        "sourceType": "module"
+    }
 }

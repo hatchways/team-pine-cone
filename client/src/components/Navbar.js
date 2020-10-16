@@ -120,7 +120,7 @@ function Navbar(props) {
       handleClick,
       handleClose,
       width: props.width
-  }
+  };
   return (
     <AppBar position="fixed" className={classes.navbar}>
       <Toolbar className={classes.navDisplay}>

@@ -4,10 +4,11 @@ import {
 	Typography,
 	TextField,
 	MenuItem,
-	Button
+	Button,
+	useMediaQuery
 } from '@material-ui/core';
 import { makeStyles } from '@material-ui/styles';
-import { months, genders } from './data';
+import { months, genders, days, years } from './data';
 
 const useStyles = makeStyles(theme => ({
 	label: { 
@@ -75,19 +76,46 @@ const Label = function({children, id}) {
 		</Typography>
 	);
 }
+/*
+ * Form props include:
+ * { 
+ * 		firstName,
+ * 		lastName,
+ * 		gender,
+ * 		month,
+ * 		day,
+ * 		year,
+ * 		email,
+ * 		phone,
+ * 		address,
+ * 		description
+ * }
+ */
 
 const ProfileEdit = function() {
 	const classes = useStyles();
 	const [form, setForm] = useState({});
 
-	const handleText = formProp => e => { 
-		setForm({ ...form, [formProp]: e.currentTarget.value });
+	const handle = eventProp => formProp => e => { 
+		setForm({ ...form, [formProp]: e[eventProp].value });
+	}
+	const handleText = handle('currentTarget');
+	const handleSelect = handle('target');
+
+	const handleSubmit = e => { 
+		e.preventDefault();
+		console.log('Success');
 	};
 
-	console.log(genders);
-
 	return (
-		<Grid component="form" className={ classes.mainContainer } container direction="column" alignItems="center">
+		<Grid 
+			component="form" 
+			className={ classes.mainContainer } 
+			container 
+			direction="column" 
+			alignItems="center" 
+			onSubmit={handleSubmit}
+		>
 			<Grid item>
 				<Typography variant="h2">Edit Profile</Typography>
 			</Grid>
@@ -114,18 +142,14 @@ const ProfileEdit = function() {
 				<Grid item xs={ 3 }>
 					<TextField
 						id="gender"
+						value={ form.gender || '' }
+						onChange={ handleSelect('gender') }
 						select
-						value=""
-						onClose={ handleText('gender')}
 						className={ classes.select }
-						variant="outlined"
-					>
+						variant="outlined">
 						{ 
 							genders.map(value => (
-								<MenuItem 
-									key={ value }
-									select="Male"
-								>
+								<MenuItem value={ value } key={ value }>
 									{ value }
 								</MenuItem>
 							))
@@ -140,32 +164,53 @@ const ProfileEdit = function() {
 				<Grid container justify="space-between" item xs={ 6 }>
 					<Grid item  xs={ 5 }>
 						<TextField
-							id="gender"
-							value="Male"
+							id="month"
 							select
 							className={ classes.select }
+							value={ form.month || '' }
+							onChange={ handleSelect('month') }
 							variant="outlined">
-							<MenuItem>Male</MenuItem>
+							{ 
+								months.map(value => (
+									<MenuItem value={ value } key={ value }>
+										{ value }
+									</MenuItem>
+								))
+							}
 						</TextField>
 					</Grid>
 					<Grid item xs={ 3 }>
 						<TextField
-							id="gender"
-							value="Male"
+							id="day"
 							select
 							className={ classes.select }
+							value={ form.day || '' }
+							onChange={ handleSelect('day') }
 							variant="outlined">
-							<MenuItem>Male</MenuItem>
+							{ 
+								days.map(value => (
+									<MenuItem value={ value } key={ value }>
+										{ value }
+									</MenuItem>
+								))
+							}
 						</TextField>
 					</Grid>
-					<Grid item xs={ 3 }>
+					<Grid item  xs={ 3 }>
 						<TextField
-							id="gender"
-							value="Male"
+							id="year"
 							select
 							className={ classes.select }
+							value={ form.year || '' }
+							onChange={ handleSelect('year') }
 							variant="outlined">
-							<MenuItem>Male</MenuItem>
+							{ 
+								years.map(value => (
+									<MenuItem value={ value } key={ value }>
+										{ value }
+									</MenuItem>
+								))
+							}
 						</TextField>
 					</Grid>
 				</Grid>
@@ -229,7 +274,13 @@ const ProfileEdit = function() {
 				</Grid>
 			</Grid>
 			<Grid item xs={ 12 }>
-				<Button variant="contained" color="primary" size="large" className={ classes.bigRedButton }>
+				<Button 
+					variant="contained" 
+					color="primary" 
+					size="large" 
+					className={ classes.bigRedButton }
+					type="submit"
+				>
 					Save
 				</Button>
 			</Grid>

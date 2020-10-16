@@ -1,3 +1,13 @@
+const range = (from, to) => { 
+	const arr = [];
+	for (let i = from; i <= to; i++) { 
+		arr[arr.length] = i;
+	}
+	return arr;
+}
+
+const year = new Date().getFullYear();
+
 export const genders = [
 	'Male',
 	'Female',
@@ -19,3 +29,6 @@ export const months = [
 	'November',
 	'December'
 ];
+
+export const days = range(1, 31);
+export const years = range(year - 80, year);

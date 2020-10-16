@@ -2,8 +2,7 @@
     "env": {
         "es6": true,
         "node": true,
-        "browser": true,
-        
+        "browser": true
     },
     "rules": {
         "semi": [
@@ -14,7 +13,8 @@
             "error",
             "double"
         ],
-        "no-var":"error"
+        "no-var":"error",
+        "react/prop-types": 0
     },
     "extends": [
         "eslint:recommended",

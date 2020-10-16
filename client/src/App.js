@@ -7,18 +7,19 @@ import LandingPage from "./pages/Landing";
 
 import "./App.css";
 import Navbar from "./components/Navbar";
+import ProfileSettings from "./pages/ProfileSettings";
 
 function App() {
   return (
     <MuiThemeProvider theme={theme}>
       <BrowserRouter>
         <Navbar />
-        <Route exact path="/" component={LandingPage} />
-        <Route exact path="/me" component={LandingPage} />
-        <Route exact path="/become-a-sitter" component={LandingPage} />
-        <Route exact path="/my-sitters" component={LandingPage} />
-        <Route exact path="/my-jobs" component={LandingPage} />
-        <Route exact path="/messages" component={LandingPage} />
+          <Route exact path="/" component={LandingPage} />
+          <Route path="/me" component={ProfileSettings} />
+          <Route exact path="/become-a-sitter" component={LandingPage} />
+          <Route exact path="/my-sitters" component={LandingPage} />
+          <Route exact path="/my-jobs" component={LandingPage} />
+          <Route exact path="/messages" component={LandingPage} />
       </BrowserRouter>
     </MuiThemeProvider>
   );

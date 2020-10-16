@@ -12,30 +12,7 @@ import Input from '../components/controls/Input';
 import { Toolbar } from '@material-ui/core';
 
 import Copyright from '../components/Copyright';
-
-const useStyles = makeStyles((theme) => ({
-  paper: {
-    marginTop: theme.spacing(8),
-    display: "flex",
-    flexDirection: "column",
-    alignItems: "center",
-  },
-  form: {
-    width: "100%", // Fix IE 11 issue.
-    marginTop: theme.spacing(3),
-  },
-  submit: {
-    margin: theme.spacing(3, 0, 2),
-  },
-  link: {
-    color: "#DF1B1B",
-    fontSize: "0.75rem",
-    fontFamily: "Roboto",
-    fontWeight: 400,
-    lineHeight: 1.43,
-    textDecoration: "none",
-  },
-}));
+import useFormStyles from "../themes/useFormStyles";
 
 const initialFormValues = {
   firstName: '',
@@ -47,7 +24,7 @@ const initialFormValues = {
 
 export default function SignUp() {
   
-  const classes = useStyles();
+  const classes = useFormStyles();
 
   const validate = () => {
     let temp = {};

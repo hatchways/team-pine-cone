@@ -1,4 +1,8 @@
 {
+    "env": {
+        "es6": true,
+        "node": true
+    },
     "rules": {
         "semi": [
             "error",
@@ -7,6 +11,8 @@
         "quotes": [
             "error",
             "double"
-        ]
-    }
+        ],
+        "no-var":"error"
+    },
+    "extends": "eslint:recommended"
 }

@@ -13,6 +13,10 @@
             "error",
             "double"
         ],
+        "indent": [
+            "error",
+            2
+        ],
         "no-var":"error",
         "react/prop-types": 0
     },

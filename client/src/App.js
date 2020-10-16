@@ -7,6 +7,7 @@ import LandingPage from "./pages/Landing";
 
 import "./App.css";
 import Navbar from "./components/Navbar";
+import ProfileEdit from './components/ProfileEdit';
 
 function App() {
   return (
@@ -15,6 +16,7 @@ function App() {
         <Navbar />
         <Route exact path="/" component={LandingPage} />
         <Route exact path="/me" component={LandingPage} />
+		<Route exact path="/profile/edit" component={ProfileEdit} />
         <Route exact path="/become-a-sitter" component={LandingPage} />
         <Route exact path="/my-sitters" component={LandingPage} />
         <Route exact path="/my-jobs" component={LandingPage} />

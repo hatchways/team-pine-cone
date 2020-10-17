@@ -18,6 +18,9 @@ const useStyles = makeStyles((theme) => ({
     padding: "1.5em",
     display: "block",
     textAlign: "right",
+    [theme.breakpoints.down("xs")]: {
+      fontSize: "0.66em",
+    },
   },
   mainContainer: {
     margin: "2em auto",
@@ -74,25 +77,21 @@ const Label = function ({ children, id }) {
     </Typography>
   );
 };
-/*
- * Form props include:
- * {
- * 		firstName,
- * 		lastName,
- * 		gender,
- * 		month,
- * 		day,
- * 		year,
- * 		email,
- * 		phone,
- * 		address,
- * 		description
- * }
- */
+
+const initialForm = {
+  firstName: "",
+  lastName: "",
+  gender: "",
+  birthDate: "",
+  email: "",
+  address: "",
+  phone: "",
+  description: "",
+};
 
 const ProfileEdit = function () {
   const classes = useStyles();
-  const [form, setForm] = useState({});
+  const [form, setForm] = useState(initialForm);
 
   const handle = (eventProp) => (formProp) => (e) => {
     setForm({ ...form, [formProp]: e[eventProp].value });
@@ -126,6 +125,8 @@ const ProfileEdit = function () {
       <Grid item>
         <Typography variant="h2">Edit Profile</Typography>
       </Grid>
+
+      {/*FIRST NAME*/}
       <InputText
         id="first-name"
         placeholder="John"
@@ -133,6 +134,8 @@ const ProfileEdit = function () {
       >
         FIRST NAME
       </InputText>
+
+      {/*LAST NAME*/}
       <InputText
         id="last-name"
         placeholder="Doe"
@@ -140,40 +143,8 @@ const ProfileEdit = function () {
       >
         LAST NAME
       </InputText>
-      <Grid container item className={classes.input}>
-        <Grid item xs={4}>
-          <Label id="gender">GENDER</Label>
-        </Grid>
-        <Grid item xs={3}>
-          <TextField
-            id="gender"
-            value={form.gender || ""}
-            onChange={handleSelect("gender")}
-            select
-            className={classes.select}
-            variant="outlined"
-          >
-            {genders.map((value) => (
-              <MenuItem value={value} key={value}>
-                {value}
-              </MenuItem>
-            ))}
-          </TextField>
-        </Grid>
-      </Grid>
-      <Grid container item alignItems="center" className={classes.input}>
-        <Grid item xs={4}>
-          <Label>BIRTH DATE</Label>
-        </Grid>
-        <Grid item xs={3}>
-          <TextField
-            id="birth-date"
-            type="date"
-            className={classes.select}
-            onChange={handleText("birthDate")}
-          />
-        </Grid>
-      </Grid>
+
+      {/*EMAIL ADDRESS*/}
       <Grid container item className={classes.input}>
         <Grid item xs={4}>
           <Label id="email">EMAIL ADDRESS</Label>
@@ -189,20 +160,8 @@ const ProfileEdit = function () {
           />
         </Grid>
       </Grid>
-      <Grid container item className={classes.input}>
-        <Grid item xs={4}>
-          <Label id="phone">PHONE NUMBER</Label>
-        </Grid>
-        <Grid container alignItems="center" item xs={6}>
-          <Grid container item alignItems="center" justify="space-between">
-            <PhoneInput
-              defaultCountry="ca"
-              regions="north-america"
-              onChange={handlePhone}
-            />
-          </Grid>
-        </Grid>
-      </Grid>
+
+      {/*ADDRESS*/}
       <InputText
         id="address"
         placeholder="Address"
@@ -210,6 +169,63 @@ const ProfileEdit = function () {
       >
         WHERE YOU LIVE
       </InputText>
+
+      {/*GENDER*/}
+      <Grid container item className={classes.input}>
+        <Grid item xs={4}>
+          <Label id="gender">GENDER</Label>
+        </Grid>
+        <Grid item xs={4} sm={3}>
+          <TextField
+            id="gender"
+            value={form.gender}
+            onChange={handleSelect("gender")}
+            select
+            className={classes.select}
+            variant="outlined"
+          >
+            {genders.map((value) => (
+              <MenuItem value={value} key={value}>
+                {value}
+              </MenuItem>
+            ))}
+          </TextField>
+        </Grid>
+      </Grid>
+
+      {/*BIRTH DATE*/}
+      <Grid container item alignItems="center" className={classes.input}>
+        <Grid item xs={4}>
+          <Label>BIRTH DATE</Label>
+        </Grid>
+        <Grid item xs={4} sm={3}>
+          <TextField
+            id="birth-date"
+            type="date"
+            className={classes.select}
+            onChange={handleText("birthDate")}
+          />
+        </Grid>
+      </Grid>
+
+      {/*PHONE NUMBER*/}
+      <Grid container item className={classes.input}>
+        <Grid item xs={4}>
+          <Label id="phone">PHONE NUMBER</Label>
+        </Grid>
+        <Grid container alignItems="center" item xs={5} sm={4}>
+          <Grid container item alignItems="center" justify="space-between">
+            <PhoneInput
+              defaultCountry="ca"
+              className={classes.select}
+              regions="north-america"
+              onChange={handlePhone}
+            />
+          </Grid>
+        </Grid>
+      </Grid>
+
+      {/*DESCRIPTION*/}
       <Grid item container className={classes.input}>
         <Grid item xs={4}>
           <Label id="description">DESCRIBE YOURSELF</Label>

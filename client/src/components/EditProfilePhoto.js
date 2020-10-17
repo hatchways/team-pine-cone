@@ -28,8 +28,11 @@ function EditProfilePhoto(props) {
         const file = Array.from(e.target.files)[0]
         const formData = new FormData()
         formData.append(0, file)
-        // POST formData to backend when integrating
-
+        const options = {
+            method: "POST",
+            body: formData
+        }
+        fetch("/upload", options)
         // setImage to url
     }
     const handleDelete = () => {

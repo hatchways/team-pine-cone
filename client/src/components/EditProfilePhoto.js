@@ -25,9 +25,9 @@ function EditProfilePhoto(props) {
     const classes = useStyles()
     const [image, setImage] = useState(null);
     const handleChange = e => {
-        const file = Array.from(e.target.files)[0]
+        const file = e.target.files[0]
         const formData = new FormData()
-        formData.append(0, file)
+        formData.append("file", file)
         const options = {
             method: "POST",
             body: formData

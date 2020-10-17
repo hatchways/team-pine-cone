@@ -1,4 +1,4 @@
-import { Avatar, Button, makeStyles } from '@material-ui/core';
+import { Avatar, Button, CircularProgress, makeStyles } from '@material-ui/core';
 import { Delete } from '@material-ui/icons';
 import React, { useState } from 'react';
 
@@ -24,6 +24,7 @@ const useStyles = makeStyles(theme => ({
 function EditProfilePhoto(props) {
     const classes = useStyles()
     const [image, setImage] = useState(null);
+    const [uploading, setUploading] = useState(false);
     const handleChange = e => {
         const file = e.target.files[0]
         const formData = new FormData()
@@ -32,9 +33,11 @@ function EditProfilePhoto(props) {
             method: "POST",
             body: formData
         }
+        setUploading(true)
         fetch("/upload", options).then(response => {
             response.json().then(result => {
                 setImage(result.url)
+                setUploading(false)
             })
         })
     }
@@ -49,7 +52,11 @@ function EditProfilePhoto(props) {
         {image ? (
           <Avatar className={classes.photo} alt="profile" src={image} />
         ) : (
-          <Avatar className={classes.photo}>No Photo</Avatar>
+            uploading ? (
+                <CircularProgress />
+            ) : (
+                <Avatar className={classes.photo}>No Photo</Avatar>
+            )
         )}
         <p className={classes.helper}>
           Please select a photo that clearly shows your face

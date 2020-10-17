@@ -21,6 +21,7 @@ const indexRouter = require("./routes/index");
 const pingRouter = require("./routes/ping");
 const registerRouter = require('./routes/register');
 const loginRouter = require('./routes/login');
+const userRouter = require('./routes/user');
 
 const { json, urlencoded } = express;
 
@@ -35,6 +36,7 @@ app.use(initializeAuthentication());
 
 app.use("/", indexRouter);
 app.use("/ping", pingRouter);
+app.use('/user', userRouter);
 app.use("/register", registerRouter);
 app.use("/login", loginRouter);
 

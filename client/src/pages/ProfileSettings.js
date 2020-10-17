@@ -9,7 +9,7 @@ import {
   Toolbar
 } from "@material-ui/core";
 import React from "react";
-import { Link } from "react-router-dom";
+import { Link, Route } from "react-router-dom";
 import {
   AccountCircle,
   Photo,
@@ -104,7 +104,9 @@ function ProfileSettings(props) {
             <Link key={link.path} className={classes.linkText} to={link.path}>
               <ListItem>
                 <ListItemIcon>{link.icon}</ListItemIcon>
-                <ListItemText className={classes.noMobileText}>{link.title}</ListItemText>
+                <ListItemText className={classes.noMobileText}>
+                  {link.title}
+                </ListItemText>
               </ListItem>
             </Link>
           ))}
@@ -112,7 +114,13 @@ function ProfileSettings(props) {
       </Drawer>
       <div className={classes.content}>
         <Toolbar />
-        <Card className={classes.card}>Content</Card>
+        <Card className={classes.card}>
+          <Route path={`${origin}/edit-profile`} />
+          <Route path={`${origin}/profile-photo`} />
+          <Route path={`${origin}/payment`} />
+          <Route path={`${origin}/security`} />
+          <Route path={`${origin}/settings`} />
+        </Card>
       </div>
     </div>
   );

@@ -32,8 +32,11 @@ function EditProfilePhoto(props) {
             method: "POST",
             body: formData
         }
-        fetch("/upload", options)
-        // setImage to url
+        fetch("/upload", options).then(response => {
+            response.json().then(result => {
+                setImage(result.url)
+            })
+        })
     }
     const handleDelete = () => {
         setImage(null)

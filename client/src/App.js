@@ -16,7 +16,7 @@ function App() {
         <Navbar />
         <Route exact path="/" component={LandingPage} />
         <Route exact path="/me" component={LandingPage} />
-		<Route exact path="/profile/edit" component={ProfileEdit} />
+		<Route exact path="/me/edit" component={ProfileEdit} />
         <Route exact path="/become-a-sitter" component={LandingPage} />
         <Route exact path="/my-sitters" component={LandingPage} />
         <Route exact path="/my-jobs" component={LandingPage} />

@@ -17,6 +17,7 @@ import {
   Security,
   Settings,
 } from "@material-ui/icons";
+import EditProfilePhoto from "../components/EditProfilePhoto";
 
 const drawerWidth = 240;
 const useStyles = makeStyles((theme) => ({
@@ -116,7 +117,7 @@ function ProfileSettings(props) {
         <Toolbar />
         <Card className={classes.card}>
           <Route path={`${origin}/edit-profile`} />
-          <Route path={`${origin}/profile-photo`} />
+          <Route path={`${origin}/profile-photo`} component={EditProfilePhoto} />
           <Route path={`${origin}/payment`} />
           <Route path={`${origin}/security`} />
           <Route path={`${origin}/settings`} />

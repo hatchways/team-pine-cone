@@ -6,6 +6,8 @@ const logger = require("morgan");
 
 require("dotenv").config();
 
+const { initializeAuthentication } = require('./middleware/authenticate');
+
 const mongodbUri = process.env.MONGODB_URI;
 const mongoose = require("mongoose");
 
@@ -17,6 +19,9 @@ mongoose.connect(mongodbUri, {
 
 const indexRouter = require("./routes/index");
 const pingRouter = require("./routes/ping");
+const registerRouter = require('./routes/register');
+const loginRouter = require('./routes/login');
+const userRouter = require('./routes/user');
 
 const { json, urlencoded } = express;
 
@@ -27,9 +32,13 @@ app.use(json());
 app.use(urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(join(__dirname, "public")));
+app.use(initializeAuthentication());
 
 app.use("/", indexRouter);
 app.use("/ping", pingRouter);
+app.use('/user', userRouter);
+app.use("/register", registerRouter);
+app.use("/login", loginRouter);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

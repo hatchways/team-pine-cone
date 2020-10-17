@@ -13,7 +13,7 @@ router.post("/", (req, res) =>{
         form.parse(req, async (err, fields, files) => {
           const buffer = fs.readFileSync(files.file[0].path)
           const type = await fileType.fromBuffer(buffer)
-          const name = files.file[0].originalFilename.replace(`.${type.ext}`, "");
+          const name = files.file[0].originalFilename.replace(`.${type.ext}`, "") + "-" + new Date();
           upload(buffer, name, type).then(result => {
               // Add image to the user profile
               res.json({url: result.Location})

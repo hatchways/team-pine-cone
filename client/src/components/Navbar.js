@@ -15,7 +15,7 @@ import {
 import { makeStyles } from "@material-ui/core/styles";
 import MoreVertIcon from "@material-ui/icons/MoreVert";
 
-const useStyles = makeStyles({
+const useStyles = makeStyles(theme => ({
   navDisplay: {
     display: "flex",
     justifyContent: "space-between",
@@ -23,13 +23,13 @@ const useStyles = makeStyles({
   linkText: {
     textDecoration: "none",
     color: "#222222",
-    fontWeight: 700,
     marginRight: 5,
   },
   navbar: {
     backgroundColor: "#EEEEEE",
+    zIndex: theme.zIndex.drawer + 1,
   },
-});
+}));
 
 function getNavigation({ width, classes, anchorEl, handleClick, handleClose }) {
   const navLinks = [
@@ -122,7 +122,7 @@ function Navbar(props) {
       width: props.width
   }
   return (
-    <AppBar position="static" className={classes.navbar}>
+    <AppBar position="fixed" className={classes.navbar}>
       <Toolbar className={classes.navDisplay}>
         <NavLink to="/">
           <img alt="Loving Sitter" src={window.origin + "/assets/logo.png"} />

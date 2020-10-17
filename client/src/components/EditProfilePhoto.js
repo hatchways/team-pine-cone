@@ -32,6 +32,11 @@ function EditProfilePhoto(props) {
 
         // setImage to url
     }
+    const handleDelete = () => {
+        setImage(null)
+
+        // PUT to delete the image from the profile model and S3
+    }
     return (
       <div className={classes.root}>
         <h2>Profile Photo</h2>
@@ -55,7 +60,7 @@ function EditProfilePhoto(props) {
             Upload a file from your device
           </Button>
         </label>
-        <Button size="small" variant="outlined">
+        <Button onClick={handleDelete} size="small" variant="outlined">
           <Delete fontSize="small" style={{ marginRight: 5 }} /> Delete Photo
         </Button>
       </div>

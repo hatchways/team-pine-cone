@@ -34,6 +34,7 @@ function EditProfilePhoto(props) {
             body: formData
         }
         setUploading(true)
+        handleDelete()
         fetch("/upload", options).then(response => {
             response.json().then(result => {
                 setImage(result.url)

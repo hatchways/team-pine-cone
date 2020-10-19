@@ -6,6 +6,7 @@ const db = require("../models");
 chai.should();
 
 const ids = [];
+let requestId;
 
 describe("Database Tests", () => {
   before(done => {
@@ -222,6 +223,24 @@ describe("Database Tests", () => {
         throw new Error("Negative date range should throw an error");
       });
     });
+  });
+
+  describe("Request Model", () => {
+    it("Saves with the required data", done => {
+      const newRequest = new db.Request({
+        user_id: ids[0],
+        sitter_id: ids[1],
+        start: new Date("10-01-20"),
+        end: new Date("10-14-20"),
+      });
+
+      newRequest.save().then(request => {
+        requestId = request._id;
+        done();
+      });
+    });
+
+
   });
 
   after(function (done) {

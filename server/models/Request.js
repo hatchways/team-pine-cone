@@ -33,6 +33,24 @@ const requestSchema = new Schema({
   },
 });
 
+requestSchema.methods.accept = function () {
+  this.declined = false;
+  this.accepted = true;
+  this.save();
+};
+
+requestSchema.methods.decline = function () {
+  this.accepted = false;
+  this.declined = true;
+  this.save();
+};
+
+requestSchema.methods.pay = function () {
+  // Logic for paying
+  this.paid = true;
+  this.save();
+};
+
 
 
 const Request = model("Request", requestSchema);

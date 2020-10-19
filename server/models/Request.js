@@ -46,7 +46,7 @@ requestSchema.methods.decline = function () {
 };
 
 requestSchema.methods.pay = function () {
-  // Logic for paying
+  // Add logic for paying
   this.paid = true;
   this.save();
 };

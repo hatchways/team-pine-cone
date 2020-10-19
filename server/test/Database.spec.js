@@ -6,7 +6,7 @@ const db = require("../models");
 chai.should();
 
 const ids = [];
-let requestId;
+let request;
 
 describe("Database Tests", () => {
   before(done => {
@@ -234,13 +234,17 @@ describe("Database Tests", () => {
         end: new Date("10-14-20"),
       });
 
-      newRequest.save().then(request => {
-        requestId = request._id;
+      newRequest.save().then(result => {
+        request = result;
         done();
       });
     });
 
-
+    it("Retrieves data for a given id", () => {
+      db.Request.findById(request._id).then(result => {
+        expect(result).to.eql(request);
+      })
+    })
   });
 
   after(function (done) {

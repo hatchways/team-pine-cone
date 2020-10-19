@@ -5,11 +5,11 @@ const cookieParser = require("cookie-parser");
 const logger = require("morgan");
 
 //delete this
-const { profileValidator } = require('./utils/validators');
+const { profileValidator } = require("./utils/validators");
 
 require("dotenv").config();
 
-const { initializeAuthentication } = require('./middleware/authenticate');
+const { initializeAuthentication } = require("./middleware/authenticate");
 
 const mongodbUri = process.env.MONGODB_URI;
 const mongoose = require("mongoose");
@@ -22,10 +22,10 @@ mongoose.connect(mongodbUri, {
 
 const indexRouter = require("./routes/index");
 const pingRouter = require("./routes/ping");
-const profileRouter = require('./routes/profile');
-const registerRouter = require('./routes/register');
-const loginRouter = require('./routes/login');
-const userRouter = require('./routes/user');
+const profileRouter = require("./routes/profile");
+const registerRouter = require("./routes/register");
+const loginRouter = require("./routes/login");
+const userRouter = require("./routes/user");
 
 const { json, urlencoded } = express;
 
@@ -40,8 +40,8 @@ app.use(initializeAuthentication());
 
 app.use("/", indexRouter);
 app.use("/ping", pingRouter);
-app.use('/profile', profileRouter);
-app.use('/user', userRouter);
+app.use("/profile", profileRouter);
+app.use("/user", userRouter);
 app.use("/register", registerRouter);
 app.use("/login", loginRouter);
 

@@ -312,6 +312,70 @@ describe("Database Tests", () => {
         }
       });
     });
+
+    it("Doesn't save without user_id", (done) => {
+      const newRequest = new db.Request({
+        sitter_id: ids[1],
+        start: new Date("10-01-20"),
+        end: new Date("10-14-20"),
+      });
+
+      newRequest.save((err) => {
+        if (err) {
+          done();
+        } else {
+          throw new Error("Saving without user_id should fail");
+        }
+      });
+    });
+
+    it("Doesn't save without sitter_id", (done) => {
+      const newRequest = new db.Request({
+        user_id: ids[0],
+        start: new Date("10-01-20"),
+        end: new Date("10-14-20"),
+      });
+
+      newRequest.save((err) => {
+        if (err) {
+          done();
+        } else {
+          throw new Error("Saving without sitter_id should fail");
+        }
+      });
+    });
+
+    it("Doesn't save without start date", (done) => {
+      const newRequest = new db.Request({
+        user_id: ids[0],
+        sitter_id: ids[1],
+        end: new Date("10-14-20"),
+      });
+
+      newRequest.save((err) => {
+        if (err) {
+          done();
+        } else {
+          throw new Error("Saving without start date should fail");
+        }
+      });
+    });
+
+    it("Doesn't save without end date", (done) => {
+      const newRequest = new db.Request({
+        user_id: ids[0],
+        sitter_id: ids[1],
+        start: new Date("10-01-20"),
+      });
+
+      newRequest.save((err) => {
+        if (err) {
+          done();
+        } else {
+          throw new Error("Saving without end date should fail");
+        }
+      });
+    });
   });
 
   after(function (done) {

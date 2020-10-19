@@ -1,11 +1,11 @@
 import React from 'react';
+import { Redirect } from 'react-router-dom';
 import { NavLink } from 'react-router-dom'
 
 import Button from '@material-ui/core/Button';
 import Grid from '@material-ui/core/Grid';
 import Box from '@material-ui/core/Box';
 import Typography from '@material-ui/core/Typography';
-import { makeStyles } from '@material-ui/core/styles';
 import Container from '@material-ui/core/Container';
 import useForm from '../components/useForm';
 import Input from '../components/controls/Input';
@@ -13,6 +13,8 @@ import { Toolbar } from '@material-ui/core';
 
 import Copyright from '../components/Copyright';
 import useFormStyles from "../themes/useFormStyles";
+
+import { useUserContext } from '../contexts/user';
 
 const initialFormValues = {
   firstName: '',
@@ -23,7 +25,7 @@ const initialFormValues = {
 };
 
 export default function SignUp() {
-  
+  const { handleRegister, user } = useUserContext();
   const classes = useFormStyles();
 
   const validate = () => {
@@ -51,11 +53,11 @@ export default function SignUp() {
   const handleSubmit = e => {
     e.preventDefault();
     if (validate()) {
-      window.alert("testing...");
+		handleRegister(values);
     }
   }
 
-  return (
+  return !user ? (
     <Container component="main" maxWidth="xs">
       <Toolbar />
       <div className={classes.paper}>
@@ -152,5 +154,7 @@ export default function SignUp() {
         <Copyright />
       </Box>
     </Container>
-  );
+  ) : (
+	  <Redirect to="/"/>
+  )
 }

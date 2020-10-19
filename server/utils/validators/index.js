@@ -36,4 +36,13 @@ const profileUpdateValidator = [
 	checkBirthDate
 ];
 
-module.exports = { profileCreateValidator, profileUpdateValidator };
+const registerValidators = [
+	check('email', 'Email is required')
+		.isEmail()
+		.normalizeEmail(),
+	check('password', 'Password is required')
+		.isLength({ min: 6 })
+		.withMessage('Password must contain at least 6 characters.')
+];
+
+module.exports = { profileCreateValidator, profileUpdateValidator, registerValidators };

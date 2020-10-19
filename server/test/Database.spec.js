@@ -274,6 +274,44 @@ describe("Database Tests", () => {
       request.pay();
       expect(request.paid).to.eql(true);
     });
+
+    it("Doesn't save if end date is before start date", done => {
+      const newRequest = new db.Request({
+        user_id: ids[0],
+        sitter_id: ids[1],
+        start: new Date("10-21-20"),
+        end: new Date("10-14-20"),
+      });
+
+      newRequest.save(err => {
+        if (err) {
+          done();
+        }
+        else {
+          throw new Error("Saving with end date before start should fail");
+        }
+      });
+    });
+
+    it("Doesn't save if accepted and declined are true", (done) => {
+      const newRequest = new db.Request({
+        user_id: ids[0],
+        sitter_id: ids[1],
+        start: new Date("10-01-20"),
+        end: new Date("10-14-20"),
+        accepted: true,
+        declined: true
+      });
+
+      newRequest.save((err) => {
+        if (err) {
+          done();
+        }
+        else {
+          throw new Error("Saving with accepted and declined true should fail");
+        }
+      });
+    });
   });
 
   after(function (done) {

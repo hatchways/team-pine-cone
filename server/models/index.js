@@ -1,5 +1,4 @@
-//NOTE this file is used just for grouping all models. May not be necessary.
-
 const { User } = require('./User');
+const Profile = require("./Profile");
 
-module.exports = { User };
+module.exports = { User, Profile };

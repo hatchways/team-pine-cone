@@ -51,7 +51,16 @@ requestSchema.methods.pay = function () {
   this.save();
 };
 
-
+requestSchema.pre("save", function (next) {
+  const endIsBeforeStart = this.end < this.start;
+  if (endIsBeforeStart) {
+    throw new Error("End date of request must be after Start date");
+  }
+  if (this.accepted && this.declined) {
+    throw new Error("Request cannot be both accepted and declined");
+  }
+  next();
+});
 
 const Request = model("Request", requestSchema);
 

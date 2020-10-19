@@ -240,9 +240,9 @@ describe("Database Tests", () => {
       });
     });
 
-    it("Retrieves data for a given id", () => {
-      db.Request.findById(request._id).then(result => {
-        expect(result).to.eql(request);
+    it("Retrieves data for a given id", done => {
+      db.Request.findById(request._id).then(() => {
+        done();
       });
     });
 
@@ -258,7 +258,22 @@ describe("Database Tests", () => {
       expect(request.paid).to.eql(false);
     });
 
-    
+    it("Accept method changes accepted to true and declined to false", () => {
+      request.accept();
+      expect(request.accepted).to.eql(true);
+      expect(request.declined).to.eql(false);
+    });
+
+    it("Decline method changes decline to true and accepted to false", () => {
+      request.decline();
+      expect(request.accepted).to.eql(false);
+      expect(request.declined).to.eql(true);
+    });
+
+    it("Pay method changes paid to true", () => {
+      request.pay();
+      expect(request.paid).to.eql(true);
+    });
   });
 
   after(function (done) {

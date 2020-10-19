@@ -243,8 +243,22 @@ describe("Database Tests", () => {
     it("Retrieves data for a given id", () => {
       db.Request.findById(request._id).then(result => {
         expect(result).to.eql(request);
-      })
-    })
+      });
+    });
+
+    it("Saves accepted as false if not specified", () => {
+      expect(request.accepted).to.eql(false);
+    });
+
+    it("Saves declined as false if not specified", () => {
+      expect(request.declined).to.eql(false);
+    });
+
+    it("Saves paid as false if not specified", () => {
+      expect(request.paid).to.eql(false);
+    });
+
+    
   });
 
   after(function (done) {

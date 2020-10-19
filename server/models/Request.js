@@ -36,19 +36,16 @@ const requestSchema = new Schema({
 requestSchema.methods.accept = function () {
   this.declined = false;
   this.accepted = true;
-  this.save();
 };
 
 requestSchema.methods.decline = function () {
   this.accepted = false;
   this.declined = true;
-  this.save();
 };
 
 requestSchema.methods.pay = function () {
   // Add logic for paying
   this.paid = true;
-  this.save();
 };
 
 requestSchema.pre("save", function (next) {

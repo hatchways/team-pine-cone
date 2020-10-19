@@ -1,4 +1,5 @@
 const { Schema, model } = require("mongoose");
+const Profile = require("./Profile");
 
 const requestSchema = new Schema({
   user_id: {
@@ -55,6 +56,16 @@ requestSchema.pre("save", function (next) {
   }
   if (this.accepted && this.declined) {
     throw new Error("Request cannot be both accepted and declined");
+  }
+  if (this.isNew) {
+    Profile.findById(this.user_id).then(user => {
+      user.requests.push(this._id);
+      user.save();
+    });
+    Profile.findById(this.sitter_id).then((user) => {
+      user.requests.push(this._id);
+      user.save();
+    });
   }
   next();
 });

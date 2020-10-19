@@ -5,6 +5,8 @@ const db = require("../models");
 
 chai.should();
 
+const ids = [];
+
 describe("Database Tests", () => {
   before(done => {
     mongoose.connect("mongodb://localhost/team-pine-cone");
@@ -65,6 +67,7 @@ describe("Database Tests", () => {
         },
       });
       testProfile.save().then(profile => {
+        ids.push(profile._id);
         expect(profile.gender).to.eql("prefer not to say");
         done();
       });
@@ -82,6 +85,7 @@ describe("Database Tests", () => {
         },
       });
       testProfile.save().then((profile) => {
+        ids.push(profile._id);
         expect(profile.isSitter).to.eql(false);
         done();
       });

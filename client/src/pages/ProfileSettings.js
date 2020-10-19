@@ -39,9 +39,9 @@ const useStyles = makeStyles((theme) => ({
     },
   },
   noMobileText: {
-    display: 'auto',
+    display: "auto",
     [theme.breakpoints.between("xs", "sm")]: {
-      display: 'none'
+      display: "none"
     },
   },
   drawerContainer: {
@@ -61,7 +61,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-function ProfileSettings(props) {
+function ProfileSettings() {
   const origin = "/me";
   const links = [
     {

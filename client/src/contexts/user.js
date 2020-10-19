@@ -9,14 +9,10 @@ export const useUserContext = function () {
 };
 
 export const AuthProvider = function ({ children }) {
-  const [loading, error, user, handleRegister, handleLogOut] = useAuth("");
+  const auth = useAuth();
 
   const context = {
-    loading,
-    isAuth: error,
-    user,
-    handleRegister,
-    handleLogOut,
+    ...auth,
   };
 
   return (

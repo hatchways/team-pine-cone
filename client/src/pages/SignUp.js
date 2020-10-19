@@ -1,27 +1,27 @@
-import React from 'react';
-import { Redirect } from 'react-router-dom';
-import { NavLink } from 'react-router-dom'
+import React from "react";
+import { Redirect } from "react-router-dom";
+import { NavLink } from "react-router-dom";
 
-import Button from '@material-ui/core/Button';
-import Grid from '@material-ui/core/Grid';
-import Box from '@material-ui/core/Box';
-import Typography from '@material-ui/core/Typography';
-import Container from '@material-ui/core/Container';
-import useForm from '../components/useForm';
-import Input from '../components/controls/Input';
-import { Toolbar } from '@material-ui/core';
+import Button from "@material-ui/core/Button";
+import Grid from "@material-ui/core/Grid";
+import Box from "@material-ui/core/Box";
+import Typography from "@material-ui/core/Typography";
+import Container from "@material-ui/core/Container";
+import useForm from "../components/useForm";
+import Input from "../components/controls/Input";
+import { Toolbar } from "@material-ui/core";
 
-import Copyright from '../components/Copyright';
+import Copyright from "../components/Copyright";
 import useFormStyles from "../themes/useFormStyles";
 
-import { useUserContext } from '../contexts/user';
+import { useUserContext } from "../contexts/user";
 
 const initialFormValues = {
-  firstName: '',
-  lastName: '',
-  email: '',
-  password: '',
-  confirmPassword: ''
+  firstName: "",
+  lastName: "",
+  email: "",
+  password: "",
+  confirmPassword: "",
 };
 
 export default function SignUp() {
@@ -32,30 +32,31 @@ export default function SignUp() {
     let temp = {};
     temp.firstName = values.firstName ? "" : "This field is required.";
     temp.lastName = values.lastName ? "" : "This field is required.";
-    temp.email = (/.+@.+..+/).test(values.email) ? "" : "Email is not valid";
-    temp.password = values.password.length >= 6 ? "" : "Minimum of 6 charactes required.";
-    temp.confirmPassword = values.confirmPassword === values.password ? "" : "Password does not match.";
+    temp.email = /.+@.+..+/.test(values.email) ? "" : "Email is not valid";
+    temp.password =
+      values.password.length >= 6 ? "" : "Minimum of 6 charactes required.";
+    temp.confirmPassword =
+      values.confirmPassword === values.password
+        ? ""
+        : "Password does not match.";
 
     setErrors({
-      ...temp
+      ...temp,
     });
 
-    return Object.values(temp).every(x => x === "");
-  }
+    return Object.values(temp).every((x) => x === "");
+  };
 
-  const {
-    values,
-    errors,
-    setErrors,
-    handleInputChange
-  } = useForm(initialFormValues);
+  const { values, errors, setErrors, handleInputChange } = useForm(
+    initialFormValues
+  );
 
-  const handleSubmit = e => {
+  const handleSubmit = (e) => {
     e.preventDefault();
     if (validate()) {
-		handleRegister(values);
+      handleRegister(values);
     }
-  }
+  };
 
   return !user ? (
     <Container component="main" maxWidth="xs">
@@ -68,6 +69,7 @@ export default function SignUp() {
           <Grid container spacing={2}>
             <Grid item xs={12} sm={6}>
               <Input
+                variant="outlined"
                 autoComplete="fname"
                 name="firstName"
                 id="firstName"
@@ -99,6 +101,7 @@ export default function SignUp() {
                 onChange={handleInputChange}
                 name="email"
                 autoComplete="email"
+                fullWidth
                 error={errors.email}
               />
             </Grid>
@@ -155,6 +158,6 @@ export default function SignUp() {
       </Box>
     </Container>
   ) : (
-	  <Redirect to="/"/>
-  )
+    <Redirect to="/" />
+  );
 }

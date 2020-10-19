@@ -52,10 +52,10 @@ export default function () {
         return dispatch({ type: "ERROR", error: "Unauthorized" });
 
       const data = await res.json();
+
       if (!res.ok)
         return dispatch({ type: "ERROR", error: data.error.message });
-
-      dispatch({ type: "SUCCESS", payload: { user: data } });
+      dispatch({ type: "SUCCESS", payload: { user: needUser ? data : null } });
     } catch (err) {
       dispatch({ type: "ERROR", error: err.message });
     }
@@ -71,10 +71,22 @@ export default function () {
     getState("/register", true, params);
   };
 
-  const handleLogOut = () => {
+  const handleLogIn = (params) => {
     dispatch({ type: "REQUEST" });
-    getState("/logout");
+    getState("/login", true, params);
   };
 
-  return [loading, errorMessage, user, handleRegister, handleLogOut];
+  const handleLogOut = () => {
+    dispatch({ type: "REQUEST" });
+    getState("/logout", false, {});
+  };
+
+  return {
+    loading,
+    errorMessage,
+    user,
+    handleRegister,
+    handleLogIn,
+    handleLogOut,
+  };
 }

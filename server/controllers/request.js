@@ -10,3 +10,22 @@ const getRequestsByUser = (req, res, next) => {
     res.status(200).json(profile.requests);
   });
 };
+
+const createRequest = (req, res, next) => {
+  if (!req.user) {
+    return next(createError(403));
+  }
+  const request = new Request({
+    user_id: req.user.profile_id,
+    sitter_id: req.body.sitter_id,
+    start: req.body.start,
+    end: req.body.end
+  });
+
+  request.save().then(result => {
+    res.status(200).json(result);
+  }).catch(e => {
+    console.log(e);
+    res.status(503).end();
+  });
+};

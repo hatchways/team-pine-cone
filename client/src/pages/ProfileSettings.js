@@ -1,6 +1,7 @@
 import {
   Card,
   Drawer,
+  Link as MUILink,
   List,
   ListItem,
   ListItemIcon,
@@ -16,8 +17,10 @@ import {
   CreditCard,
   Security,
   Settings,
+  PowerSettingsNew,
 } from "@material-ui/icons";
 import EditProfilePhoto from "../components/EditProfilePhoto";
+import { useUserContext } from "../contexts/user";
 
 const drawerWidth = 240;
 const useStyles = makeStyles((theme) => ({
@@ -40,9 +43,9 @@ const useStyles = makeStyles((theme) => ({
     },
   },
   noMobileText: {
-    display: 'auto',
+    display: "auto",
     [theme.breakpoints.between("xs", "sm")]: {
-      display: 'none'
+      display: "none"
     },
   },
   drawerContainer: {
@@ -61,9 +64,14 @@ const useStyles = makeStyles((theme) => ({
     padding: theme.spacing(3),
     height: 500
   },
+  logout: {
+    cursor: "pointer",
+  },
 }));
 
 function ProfileSettings(props) {
+  const { handleLogOut} = useUserContext();
+
   const origin = "/me";
   const links = [
     {
@@ -112,6 +120,21 @@ function ProfileSettings(props) {
               </ListItem>
             </Link>
           ))}
+          <MUILink
+            className={`${classes.linkText} ${classes.logout}`}
+            underline="none"
+            variant="body2"
+            onClick={handleLogOut}
+          >
+            <ListItem>
+              <ListItemIcon>
+                <PowerSettingsNew />
+              </ListItemIcon>
+              <ListItemText className={classes.noMobileText}>
+                Log Out
+              </ListItemText>
+            </ListItem>
+          </MUILink>
         </List>
       </Drawer>
       <div className={classes.content}>

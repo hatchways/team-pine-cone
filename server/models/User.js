@@ -17,7 +17,7 @@ const userSchema = new Schema({
   profile: {
     type: Schema.Types.ObjectId,
     ref: "User",
-  },
+  }
 });
 
 userSchema.statics.createUser = async function (email, password, profile) {

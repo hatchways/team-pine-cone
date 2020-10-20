@@ -90,7 +90,7 @@ const getProfile = async (req, res, next) => {
 			return next(createError(404, 'Profile not found'));
 		}
 
-		return res.status(200).json({ profile });
+		return res.status(200).json(profile);
 	} catch (err) { 
 		next(createError(500, err.message));
 	}

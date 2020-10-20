@@ -3,5 +3,5 @@ export const genders = [
   "Female",
   "Non-Binary",
   "Other",
-  "Prefer Not to Say",
+  "Prefer Not To Say",
 ];

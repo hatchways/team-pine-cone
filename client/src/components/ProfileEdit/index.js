@@ -1,4 +1,5 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import { useUserContext } from '../../contexts/user';
 import {
   Grid,
   Typography,
@@ -23,8 +24,8 @@ const useStyles = makeStyles((theme) => ({
     },
   },
   mainContainer: {
-    margin: "2em auto",
-    maxWidth: "900px",
+    margin: "auto",
+    maxWidth: "1200px",
   },
   input: {
     marginBottom: "1em",
@@ -45,7 +46,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const InputText = function ({ id, placeholder, children, handleChange }) {
+const InputText = function ({ id, placeholder, children, value, handleChange }) {
   const classes = useStyles();
 
   return (
@@ -61,6 +62,7 @@ const InputText = function ({ id, placeholder, children, handleChange }) {
           id={id}
           variant="outlined"
           fullWidth
+		value={ value }
           placeholder={placeholder}
         />
       </Grid>
@@ -89,9 +91,34 @@ const initialForm = {
   description: "",
 };
 
+const capitaleachword = str => str
+	.split(' ')
+	.map(s => s.charAt(0).toUpperCase() + s.slice(1, s.length))
+	.join(' ');
+
 const ProfileEdit = function () {
+
+	const { user } = useUserContext();
   const classes = useStyles();
   const [form, setForm] = useState(initialForm);
+	const [emailError, setEmailError] = useState('');
+
+
+	  const wow = Object.entries(form)
+		  .filter(([,value]) => value)
+	  		.reduce((acc, [key, value]) => ({...acc, [key]: value}), {})
+	console.log(wow)
+
+	useEffect(() => {
+		fetch(`/profile/${ user.profile }`)
+			.then(data => data.json())
+			.then(profile => setForm({ 
+				...form,
+				...profile,
+				email: user.email,
+				gender: capitaleachword(profile.gender)
+			}))
+	}, [user.profileId, user.email]);
 
   const handle = (eventProp) => (formProp) => (e) => {
     setForm({ ...form, [formProp]: e[eventProp].value });
@@ -104,14 +131,28 @@ const ProfileEdit = function () {
   };
 
   const handleEmail = (e) => {
-    //validate email here
-    setForm({ ...form, email: e.currentTarget.value });
+	  const text = e.currentTarget.value;
+	  if (!/.+@.+..+/.test(text)) { 
+		setEmailError('Email is not valid');
+	  } else { 
+		setEmailError('');
+	  }
+
+    setForm({ ...form, email: text });
   };
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    console.log("Success");
+	  Object.entites(form)
+		  .filter(([,value]) => value)
+	  		.reduce((acc, [key, value]) => ({[key]: value}), {})
 
+	  if (!emailError) { 
+		  fetch(`/profile/${user._id}`, {
+				header: 'Content-Type: application/json',
+			  body: {  }
+		  })
+	  }
   };
 
   return (
@@ -131,6 +172,7 @@ const ProfileEdit = function () {
       <InputText
         id="first-name"
         placeholder="John"
+	  value={ form.firstName }
         handleChange={handleText("firstName")}
       >
         FIRST NAME
@@ -140,6 +182,7 @@ const ProfileEdit = function () {
       <InputText
         id="last-name"
         placeholder="Doe"
+	  value={ form.lastName }
         handleChange={handleText("lastName")}
       >
         LAST NAME
@@ -156,6 +199,8 @@ const ProfileEdit = function () {
             fullWidth
             variant="outlined"
             type="email"
+		  error={ !!emailError }
+		  value={form.email}
             placeholder="john-doe@gmail.com"
             onChange={handleEmail}
           />
@@ -166,6 +211,7 @@ const ProfileEdit = function () {
       <InputText
         id="address"
         placeholder="Address"
+		  value={ form.address }
         handleChange={handleText("address")}
       >
         WHERE YOU LIVE
@@ -182,6 +228,7 @@ const ProfileEdit = function () {
             value={form.gender}
             onChange={handleSelect("gender")}
             select
+		  value={ form.gender }
             className={classes.select}
             variant="outlined"
           >
@@ -203,6 +250,7 @@ const ProfileEdit = function () {
           <TextField
             id="birth-date"
             type="date"
+		  value={ form.birthDate }
             className={classes.select}
             onChange={handleText("birthDate")}
           />
@@ -219,6 +267,7 @@ const ProfileEdit = function () {
             <PhoneInput
               defaultCountry="ca"
               className={classes.select}
+		  value={ form.phone }
               regions="north-america"
               onChange={handlePhone}
             />
@@ -236,6 +285,7 @@ const ProfileEdit = function () {
             id="description"
             multiline
             fullWidth
+		  value={ form.description }
             rows={6}
             variant="outlined"
             placeholder="About you"

@@ -19,8 +19,8 @@ import {
   Settings,
   PowerSettingsNew,
 } from "@material-ui/icons";
-import ProfileEdit from '../components/ProfileEdit/';
 import { useUserContext } from "../contexts/user";
+import ProfileEdit from '../components/ProfileEdit';
 
 const drawerWidth = 240;
 const useStyles = makeStyles((theme) => ({
@@ -68,7 +68,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-function ProfileSettings(props) {
+function ProfileSettings({ children }) {
   const { handleLogOut} = useUserContext();
 
   const origin = "/me";
@@ -138,7 +138,9 @@ function ProfileSettings(props) {
       </Drawer>
       <div className={classes.content}>
         <Toolbar />
-        <Card className={classes.card}>Content</Card>
+		<Card className={classes.card}>
+			<ProfileEdit/>
+		</Card>
       </div>
     </div>
   );

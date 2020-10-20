@@ -1,5 +1,5 @@
 import React, { Fragment } from "react";
-import { NavLink } from "react-router-dom";
+import { Link, NavLink } from "react-router-dom";
 import {
   AppBar,
   Toolbar,
@@ -71,13 +71,23 @@ function getNavigation({ width, classes, anchorEl, handleClick, handleClose, pro
           onClose={handleClose}
         >
           {navLinks.map(({ title, path }) => (
-            <NavLink className={classes.linkText} to={path} key={title}>
-              <MenuItem onClick={handleClose}>{title}</MenuItem>
-            </NavLink>
+            <MenuItem
+              component={Link}
+              to={path}
+              key={title}
+              onClick={handleClose}
+            >
+              {title}
+            </MenuItem>
           ))}
-          <NavLink className={classes.linkText} to={"/me"} key="me">
-            <MenuItem onClick={handleClose}>Me</MenuItem>
-          </NavLink>
+            <MenuItem
+              component={Link}
+              to={"/me"}
+              key="me"
+              onClick={handleClose}
+            >
+              Me
+            </MenuItem>
         </Menu>
       </Fragment>
     );

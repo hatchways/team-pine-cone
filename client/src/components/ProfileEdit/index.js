@@ -1,15 +1,17 @@
 import React, { useState, useEffect } from "react";
-import { useUserContext } from '../../contexts/user';
+import { useUserContext } from "../../contexts/user";
 import {
   Grid,
   Typography,
   TextField,
   MenuItem,
-  Button,
+	Button,
+	Snackbar
 } from "@material-ui/core";
 import { makeStyles } from "@material-ui/styles";
 import PhoneInput from "material-ui-phone-number";
 import { genders } from "./data";
+import { Alert } from '@material-ui/lab/';
 
 const useStyles = makeStyles((theme) => ({
   label: {
@@ -25,7 +27,7 @@ const useStyles = makeStyles((theme) => ({
   },
   mainContainer: {
     margin: "auto",
-    maxWidth: "1200px",
+    maxWidth: "900px",
   },
   input: {
     marginBottom: "1em",
@@ -46,23 +48,29 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const InputText = function ({ id, placeholder, children, value, handleChange }) {
+const InputText = function ({
+  id,
+  placeholder,
+  children,
+  value,
+  handleChange,
+}) {
   const classes = useStyles();
 
   return (
     <Grid container item className={classes.input}>
-      <Grid item xs={4}>
+      <Grid item xs={4} md={2}>
         <Typography className={classes.label} component="label" htmlFor={id}>
           {children}
         </Typography>
       </Grid>
-      <Grid item xs={6}>
+      <Grid item xs={8} md={7}>
         <TextField
           onChange={handleChange}
           id={id}
-          variant="outlined"
           fullWidth
-		value={ value }
+          variant="outlined"
+          value={value}
           placeholder={placeholder}
         />
       </Grid>
@@ -91,34 +99,35 @@ const initialForm = {
   description: "",
 };
 
-const capitaleachword = str => str
-	.split(' ')
-	.map(s => s.charAt(0).toUpperCase() + s.slice(1, s.length))
-	.join(' ');
+const capitaleachword = (str) =>
+  str
+    .split(" ")
+    .map((s) => s.charAt(0).toUpperCase() + s.slice(1, s.length))
+    .join(" ");
 
 const ProfileEdit = function () {
-
-	const { user } = useUserContext();
+  const { user } = useUserContext();
   const classes = useStyles();
   const [form, setForm] = useState(initialForm);
-	const [emailError, setEmailError] = useState('');
+  const [emailError, setEmailError] = useState("");
+	const [isSaved, setIsSaved] = useState(false);
 
-
-	  const wow = Object.entries(form)
-		  .filter(([,value]) => value)
-	  		.reduce((acc, [key, value]) => ({...acc, [key]: value}), {})
-	console.log(wow)
-
-	useEffect(() => {
-		fetch(`/profile/${ user.profile }`)
-			.then(data => data.json())
-			.then(profile => setForm({ 
-				...form,
-				...profile,
-				email: user.email,
-				gender: capitaleachword(profile.gender)
-			}))
-	}, [user.profileId, user.email]);
+  useEffect(() => {
+    fetch(`/profile/${user.profile}`)
+      .then((res) => res.json())
+      .then((profile) =>
+        setForm({
+          ...form,
+          ...profile,
+          gender:
+            profile.gender === "non-binary"
+              ? "Non-Binary"
+              : capitaleachword(profile.gender),
+          birthDate: new Date(profile.birthDate),
+          email: user.email,
+        })
+      );
+  }, [user.email, user.profile]);
 
   const handle = (eventProp) => (formProp) => (e) => {
     setForm({ ...form, [formProp]: e[eventProp].value });
@@ -131,28 +140,38 @@ const ProfileEdit = function () {
   };
 
   const handleEmail = (e) => {
-	  const text = e.currentTarget.value;
-	  if (!/.+@.+..+/.test(text)) { 
-		setEmailError('Email is not valid');
-	  } else { 
-		setEmailError('');
-	  }
+    const text = e.currentTarget.value;
+    if (!/.+@.+..+/.test(text)) {
+      setEmailError("Email is not valid");
+    } else {
+      setEmailError("");
+    }
 
     setForm({ ...form, email: text });
   };
 
+	const handleCloseSaved = () => {  
+		setIsSaved(false);
+	}
+
   const handleSubmit = (e) => {
     e.preventDefault();
-	  Object.entites(form)
-		  .filter(([,value]) => value)
-	  		.reduce((acc, [key, value]) => ({[key]: value}), {})
 
-	  if (!emailError) { 
-		  fetch(`/profile/${user._id}`, {
-				header: 'Content-Type: application/json',
-			  body: {  }
-		  })
-	  }
+    if (!emailError) {
+      const cleanForm = {
+        ...form,
+        gender: form.gender.toLowerCase(),
+      };
+
+      fetch(`/profile/${user.profile}`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(cleanForm),
+	  })
+			.then(() => setIsSaved(true))
+    }
   };
 
   return (
@@ -164,6 +183,11 @@ const ProfileEdit = function () {
       alignItems="center"
       onSubmit={handleSubmit}
     >
+		<Snackbar open={isSaved} onClose={ handleCloseSaved } autoHideDuration={6000}>
+			<Alert severity="success" variant="filled">
+				Saved!
+			</Alert>
+		</Snackbar>
       <Grid item>
         <Typography variant="h2">Edit Profile</Typography>
       </Grid>
@@ -172,7 +196,7 @@ const ProfileEdit = function () {
       <InputText
         id="first-name"
         placeholder="John"
-	  value={ form.firstName }
+        value={form.firstName}
         handleChange={handleText("firstName")}
       >
         FIRST NAME
@@ -182,7 +206,7 @@ const ProfileEdit = function () {
       <InputText
         id="last-name"
         placeholder="Doe"
-	  value={ form.lastName }
+        value={form.lastName}
         handleChange={handleText("lastName")}
       >
         LAST NAME
@@ -190,17 +214,17 @@ const ProfileEdit = function () {
 
       {/*EMAIL ADDRESS*/}
       <Grid container item className={classes.input}>
-        <Grid item xs={4}>
+        <Grid item xs={4} md={2}>
           <Label id="email">EMAIL ADDRESS</Label>
         </Grid>
-        <Grid item xs={6}>
+        <Grid item xs={8} md={7}>
           <TextField
             id="email"
             fullWidth
             variant="outlined"
             type="email"
-		  error={ !!emailError }
-		  value={form.email}
+            error={!!emailError}
+            value={form.email}
             placeholder="john-doe@gmail.com"
             onChange={handleEmail}
           />
@@ -211,7 +235,7 @@ const ProfileEdit = function () {
       <InputText
         id="address"
         placeholder="Address"
-		  value={ form.address }
+        value={form.address}
         handleChange={handleText("address")}
       >
         WHERE YOU LIVE
@@ -219,16 +243,15 @@ const ProfileEdit = function () {
 
       {/*GENDER*/}
       <Grid container item className={classes.input}>
-        <Grid item xs={4}>
+        <Grid item xs={4} md={2}>
           <Label id="gender">GENDER</Label>
         </Grid>
-        <Grid item xs={4} sm={3}>
+        <Grid item xs={8} md={7}>
           <TextField
             id="gender"
             value={form.gender}
             onChange={handleSelect("gender")}
             select
-		  value={ form.gender }
             className={classes.select}
             variant="outlined"
           >
@@ -243,14 +266,14 @@ const ProfileEdit = function () {
 
       {/*BIRTH DATE*/}
       <Grid container item alignItems="center" className={classes.input}>
-        <Grid item xs={4}>
+        <Grid item xs={4} md={2}>
           <Label>BIRTH DATE</Label>
         </Grid>
-        <Grid item xs={4} sm={3}>
+        <Grid item xs={8} md={7}>
           <TextField
             id="birth-date"
             type="date"
-		  value={ form.birthDate }
+            value={form.birthDate}
             className={classes.select}
             onChange={handleText("birthDate")}
           />
@@ -259,15 +282,15 @@ const ProfileEdit = function () {
 
       {/*PHONE NUMBER*/}
       <Grid container item className={classes.input}>
-        <Grid item xs={4}>
+        <Grid item xs={4} md={2}>
           <Label id="phone">PHONE NUMBER</Label>
         </Grid>
-        <Grid container alignItems="center" item xs={5} sm={4}>
+        <Grid container alignItems="center" item xs={8} md={7}>
           <Grid container item alignItems="center" justify="space-between">
             <PhoneInput
               defaultCountry="ca"
               className={classes.select}
-		  value={ form.phone }
+              value={form.phone}
               regions="north-america"
               onChange={handlePhone}
             />
@@ -277,15 +300,15 @@ const ProfileEdit = function () {
 
       {/*DESCRIPTION*/}
       <Grid item container className={classes.input}>
-        <Grid item xs={4}>
+        <Grid item xs={4} md={2}>
           <Label id="description">DESCRIBE YOURSELF</Label>
         </Grid>
-        <Grid item xs={6}>
+        <Grid item xs={8} md={7}>
           <TextField
             id="description"
             multiline
             fullWidth
-		  value={ form.description }
+            value={form.description}
             rows={6}
             variant="outlined"
             placeholder="About you"
@@ -297,6 +320,7 @@ const ProfileEdit = function () {
         <Button
           variant="contained"
           color="primary"
+		disabled={isSaved}
           size="large"
           className={classes.bigRedButton}
           type="submit"

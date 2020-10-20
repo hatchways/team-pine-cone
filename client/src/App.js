@@ -7,6 +7,8 @@ import SignUp from "./pages/SignUp";
 import Login from "./pages/Login";
 
 import "./App.css";
+import Navbar from "./components/Navbar";
+import ProfileSettings from "./pages/ProfileSettings";
 
 import { AuthProvider } from "./contexts/user";
 import PrivateRoute from "./components/PrivateRoute/";

@@ -7,7 +7,7 @@ import {
   ListItemIcon,
   ListItemText,
   makeStyles,
-  Toolbar,
+  Toolbar
 } from "@material-ui/core";
 import React from "react";
 import { Link } from "react-router-dom";
@@ -44,7 +44,7 @@ const useStyles = makeStyles((theme) => ({
   noMobileText: {
     display: "auto",
     [theme.breakpoints.between("xs", "sm")]: {
-      display: "none",
+      display: "none"
     },
   },
   drawerContainer: {

@@ -7,6 +7,7 @@ import { theme } from "./themes/theme";
 import "./App.css";
 import Navbar from "./components/Navbar";
 import ProfileSettings from "./pages/ProfileSettings";
+import ProfileDetails from './pages/ProfileDetails';
 
 function App() {
   return (
@@ -15,6 +16,7 @@ function App() {
         <Navbar />
         <Route exact path="/" component={ProfileSettings} />
         <Route path="/me" component={ProfileSettings} />
+        <Route path="/profile-details" component={ProfileDetails} />
         <Route exact path="/become-a-sitter" component={ProfileSettings} />
         <Route exact path="/my-sitters" component={ProfileSettings} />
         <Route exact path="/my-jobs" component={ProfileSettings} />

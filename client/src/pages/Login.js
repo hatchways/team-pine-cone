@@ -1,33 +1,65 @@
-import React, { Fragment } from 'react';
-import Button from '@material-ui/core/Button';
-import TextField from '@material-ui/core/TextField';
-import FormControlLabel from '@material-ui/core/FormControlLabel';
-import Checkbox from '@material-ui/core/Checkbox';
-import Link from '@material-ui/core/Link';
-import Grid from '@material-ui/core/Grid';
-import Box from '@material-ui/core/Box';
-import Typography from '@material-ui/core/Typography';
-import { makeStyles } from '@material-ui/core/styles';
-import Container from '@material-ui/core/Container';
-import { Toolbar } from '@material-ui/core';
-import { NavLink } from 'react-router-dom';
-import useForm from '../components/useForm';
+import React, { Fragment, useEffect } from "react";
+import { Redirect } from "react-router-dom";
+import Button from "@material-ui/core/Button";
+import FormControlLabel from "@material-ui/core/FormControlLabel";
+import Checkbox from "@material-ui/core/Checkbox";
+import Link from "@material-ui/core/Link";
+import Grid from "@material-ui/core/Grid";
+import Box from "@material-ui/core/Box";
+import Typography from "@material-ui/core/Typography";
+import Container from "@material-ui/core/Container";
+import { Toolbar } from "@material-ui/core";
+import { NavLink } from "react-router-dom";
+import useForm from "../components/useForm";
+import Input from "../components/controls/Input";
+import { useUserContext } from "../contexts/user";
 
 import Copyright from "../components/Copyright";
 import useFormStyles from "../themes/useFormStyles";
 
 const initialFormValues = {
-  email: '',
-  password: '',
-  remember: false
-}
+  email: "",
+  password: "",
+  remember: false,
+};
 
 export default function SignIn() {
   const classes = useFormStyles();
+  const { user, errorMessage, handleLogIn } = useUserContext();
 
-  const { values, handleInputChange, handleCheckboxChange } = useForm(initialFormValues);
+  const {
+    values,
+    setErrors,
+    errors,
+    handleInputChange,
+    handleCheckboxChange,
+  } = useForm(initialFormValues);
 
-  return (
+	useEffect(() => { 
+		if (errorMessage === 'Forbidden') { 
+			setErrors({ 
+				email: 'Email may be invalid',
+				password: 'Password may be invalid'
+			})
+		}
+	}, [errorMessage, setErrors]);
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+
+    const errors = {};
+    if (!/.+@.+..+/.test(values.email)) errors.email = "Email is not valid.";
+    if (values.password.length < 6)
+      errors.password = "Minimum of 6 charactes required.";
+
+    setErrors({ ...errors });
+
+    if (Object.keys(errors).length === 0) {
+      handleLogIn(values);
+    }
+  };
+
+  return !user ? (
     <Fragment>
       <Toolbar />
       <Container component="main" maxWidth="xs">
@@ -35,8 +67,8 @@ export default function SignIn() {
           <Typography component="h1" variant="h5">
             Sign in
           </Typography>
-          <form className={classes.form} noValidate>
-            <TextField
+          <form className={classes.form} noValidate onSubmit={handleSubmit}>
+            <Input
               variant="outlined"
               margin="normal"
               required
@@ -45,15 +77,17 @@ export default function SignIn() {
               label="Email Address"
               name="email"
               autoComplete="email"
+              error={errors.email}
               autoFocus
               value={values.email}
               onChange={handleInputChange}
             />
-            <TextField
+            <Input
               variant="outlined"
               margin="normal"
               required
               fullWidth
+              error={errors.password}
               name="password"
               label="Password"
               type="password"
@@ -63,7 +97,14 @@ export default function SignIn() {
               onChange={handleInputChange}
             />
             <FormControlLabel
-              control={<Checkbox name="remember" onChange={handleCheckboxChange} checked={values.remember} color="primary" />}
+              control={
+                <Checkbox
+                  name="remember"
+                  onChange={handleCheckboxChange}
+                  checked={values.remember}
+                  color="primary"
+                />
+              }
               label="Remember me"
             />
             <Button
@@ -83,7 +124,7 @@ export default function SignIn() {
               </Grid>
               <Grid item>
                 <NavLink className={classes.link} to="/signup">
-                    {"Don't have an account? Sign Up"}
+                  {"Don't have an account? Sign Up"}
                 </NavLink>
               </Grid>
             </Grid>
@@ -94,5 +135,7 @@ export default function SignIn() {
         </Box>
       </Container>
     </Fragment>
+  ) : (
+    <Redirect to="/" />
   );
 }

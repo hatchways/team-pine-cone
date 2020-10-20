@@ -4,7 +4,12 @@ const { join } = require("path");
 const cookieParser = require("cookie-parser");
 const logger = require("morgan");
 
+//delete this
+const { profileValidator } = require('./utils/validators');
+
 require("dotenv").config();
+
+const { initializeAuthentication } = require('./middleware/authenticate');
 
 const mongodbUri = process.env.MONGODB_URI;
 const mongoose = require("mongoose");
@@ -17,6 +22,11 @@ mongoose.connect(mongodbUri, {
 
 const indexRouter = require("./routes/index");
 const pingRouter = require("./routes/ping");
+const profileRouter = require('./routes/profile');
+const registerRouter = require('./routes/register');
+const loginRouter = require('./routes/login');
+const logoutRouter = require('./routes/logout');
+const userRouter = require('./routes/user');
 
 const { json, urlencoded } = express;
 
@@ -27,9 +37,15 @@ app.use(json());
 app.use(urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(join(__dirname, "public")));
+app.use(initializeAuthentication());
 
 app.use("/", indexRouter);
 app.use("/ping", pingRouter);
+app.use('/profile', profileRouter);
+app.use('/user', userRouter);
+app.use("/register", registerRouter);
+app.use("/login", loginRouter);
+app.use("/logout", logoutRouter);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

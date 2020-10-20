@@ -34,7 +34,7 @@ function EditProfilePhoto(props) {
             body: formData
         }
         setUploading(true)
-        handleDelete()
+        handleDelete(false)
         fetch("/upload", options).then(response => {
             response.json().then(result => {
                 setImage(result.url)
@@ -42,9 +42,17 @@ function EditProfilePhoto(props) {
             })
         })
     }
-    const handleDelete = () => {
+    const handleDelete = (sendRequest=false) => {
         setImage(null)
-
+        if (sendRequest) {
+          setUploading(true)
+          const options = {
+            method: "PUT"
+          }
+          fetch("/upload/delete", options).then(() => {
+            setUploading(false)
+          })
+        }
         // PUT to delete the image from the profile model and S3
     }
     return (

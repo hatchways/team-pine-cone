@@ -111,6 +111,7 @@ const ProfileEdit = function () {
   const handleSubmit = (e) => {
     e.preventDefault();
     console.log("Success");
+
   };
 
   return (

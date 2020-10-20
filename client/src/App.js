@@ -14,13 +14,13 @@ function App() {
     <MuiThemeProvider theme={theme}>
       <BrowserRouter>
         <Navbar />
-        <Route exact path="/" component={LandingPage} />
-        <Route exact path="/me" component={LandingPage} />
-		<Route exact path="/me/edit" component={ProfileEdit} />
-        <Route exact path="/become-a-sitter" component={LandingPage} />
-        <Route exact path="/my-sitters" component={LandingPage} />
-        <Route exact path="/my-jobs" component={LandingPage} />
-        <Route exact path="/messages" component={LandingPage} />
+        <Route exact path="/" />
+        <Route exact path="/me" component={ProfileSettings} />
+		<Route exact path="/me/profile-edit" component={ProfileEdit} />
+        <Route exact path="/become-a-sitter" />
+        <Route exact path="/my-sitters" />
+        <Route exact path="/my-jobs" />
+        <Route exact path="/messages" />
       </BrowserRouter>
     </MuiThemeProvider>
   );

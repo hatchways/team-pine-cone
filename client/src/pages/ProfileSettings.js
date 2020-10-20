@@ -1,6 +1,7 @@
 import {
   Card,
   Drawer,
+  Link as MUILink,
   List,
   ListItem,
   ListItemIcon,
@@ -16,8 +17,10 @@ import {
   CreditCard,
   Security,
   Settings,
+  PowerSettingsNew,
 } from "@material-ui/icons";
 import ProfileEdit from '../components/ProfileEdit/';
+import { useUserContext } from "../contexts/user";
 
 const drawerWidth = 240;
 const useStyles = makeStyles((theme) => ({
@@ -60,9 +63,14 @@ const useStyles = makeStyles((theme) => ({
   card: {
     padding: theme.spacing(3),
   },
+  logout: {
+    cursor: "pointer",
+  },
 }));
 
-function ProfileSettings() {
+function ProfileSettings(props) {
+  const { handleLogOut} = useUserContext();
+
   const origin = "/me";
   const links = [
     {
@@ -105,10 +113,27 @@ function ProfileSettings() {
             <Link key={link.path} className={classes.linkText} to={link.path}>
               <ListItem>
                 <ListItemIcon>{link.icon}</ListItemIcon>
-                <ListItemText className={classes.noMobileText}>{link.title}</ListItemText>
+                <ListItemText className={classes.noMobileText}>
+                  {link.title}
+                </ListItemText>
               </ListItem>
             </Link>
           ))}
+          <MUILink
+            className={`${classes.linkText} ${classes.logout}`}
+            underline="none"
+            variant="body2"
+            onClick={handleLogOut}
+          >
+            <ListItem>
+              <ListItemIcon>
+                <PowerSettingsNew />
+              </ListItemIcon>
+              <ListItemText className={classes.noMobileText}>
+                Log Out
+              </ListItemText>
+            </ListItem>
+          </MUILink>
         </List>
       </Drawer>
       <div className={classes.content}>

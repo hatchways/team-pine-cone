@@ -24,7 +24,7 @@ const registerUser = async (req, res, next) => {
 	} catch (err) {
 		//check monggoose error code for email duplication
 		if (err.code === 11000) {
-			return next(createError(422, 'Email is already taken.'));
+			return next(createError(400, 'Email is already taken.'));
 		}
 
 		next(createError(500, err.message));

@@ -17,6 +17,7 @@ import {
   Security,
   Settings,
 } from "@material-ui/icons";
+import ProfileEdit from '../components/ProfileEdit/';
 
 const drawerWidth = 240;
 const useStyles = makeStyles((theme) => ({

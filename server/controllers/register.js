@@ -1,18 +1,20 @@
 const createError = require('http-errors');
 const { validationResult } = require('express-validator');
 const { User } = require('../models/');
+const { Profile } = require('../models/');
 const { jwtCookie } = require('../utils/jwt');
 
 const registerUser = async (req, res, next) => {
-	const {email, password} = req.body;
+	const {email, password, firstName, lastName} = req.body;
 	const errors = validationResult(req);
 
 	if (!errors.isEmpty()) {
-		return res.status(422).json({ errors });
+		return res.status(422).json(errors);
 	}
 
 	try {
-		const user = await User.createUser(email, password);
+		const profile = await Profile.create({firstName, lastName});
+		const user = await User.createUser(email, password, profile);
 
 		jwtCookie(user, res);
 

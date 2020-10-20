@@ -16,7 +16,6 @@ const profileSchema = new Schema({
   },
   birthDate: {
     type: Date,
-    required: [true, "Birthdate is required"],
   },
   description: {
     type: String,
@@ -41,11 +40,9 @@ const profileSchema = new Schema({
     type: {
       type: String,
       enum: ["Point"],
-      required: true,
     },
     coordinates: {
       type: [Number],
-      required: true,
     },
   },
   phone: {
@@ -56,21 +53,29 @@ const profileSchema = new Schema({
       },
       message: (props) => `${props.value} is not a valid phone number!`,
     },
-    required: [true, "Phone number required"],
   },
 });
 
-profileSchema.pre("save", function(next) {
-  if (this.availability) {
-    this.availability.forEach(range => {
-      const isNegativeRange = range.end < range.start;
-      if (isNegativeRange) { throw new Error("Date ranges must have a start date before the end date"); }
-    });
-  }
+profileSchema.pre("save", function (next) {
+  if (this.birthDate) {
+    if (this.availability) {
+      this.availability.forEach((range) => {
+        const isNegativeRange = range.end < range.start;
+        if (isNegativeRange) {
+          throw new Error(
+            "Date ranges must have a start date before the end date"
+          );
+        }
+      });
+    }
 
-  const today = new Date();
-  const isUnderEighteen = today.getFullYear() - this.birthDate.getFullYear() < 18;
-  if (isUnderEighteen) { throw new Error("User must be 18 years old"); }
+    const today = new Date();
+    const isUnderEighteen =
+      today.getFullYear() - this.birthDate.getFullYear() < 18;
+    if (isUnderEighteen) {
+      throw new Error("User must be 18 years old");
+    }
+  }
   next();
 });
 

@@ -60,7 +60,11 @@ const profileSchema = new Schema({
   },
   photo: {
     type: String
-  }
+  },
+  requests: [{
+    type: Schema.Types.ObjectId,
+    ref: "Request"
+  }]
 });
 
 profileSchema.pre("save", function(next) {

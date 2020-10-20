@@ -96,4 +96,16 @@ const getProfile = async (req, res, next) => {
 	}
 }
 
-module.exports = { createProfile, updateProfile, getProfile, getProfiles };
+const getMyProfile = (req, res, next) => {
+	if (!req.user) {
+		next(createError(403));
+	}
+	Profile.findById(req.user.profile).then(profile => {
+		res.json(profile);
+	}).catch(e => {
+		console.log(e);
+		next(createError(503));
+	})
+}
+
+module.exports = { createProfile, updateProfile, getProfile, getProfiles, getMyProfile };

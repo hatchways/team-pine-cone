@@ -15,6 +15,7 @@ import {
 import { makeStyles } from "@material-ui/core/styles";
 import MoreVertIcon from "@material-ui/icons/MoreVert";
 import { useUserContext } from "../contexts/user";
+import { useProfileContext } from "../contexts/profile";
 
 const useStyles = makeStyles((theme) => ({
   navDisplay: {
@@ -32,7 +33,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-function getNavigation({ width, classes, anchorEl, handleClick, handleClose }) {
+function getNavigation({ width, classes, anchorEl, handleClick, handleClose, profile }) {
   const navLinks = [
     {
       title: "Become A Sitter",
@@ -95,7 +96,7 @@ function getNavigation({ width, classes, anchorEl, handleClick, handleClose }) {
           </NavLink>
         ))}
         <NavLink className={classes.linkText} to="/me">
-          <Avatar>D</Avatar>
+          {profile.photo ? <Avatar src={profile.photo} /> : <Avatar>D</Avatar>}
         </NavLink>
       </List>
     );
@@ -105,6 +106,8 @@ function getNavigation({ width, classes, anchorEl, handleClick, handleClose }) {
 function Navbar(props) {
   const { user } = useUserContext();
   const classes = useStyles();
+  const { profile } = useProfileContext();
+  console.log(profile)
 
   const [anchorEl, setAnchorEl] = React.useState(null);
 
@@ -122,6 +125,7 @@ function Navbar(props) {
     handleClick,
     handleClose,
     width: props.width,
+    profile
   };
   return user ? (
     <AppBar position="fixed" className={classes.navbar}>

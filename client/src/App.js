@@ -13,8 +13,6 @@ import ProfileSettings from "./pages/ProfileSettings";
 import { AuthProvider } from "./contexts/user";
 import PrivateRoute from "./components/PrivateRoute/";
 
-import Navbar from "./components/Navbar";
-import ProfileSettings from "./pages/ProfileSettings";
 
 function App() {
   return (

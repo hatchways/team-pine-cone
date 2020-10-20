@@ -8,6 +8,9 @@ const getRequestsByUser = (req, res, next) => {
 
   Profile.findById(req.user.profile_id).populate("requests").then(profile => {
     res.status(200).json(profile.requests);
+  }).catch(e => {
+    console.log(e);
+    res.status(503).end();
   });
 };
 
@@ -28,4 +31,28 @@ const createRequest = (req, res, next) => {
     console.log(e);
     res.status(503).end();
   });
+};
+
+const updateRequest = (req, res, next) => {
+  if (!req.user) {
+    return next(createError(403));
+  }
+  Request.findById(req.body.request_id).then(request => {
+    if (req.body.approved) {
+      request.accept().save();
+    }
+    else {
+      request.decline().save();
+    }
+    res.status(200).json(request);
+  }).catch(e => {
+    console.log(e);
+    res.status(503).end();
+  });
+};
+
+module.exports = {
+  getRequestsByUser,
+  createRequest,
+  updateRequest
 };

@@ -1,3 +1,4 @@
+import "date-fns";
 import React, { useState, useEffect } from "react";
 import { useUserContext } from "../../contexts/user";
 import {
@@ -5,13 +6,18 @@ import {
   Typography,
   TextField,
   MenuItem,
-	Button,
-	Snackbar
+  Button,
+  Snackbar,
 } from "@material-ui/core";
 import { makeStyles } from "@material-ui/styles";
 import PhoneInput from "material-ui-phone-number";
 import { genders } from "./data";
-import { Alert } from '@material-ui/lab/';
+import { Alert } from "@material-ui/lab/";
+import {
+  KeyboardDatePicker,
+  MuiPickersUtilsProvider,
+} from "@material-ui/pickers";
+import DateFnsUtils from "@date-io/date-fns";
 
 const useStyles = makeStyles((theme) => ({
   label: {
@@ -110,7 +116,8 @@ const ProfileEdit = function () {
   const classes = useStyles();
   const [form, setForm] = useState(initialForm);
   const [emailError, setEmailError] = useState("");
-	const [isSaved, setIsSaved] = useState(false);
+  const [isSaved, setIsSaved] = useState(false);
+  const [disableSubmit, setDisableSubmit] = useState(false);
 
   useEffect(() => {
     fetch(`/profile/${user.profile}`)
@@ -150,9 +157,10 @@ const ProfileEdit = function () {
     setForm({ ...form, email: text });
   };
 
-	const handleCloseSaved = () => {  
-		setIsSaved(false);
-	}
+  const handleCloseSaved = () => {
+    setIsSaved(false);
+    setDisableSubmit(false);
+  };
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -163,14 +171,15 @@ const ProfileEdit = function () {
         gender: form.gender.toLowerCase(),
       };
 
+      setDisableSubmit(true);
+
       fetch(`/profile/${user.profile}`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
         },
         body: JSON.stringify(cleanForm),
-	  })
-			.then(() => setIsSaved(true))
+      }).then(() => setIsSaved(true));
     }
   };
 
@@ -183,11 +192,6 @@ const ProfileEdit = function () {
       alignItems="center"
       onSubmit={handleSubmit}
     >
-		<Snackbar open={isSaved} onClose={ handleCloseSaved } autoHideDuration={6000}>
-			<Alert severity="success" variant="filled">
-				Saved!
-			</Alert>
-		</Snackbar>
       <Grid item>
         <Typography variant="h2">Edit Profile</Typography>
       </Grid>
@@ -224,6 +228,7 @@ const ProfileEdit = function () {
             variant="outlined"
             type="email"
             error={!!emailError}
+		  	label={emailError || ''}
             value={form.email}
             placeholder="john-doe@gmail.com"
             onChange={handleEmail}
@@ -270,13 +275,14 @@ const ProfileEdit = function () {
           <Label>BIRTH DATE</Label>
         </Grid>
         <Grid item xs={8} md={7}>
-          <TextField
-            id="birth-date"
-            type="date"
-            value={form.birthDate}
-            className={classes.select}
-            onChange={handleText("birthDate")}
-          />
+          <MuiPickersUtilsProvider utils={DateFnsUtils}>
+            <KeyboardDatePicker
+              value={form.birthDate}
+              className={classes.select}
+              disableFuture
+              onChange={(value) => setForm({ ...form, birthDate: value })}
+            />
+          </MuiPickersUtilsProvider>
         </Grid>
       </Grid>
 
@@ -320,7 +326,7 @@ const ProfileEdit = function () {
         <Button
           variant="contained"
           color="primary"
-		disabled={isSaved}
+          disabled={isSaved || disableSubmit}
           size="large"
           className={classes.bigRedButton}
           type="submit"
@@ -328,6 +334,15 @@ const ProfileEdit = function () {
           Save
         </Button>
       </Grid>
+      <Snackbar
+        open={isSaved}
+        onClose={handleCloseSaved}
+        autoHideDuration={3000}
+      >
+        <Alert severity="success" variant="filled">
+          Saved!
+        </Alert>
+      </Snackbar>
     </Grid>
   );
 };

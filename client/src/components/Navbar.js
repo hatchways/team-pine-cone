@@ -106,7 +106,7 @@ function getNavigation({ width, classes, anchorEl, handleClick, handleClose, pro
           </NavLink>
         ))}
         <NavLink className={classes.linkText} to="/me">
-          {profile.photo ? <Avatar src={profile.photo} /> : <Avatar>D</Avatar>}
+          {profile && profile.photo ? <Avatar src={profile.photo} /> : <Avatar>D</Avatar>}
         </NavLink>
       </List>
     );

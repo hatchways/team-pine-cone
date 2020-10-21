@@ -117,7 +117,6 @@ function Navbar(props) {
   const { user } = useUserContext();
   const classes = useStyles();
   const { profile } = useProfileContext();
-  console.log(profile)
 
   const [anchorEl, setAnchorEl] = React.useState(null);
 

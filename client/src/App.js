@@ -13,7 +13,6 @@ import { AuthProvider } from "./contexts/user";
 import PrivateRoute from "./components/PrivateRoute/";
 import { ProfileProvider } from "./contexts/profile";
 
-
 function App() {
   return (
     <MuiThemeProvider theme={theme}>

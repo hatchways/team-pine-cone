@@ -1,6 +1,7 @@
-import { Avatar, Button, CircularProgress, makeStyles } from '@material-ui/core';
+import { Avatar, Button, CircularProgress, makeStyles, Snackbar } from '@material-ui/core';
 import { Delete } from '@material-ui/icons';
 import React, { useState } from 'react';
+import { useProfileContext } from '../contexts/profile';
 
 const useStyles = makeStyles(theme => ({
     root: {
@@ -23,7 +24,16 @@ const useStyles = makeStyles(theme => ({
 
 function EditProfilePhoto(props) {
     const classes = useStyles()
-    const [image, setImage] = useState(null);
+    const [openSnackbar, setOpenSnackbar] = useState(false)
+    const handleCloseSnackbar = (event, reason) => {
+      if (reason === "clickaway") {
+        return;
+      }
+
+      setOpenSnackbar(false);
+    };
+    const { profile } = useProfileContext()
+    const [image, setImage] = useState(profile && profile.image);
     const [uploading, setUploading] = useState(false);
     const handleChange = e => {
         const file = e.target.files[0]
@@ -39,6 +49,9 @@ function EditProfilePhoto(props) {
             response.json().then(result => {
                 setImage(result.url)
                 setUploading(false)
+            }).catch(() => {
+              setOpenSnackbar(true);
+              setUploading(false);
             })
         })
     }
@@ -53,7 +66,6 @@ function EditProfilePhoto(props) {
             setUploading(false)
           })
         }
-        // PUT to delete the image from the profile model and S3
     }
     return (
       <div className={classes.root}>
@@ -85,6 +97,7 @@ function EditProfilePhoto(props) {
         <Button onClick={handleDelete} size="small" variant="outlined">
           <Delete fontSize="small" style={{ marginRight: 5 }} /> Delete Photo
         </Button>
+        <Snackbar open={openSnackbar} autoHideDuration={6000} onClose={handleCloseSnackbar} message="Sorry! Something Went Wrong!" />
       </div>
     );
 }

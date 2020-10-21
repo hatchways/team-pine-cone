@@ -15,7 +15,7 @@ import {
 import { makeStyles } from "@material-ui/core/styles";
 import MoreVertIcon from "@material-ui/icons/MoreVert";
 import { useUserContext } from "../contexts/user";
-import { useProfileContext } from "../contexts/profile";
+import { ProfileContext } from "../contexts/profile";
 
 const useStyles = makeStyles((theme) => ({
   navDisplay: {
@@ -33,7 +33,8 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-function getNavigation({ width, classes, anchorEl, handleClick, handleClose, profile }) {
+function Navigation({ width, classes, anchorEl, handleClick, handleClose, profile }) {
+  console.log(profile)
   const navLinks = [
     {
       title: "Become A Sitter",
@@ -106,7 +107,7 @@ function getNavigation({ width, classes, anchorEl, handleClick, handleClose, pro
           </NavLink>
         ))}
         <NavLink className={classes.linkText} to="/me">
-          {profile && profile.photo ? <Avatar src={profile.photo} /> : <Avatar>D</Avatar>}
+          {profile && profile.photo ? <Avatar src={profile.photo} /> : <Avatar>{profile.firstName[0]}</Avatar>}
         </NavLink>
       </List>
     );
@@ -116,7 +117,6 @@ function getNavigation({ width, classes, anchorEl, handleClick, handleClose, pro
 function Navbar(props) {
   const { user } = useUserContext();
   const classes = useStyles();
-  const { profile } = useProfileContext();
 
   const [anchorEl, setAnchorEl] = React.useState(null);
 
@@ -133,18 +133,21 @@ function Navbar(props) {
     anchorEl,
     handleClick,
     handleClose,
-    width: props.width,
-    profile
+    width: props.width
   };
   return user ? (
-    <AppBar position="fixed" className={classes.navbar}>
-      <Toolbar className={classes.navDisplay}>
-        <NavLink to="/">
-          <img alt="Loving Sitter" src={window.origin + "/assets/logo.png"} />
-        </NavLink>
-        {getNavigation(navOptions)}
-      </Toolbar>
-    </AppBar>
+    <ProfileContext.Consumer>
+      {value => (
+        <AppBar position="fixed" className={classes.navbar}>
+          <Toolbar className={classes.navDisplay}>
+            <NavLink to="/">
+              <img alt="Loving Sitter" src={window.origin + "/assets/logo.png"} />
+            </NavLink>
+            <Navigation profile={value.profile} {...navOptions} />
+          </Toolbar>
+        </AppBar>
+      )}
+    </ProfileContext.Consumer>
   ) : null;
 }
 

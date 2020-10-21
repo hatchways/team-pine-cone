@@ -1,6 +1,6 @@
 import React, {useContext, createContext, useState, useEffect} from 'react';
 
-const ProfileContext = createContext(null);
+export const ProfileContext = createContext(null);
 
 export const useProfileContext = () => {
     const profileContext = useContext(ProfileContext);
@@ -11,7 +11,9 @@ export function ProfileProvider({ children }) {
     const [profile, setProfile] = useState(null);
     useEffect(() => {
         fetch("/profile/me").then(profile => {
-            setProfile(profile)
+            profile.json().then(result => {
+                setProfile(result);
+            })
         })
     }, [])
     return (

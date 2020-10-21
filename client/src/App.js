@@ -13,7 +13,6 @@ import ProfileDetails from './pages/ProfileDetails';
 import { AuthProvider } from "./contexts/user";
 import PrivateRoute from "./components/PrivateRoute/";
 
-
 function App() {
   return (
     <MuiThemeProvider theme={theme}>
@@ -21,6 +20,7 @@ function App() {
         <AuthProvider>
           <Navbar />
           <Route exact path="/" />
+          <Route exact path="/"/>
           <Route exact path="/signup" component={SignUp} />
           <Route path="/login" component={Login} />
 		  <Route path="/profiles/:id" component={ProfileDetails} />

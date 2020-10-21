@@ -12,6 +12,7 @@ const loginUser = async (req, res, next) => {
 	}
 	
 	try {
+		console.log(email, password)
 		const user = await User.findOne({email: email.toLowerCase()});
 
 		if (!user) {
@@ -30,7 +31,8 @@ const loginUser = async (req, res, next) => {
 			.status(200)
 			.json({ user: {
 				id: user.id,
-				email: user.email
+				email: user.email,
+				profile: user.profile
 			}});
 	} catch (err) {
 		next(createError(500, err.message));

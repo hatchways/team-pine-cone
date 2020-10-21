@@ -1,5 +1,6 @@
 const createError = require('http-errors');
 const { Profile } = require('../models/');
+const { User } = require('../models/');
 const { validationResult } = require('express-validator');
 
 const checkDateErrors = err => ['Date ranges', 'User must be 18']
@@ -35,7 +36,7 @@ const createProfile = async (req, res, next) => {
 
 const updateProfile = async (req, res, next) => { 
 	const { id } = req.params;
-	const profileProps = req.body;
+	const { email, ...profileProps } = req.body;
 	const errors = validationResult(req);
 
 	if (!errors.isEmpty()) { 
@@ -51,6 +52,13 @@ const updateProfile = async (req, res, next) => {
 			{ ...profileProps }, 
 			options
 		);
+
+		if (email) { 
+			await User.findOneAndUpdate(
+				{ profile: id }, 
+				{ email: email.toLowerCase() }
+			);
+		}
 
 		return res.status(200).json({ profile });
 	} catch (err) { 
@@ -77,22 +85,24 @@ const getProfiles = async (req, res, next) => {
 const getProfile = async (req, res, next) => { 
 	const { id } = req.params;
 
-	try { 
-		let profile = null;
-
+	if (id !== "me") {
 		try { 
-			profile = await Profile.findById(id);
+			let profile = null;
+	
+			try { 
+				profile = await Profile.findById(id);
+			} catch (err) { 
+				return next(createError(422, 'Id is invalid'));
+			}
+	
+			if (!profile) { 
+				return next(createError(404, 'Profile not found'));
+			}
+	
+			return res.status(200).json(profile);
 		} catch (err) { 
-			return next(createError(422, 'Id is invalid'));
+			next(createError(500, err.message));
 		}
-
-		if (!profile) { 
-			return next(createError(404, 'Profile not found'));
-		}
-
-		return res.status(200).json({ profile });
-	} catch (err) { 
-		next(createError(500, err.message));
 	}
 }
 
@@ -101,7 +111,7 @@ const getMyProfile = (req, res, next) => {
 		next(createError(403));
 	}
 	Profile.findById(req.user.profile).then(profile => {
-		res.json(profile);
+		res.status(200).json(profile);
 	}).catch(e => {
 		console.log(e);
 		next(createError(503));

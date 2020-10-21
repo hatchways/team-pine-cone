@@ -55,7 +55,7 @@ export default function () {
 
       if (!res.ok)
         return dispatch({ type: "ERROR", error: data.error.message });
-      dispatch({ type: "SUCCESS", payload: { user: needUser ? data : null } });
+      dispatch({ type: "SUCCESS", payload: { user: needUser ? data.user : null } });
     } catch (err) {
       dispatch({ type: "ERROR", error: err.message });
     }

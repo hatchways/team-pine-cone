@@ -16,33 +16,41 @@ const checkBirthDate = check("birthDate")
   .isISO8601()
   .withMessage("Invalid date, must be in ISO86061 format");
 
+const checkFirstName = check("firstName", "First name required")
+  .exists()
+  .trim()
+  .isAlpha()
+  .withMessage("First names may only contain letters");
+
+const checkLastName = check("lastName", "Last name required")
+  .exists()
+  .trim()
+  .isAlpha()
+  .withMessage("Last names may only contain letters");
+
+const checkEmail = check("email", "Email is required")
+  .isEmail();
+
+const checkPassword = check("password", "Password is required")
+  .isLength({ min: 6 })
+  .withMessage("Password must contain at least 6 characters.");
+
 const profileCreateValidator = [
-  check("firstName", "First name required")
-    .exists()
-    .trim()
-    .isAlpha()
-    .withMessage("First names may only contain letters"),
-  check("lastName", "Last name required")
-    .exists()
-    .trim()
-    .isAlpha()
-    .withMessage("Last names may only contain letters"),
+  checkFirstName,
+  checkLastName,
   checkGender,
-  checkBirthDate
+  checkBirthDate,
 ];
 
-const profileUpdateValidator = [
-  checkGender,
-  checkBirthDate
-];
+const profileUpdateValidator = [checkGender, checkBirthDate];
 
-const registerValidators = [
-  check("email", "Email is required")
-    .isEmail()
-    .normalizeEmail(),
-  check("password", "Password is required")
-    .isLength({ min: 6 })
-    .withMessage("Password must contain at least 6 characters.")
-];
+const registerValidators = [checkFirstName, checkLastName];
 
-module.exports = { profileCreateValidator, profileUpdateValidator, registerValidators };
+const loginValidators = [checkEmail, checkPassword];
+
+module.exports = {
+  profileCreateValidator,
+  profileUpdateValidator,
+  registerValidators,
+  loginValidators,
+};

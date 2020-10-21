@@ -8,7 +8,7 @@ import { makeStyles } from "@material-ui/core/styles";
 import RoomIcon from "@material-ui/icons/Room";
 import { DateTimePicker, MuiPickersUtilsProvider } from "@material-ui/pickers";
 
-const useStyles = makeStyles((theme) => ({
+export const useStyles = makeStyles((theme) => ({
   root: {
     overflow: "hidden",
     borderRadius: "10px",

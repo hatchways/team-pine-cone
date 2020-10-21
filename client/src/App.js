@@ -18,16 +18,16 @@ function App() {
     <MuiThemeProvider theme={theme}>
       <BrowserRouter>
         <AuthProvider>
+          <Route exact path="/signup" component={SignUp} />
+          <Route path="/login" component={Login} />
           <ProfileProvider>
             <Navbar />
-            <Route exact path="/" component={ProfileSettings} />
-            <Route exact path="/signup" component={SignUp} />
-            <Route path="/login" component={Login} />
+            <Route exact path="/"/>
             <PrivateRoute path="/me" component={ProfileSettings} />
-            <PrivateRoute exact path="/become-a-sitter" component={ProfileSettings} />
-            <PrivateRoute exact path="/my-sitters" component={ProfileSettings} />
-            <PrivateRoute exact path="/my-jobs" component={ProfileSettings} />
-            <PrivateRoute exact path="/messages" component={ProfileSettings} />
+            <PrivateRoute exact path="/become-a-sitter" />
+            <PrivateRoute exact path="/my-sitters" />
+            <PrivateRoute exact path="/my-jobs" />
+            <PrivateRoute exact path="/messages" />
           </ProfileProvider>
         </AuthProvider>
       </BrowserRouter>

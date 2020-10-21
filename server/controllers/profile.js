@@ -107,7 +107,6 @@ const getProfile = async (req, res, next) => {
 }
 
 const getMyProfile = (req, res, next) => {
-	console.log(req.user)
 	if (!req.user) {
 		next(createError(403));
 	}

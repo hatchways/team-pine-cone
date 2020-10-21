@@ -12,7 +12,10 @@ const registerUser = async (req, res, next) => {
 	}
 
 	try {
-		const user = await User.createUser(email, password);
+		const user = await User.createUser({
+			email,
+			password
+		});
 
 		jwtCookie(user, res);
 

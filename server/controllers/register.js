@@ -5,7 +5,7 @@ const { Profile } = require('../models/');
 const { jwtCookie } = require('../utils/jwt');
 
 const registerUser = async (req, res, next) => {
-	const {email, password, firstName, lastName} = req.body;
+	const {email, password, ...profileProps} = req.body;
 	const errors = validationResult(req);
 
 	if (!errors.isEmpty()) {
@@ -13,7 +13,8 @@ const registerUser = async (req, res, next) => {
 	}
 
 	try {
-		const profile = await Profile.create({firstName, lastName});
+		//need to inclue location for now this will relax it
+		const profile = await Profile.create({...profileProps, location: {type: "Point"}});
 		const user = await User.createUser(email, password, profile);
 
 		jwtCookie(user, res);

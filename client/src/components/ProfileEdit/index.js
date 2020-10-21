@@ -17,7 +17,9 @@ import {
   KeyboardDatePicker,
   MuiPickersUtilsProvider,
 } from "@material-ui/pickers";
+import { addYears } from "date-fns";
 import DateFnsUtils from "@date-io/date-fns";
+import useForm from "../useForm";
 
 const useStyles = makeStyles((theme) => ({
   label: {
@@ -74,6 +76,7 @@ const InputText = function ({
         <TextField
           onChange={handleChange}
           id={id}
+          name={id}
           fullWidth
           variant="outlined"
           value={value}
@@ -94,37 +97,45 @@ const Label = function ({ children, id }) {
   );
 };
 
-const initialForm = {
-  firstName: "",
-  lastName: "",
-  gender: "",
-  birthDate: "",
-  email: "",
-  address: "",
-  phone: "",
-  description: "",
-};
-
 const capitaleachword = (str) =>
   str
     .split(" ")
     .map((s) => s.charAt(0).toUpperCase() + s.slice(1, s.length))
     .join(" ");
 
+const minDate = addYears(new Date(), -18);
+
+const initialForm = {
+  firstName: "",
+  lastName: "",
+  gender: "",
+  birthDate: minDate,
+  email: "",
+  address: "",
+  phone: "",
+  description: "",
+};
+
 const ProfileEdit = function () {
   const { user } = useUserContext();
   const classes = useStyles();
-  const [form, setForm] = useState(initialForm);
-  const [emailError, setEmailError] = useState("");
   const [isSaved, setIsSaved] = useState(false);
   const [disableSubmit, setDisableSubmit] = useState(false);
+  const {
+    values,
+    setValues,
+    errors,
+    setErrors,
+    handleInputChange,
+    handleDateChange,
+  } = useForm(initialForm);
 
   useEffect(() => {
     fetch(`/profile/${user.profile}`)
       .then((res) => res.json())
       .then((profile) =>
-        setForm({
-          ...form,
+        setValues((values) => ({
+          ...values,
           ...profile,
           gender:
             profile.gender === "non-binary"
@@ -132,29 +143,29 @@ const ProfileEdit = function () {
               : capitaleachword(profile.gender),
           birthDate: new Date(profile.birthDate),
           email: user.email,
-        })
+        }))
       );
-  }, [user.email, user.profile]);
-
-  const handle = (eventProp) => (formProp) => (e) => {
-    setForm({ ...form, [formProp]: e[eventProp].value });
-  };
-  const handleText = handle("currentTarget");
-  const handleSelect = handle("target");
+  }, [user.email, user.profile, setValues]);
 
   const handlePhone = (value) => {
-    setForm({ ...form, phone: value });
+	  if (!/\+1 \(\d{3}\) \d{3}-\d{4}/.test(value)) {
+		setErrors({...errors, phone: 'Phone number is invalid'});
+	  } else { 
+		setErrors({...errors, phone: ''});
+	  }
+
+	  setValues({...values, phone: value});
   };
 
   const handleEmail = (e) => {
     const text = e.currentTarget.value;
     if (!/.+@.+..+/.test(text)) {
-      setEmailError("Email is not valid");
+      setErrors({ ...errors, email: "Email is not valid" });
     } else {
-      setEmailError("");
+      setErrors({ ...errors, email: "" });
     }
 
-    setForm({ ...form, email: text });
+    setValues({ ...values, email: text });
   };
 
   const handleCloseSaved = () => {
@@ -165,10 +176,10 @@ const ProfileEdit = function () {
   const handleSubmit = (e) => {
     e.preventDefault();
 
-    if (!emailError) {
+    if (!errors.email) {
       const cleanForm = {
-        ...form,
-        gender: form.gender.toLowerCase(),
+        ...values,
+        gender: values.gender.toLowerCase(),
       };
 
       setDisableSubmit(true);
@@ -198,20 +209,20 @@ const ProfileEdit = function () {
 
       {/*FIRST NAME*/}
       <InputText
-        id="first-name"
+        id="firstName"
         placeholder="John"
-        value={form.firstName}
-        handleChange={handleText("firstName")}
+        value={values.firstName}
+        handleChange={handleInputChange}
       >
         FIRST NAME
       </InputText>
 
       {/*LAST NAME*/}
       <InputText
-        id="last-name"
+        id="lastName"
         placeholder="Doe"
-        value={form.lastName}
-        handleChange={handleText("lastName")}
+        value={values.lastName}
+        handleChange={handleInputChange}
       >
         LAST NAME
       </InputText>
@@ -227,9 +238,9 @@ const ProfileEdit = function () {
             fullWidth
             variant="outlined"
             type="email"
-            error={!!emailError}
-		  	label={emailError || ''}
-            value={form.email}
+            error={!!errors.email}
+            label={errors.email || ""}
+            value={values.email}
             placeholder="john-doe@gmail.com"
             onChange={handleEmail}
           />
@@ -240,8 +251,8 @@ const ProfileEdit = function () {
       <InputText
         id="address"
         placeholder="Address"
-        value={form.address}
-        handleChange={handleText("address")}
+        value={values.address}
+        handleChange={handleInputChange}
       >
         WHERE YOU LIVE
       </InputText>
@@ -254,8 +265,9 @@ const ProfileEdit = function () {
         <Grid item xs={8} md={7}>
           <TextField
             id="gender"
-            value={form.gender}
-            onChange={handleSelect("gender")}
+            name="gender"
+            value={values.gender}
+            onChange={handleInputChange}
             select
             className={classes.select}
             variant="outlined"
@@ -277,10 +289,13 @@ const ProfileEdit = function () {
         <Grid item xs={8} md={7}>
           <MuiPickersUtilsProvider utils={DateFnsUtils}>
             <KeyboardDatePicker
-              value={form.birthDate}
+              value={values.birthDate || minDate}
               className={classes.select}
+			maxDate={ minDate }
+			format="dd/MM/yyyy"
+                  views={["year", "month", "date"]}
               disableFuture
-              onChange={(value) => setForm({ ...form, birthDate: value })}
+              onChange={handleDateChange("birthDate")}
             />
           </MuiPickersUtilsProvider>
         </Grid>
@@ -294,9 +309,11 @@ const ProfileEdit = function () {
         <Grid container alignItems="center" item xs={8} md={7}>
           <Grid container item alignItems="center" justify="space-between">
             <PhoneInput
+			label={errors.phone || ""}
+			error={!!errors.phone}
               defaultCountry="ca"
               className={classes.select}
-              value={form.phone}
+              value={values.phone}
               regions="north-america"
               onChange={handlePhone}
             />
@@ -312,13 +329,14 @@ const ProfileEdit = function () {
         <Grid item xs={8} md={7}>
           <TextField
             id="description"
+            name="description"
             multiline
             fullWidth
-            value={form.description}
+            value={values.description}
             rows={6}
             variant="outlined"
             placeholder="About you"
-            onChange={handleText("description")}
+            onChange={handleInputChange}
           />
         </Grid>
       </Grid>

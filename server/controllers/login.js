@@ -30,7 +30,8 @@ const loginUser = async (req, res, next) => {
 			.status(200)
 			.json({ user: {
 				id: user.id,
-				email: user.email
+				email: user.email,
+				profile: user.profile
 			}});
 	} catch (err) {
 		next(createError(500, err.message));

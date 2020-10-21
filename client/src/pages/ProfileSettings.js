@@ -10,7 +10,7 @@ import {
   Toolbar
 } from "@material-ui/core";
 import React from "react";
-import { Link } from "react-router-dom";
+import { Link, Route } from "react-router-dom";
 import {
   AccountCircle,
   Photo,
@@ -19,6 +19,7 @@ import {
   Settings,
   PowerSettingsNew,
 } from "@material-ui/icons";
+import EditProfilePhoto from "../components/EditProfilePhoto";
 import { useUserContext } from "../contexts/user";
 import ProfileEdit from '../components/ProfileEdit';
 
@@ -62,6 +63,7 @@ const useStyles = makeStyles((theme) => ({
   },
   card: {
     padding: theme.spacing(3),
+    height: 500
   },
   logout: {
     cursor: "pointer",
@@ -138,9 +140,13 @@ function ProfileSettings({ children }) {
       </Drawer>
       <div className={classes.content}>
         <Toolbar />
-		<Card className={classes.card}>
-			<ProfileEdit/>
-		</Card>
+        <Card className={classes.card}>
+          <Route path={`${origin}/edit-profile`} component={ProfileSettings} />
+          <Route path={`${origin}/profile-photo`} component={EditProfilePhoto} />
+          <Route path={`${origin}/payment`} />
+          <Route path={`${origin}/security`} />
+          <Route path={`${origin}/settings`} />
+        </Card>
       </div>
     </div>
   );

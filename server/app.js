@@ -5,11 +5,11 @@ const cookieParser = require("cookie-parser");
 const logger = require("morgan");
 
 //delete this
-const { profileValidator } = require('./utils/validators');
+const { profileValidator } = require("./utils/validators");
 
 require("dotenv").config();
 
-const { initializeAuthentication } = require('./middleware/authenticate');
+const { initializeAuthentication } = require("./middleware/authenticate");
 
 const mongodbUri = process.env.MONGODB_URI;
 const mongoose = require("mongoose");
@@ -41,8 +41,8 @@ app.use(initializeAuthentication());
 
 app.use("/", indexRouter);
 app.use("/ping", pingRouter);
-app.use('/profile', profileRouter);
-app.use('/user', userRouter);
+app.use("/profile", profileRouter);
+app.use("/user", userRouter);
 app.use("/register", registerRouter);
 app.use("/login", loginRouter);
 app.use("/logout", logoutRouter);

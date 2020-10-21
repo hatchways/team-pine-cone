@@ -6,7 +6,7 @@ const genders = Profile.schema.paths.gender.enumValues;
 
 const checkGender = check("gender")
   .optional()
-  .custom((value) => {
+  .custom(value => { 
     return genders.includes(value);
   })
   .withMessage("Provide valid gender value");

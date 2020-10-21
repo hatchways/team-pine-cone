@@ -54,7 +54,10 @@ const updateProfile = async (req, res, next) => {
 		);
 
 		if (email) { 
-			await User.findOneAndUpdate({ profile: id }, { email });
+			await User.findOneAndUpdate(
+				{ profile: id }, 
+				{ email: email.toLowerCase() }
+			);
 		}
 
 		return res.status(200).json({ profile });

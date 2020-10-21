@@ -12,6 +12,7 @@ const loginUser = async (req, res, next) => {
 	}
 	
 	try {
+		console.log(email, password)
 		const user = await User.findOne({email: email.toLowerCase()});
 
 		if (!user) {

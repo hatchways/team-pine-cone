@@ -29,8 +29,7 @@ const checkLastName = check("lastName", "Last name required")
   .withMessage("Last names may only contain letters");
 
 const checkEmail = check("email", "Email is required")
-  .isEmail()
-  .normalizeEmail();
+  .isEmail();
 
 const checkPassword = check("password", "Password is required")
   .isLength({ min: 6 })

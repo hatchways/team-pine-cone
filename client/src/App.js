@@ -2,7 +2,6 @@ import React from "react";
 import { MuiThemeProvider } from "@material-ui/core";
 import { BrowserRouter, Route } from "react-router-dom";
 import { theme } from "./themes/theme";
-import LandingPage from "./pages/Landing";
 import SignUp from "./pages/SignUp";
 import Login from "./pages/Login";
 
@@ -13,23 +12,20 @@ import ProfileSettings from "./pages/ProfileSettings";
 import { AuthProvider } from "./contexts/user";
 import PrivateRoute from "./components/PrivateRoute/";
 
-import Navbar from "./components/Navbar";
-import ProfileSettings from "./pages/ProfileSettings";
-
 function App() {
   return (
     <MuiThemeProvider theme={theme}>
       <BrowserRouter>
         <AuthProvider>
           <Navbar />
-          <Route exact path="/" component={LandingPage} />
+          <Route exact path="/"/>
           <Route exact path="/signup" component={SignUp} />
           <Route path="/login" component={Login} />
           <PrivateRoute path="/me" component={ProfileSettings} />
-          <PrivateRoute exact path="/become-a-sitter" component={LandingPage} />
-          <PrivateRoute exact path="/my-sitters" component={LandingPage} />
-          <PrivateRoute exact path="/my-jobs" component={LandingPage} />
-          <PrivateRoute exact path="/messages" component={LandingPage} />
+          <PrivateRoute exact path="/become-a-sitter" />
+          <PrivateRoute exact path="/my-sitters" />
+          <PrivateRoute exact path="/my-jobs" />
+          <PrivateRoute exact path="/messages" />
         </AuthProvider>
       </BrowserRouter>
     </MuiThemeProvider>

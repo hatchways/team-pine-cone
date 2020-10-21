@@ -1,6 +1,6 @@
 import React from 'react';
 import { makeStyles } from "@material-ui/core/styles";
-import { Avatar, Grid, GridList, Typography, Card } from '@material-ui/core/';
+import { Avatar, Grid, GridList, Typography, Button } from '@material-ui/core/';
 import { Rating } from "@material-ui/lab";
 import RoomIcon from "@material-ui/icons/Room";
 
@@ -8,10 +8,7 @@ import profileDetailsStyles from './ProfileDetails';
 
 const useStyle = makeStyles(theme => ({
 	root: {  
-		borderRadius: "10px",
-		maxWidth: "1500px",
-		width: "95%",
-		margin: "6em auto",
+		flexWrap: "nowrap",
 	},
 	bold: { 
 		fontWeight: 'bold'
@@ -20,8 +17,6 @@ const useStyle = makeStyles(theme => ({
       boxShadow: "0px 0px 26px -5px rgba(0,0,0,0.75)",
 		padding: "1.5em",
 		textAlign: 'center',
-		maxWidth: '350px',
-		margin: 'auto'
 	},
 	cardBottom: {
 		width: '100%',
@@ -36,15 +31,26 @@ const useStyle = makeStyles(theme => ({
   },
 	description: {
 		fontWeight: 500
+	},
+	cards: { 
+		padding: "2em",
+		display: 'grid',
+		"grid-template-columns": "repeat(auto-fill, minmax(10rem, 20rem))",
+		"justify-content": "center",
+		"grid-gap": "5em"
+	},
+	button: { 
+		padding: "1.5em 3em"
 	}
 }));
 
 const Item = function(props) {
 	const {src, firstName, lastName, shortDescription, title, rating, hourlyRate, location} = props;
 	const classes = useStyle();
+	
 
 	return (
-		<Grid item xs={4} className={classes.card}>
+		<Grid item xs={12} className={classes.card}>
 			<Grid container spacing={2} direction="column" alignItems="center">
 				<Grid item>
 					<Avatar className={classes.avatar} src={src} alt={lastName}/>
@@ -120,11 +126,14 @@ const ProfileListings = function() {
 				</Typography>
 			</Grid>
 			<Grid item>
-				<Grid container>
+				<div className={classes.cards}>
 					{ 
 						users.map((props, i) => <Item key={props.name + i} {...props}/>)
 					}
-				</Grid>
+				</div>
+			</Grid>
+			<Grid item style={{margin: "2em auto"}}>
+				<Button className={classes.button} color="primary" size="large" variant="contained">Show More</Button>			
 			</Grid>
 		</Grid>
 	)

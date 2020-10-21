@@ -57,7 +57,11 @@ const useStyles = makeStyles((theme) => ({
   },
   subtile: {
     color: theme.palette.grey[600],
+		fontWeight: '500'
   },
+	para: {  
+		fontWeight: '400'
+	}
 }));
 
 //DELETE
@@ -119,7 +123,7 @@ const ProfileDetails = function () {
               </Typography>
             </Grid>
             <Grid item className={classes.mb2}>
-              <Typography paragraph gutterBottom>
+              <Typography className={classes.para} paragraph gutterBottom>
                 Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
                 eiusmod tempor incididunt ut labore et dolore magna aliqua. Sit
                 amet nulla facilisi morbi tempus. Tortor dignissim convallis

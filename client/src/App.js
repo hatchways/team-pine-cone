@@ -7,7 +7,6 @@ import Login from "./pages/Login";
 
 import "./App.css";
 import Navbar from "./components/Navbar";
-import ProfileEdit from './components/ProfileEdit';
 import ProfileSettings from "./pages/ProfileSettings";
 
 import { AuthProvider } from "./contexts/user";

@@ -13,10 +13,7 @@ import { makeStyles } from "@material-ui/styles";
 import PhoneInput from "material-ui-phone-number";
 import { genders } from "./data";
 import { Alert } from "@material-ui/lab/";
-import {
-  KeyboardDatePicker,
-  MuiPickersUtilsProvider,
-} from "@material-ui/pickers";
+import { DatePicker, MuiPickersUtilsProvider } from "@material-ui/pickers";
 import { addYears } from "date-fns";
 import DateFnsUtils from "@date-io/date-fns";
 import useForm from "../useForm";
@@ -148,21 +145,25 @@ const ProfileEdit = function () {
   }, [user.email, user.profile, setValues]);
 
   const handlePhone = (value) => {
-	  if (!/\+1 \(\d{3}\) \d{3}-\d{4}/.test(value)) {
-		setErrors({...errors, phone: 'Phone number is invalid'});
-	  } else { 
-		setErrors({...errors, phone: ''});
-	  }
+    if (!/\+1 \(\d{3}\) \d{3}-\d{4}/.test(value)) {
+      setErrors({ ...errors, phone: "Phone number is invalid" });
+      setDisableSubmit(true);
+    } else {
+      setErrors({ ...errors, phone: "" });
+      setDisableSubmit(false);
+    }
 
-	  setValues({...values, phone: value});
+    setValues({ ...values, phone: value });
   };
 
   const handleEmail = (e) => {
     const text = e.currentTarget.value;
     if (!/.+@.+..+/.test(text)) {
       setErrors({ ...errors, email: "Email is not valid" });
+      setDisableSubmit(true);
     } else {
       setErrors({ ...errors, email: "" });
+      setDisableSubmit(false);
     }
 
     setValues({ ...values, email: text });
@@ -176,22 +177,21 @@ const ProfileEdit = function () {
   const handleSubmit = (e) => {
     e.preventDefault();
 
-    if (!errors.email) {
-      const cleanForm = {
-        ...values,
-        gender: values.gender.toLowerCase(),
-      };
+    const cleanForm = {
+      ...values,
+      gender: values.gender.toLowerCase(),
+    };
 
-      setDisableSubmit(true);
+    setDisableSubmit(true);
 
-      fetch(`/profile/${user.profile}`, {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(cleanForm),
-      }).then(() => setIsSaved(true));
-    }
+    fetch(`/profile/${user.profile}`, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(cleanForm),
+    })
+      .then(() => setIsSaved(true))
   };
 
   return (
@@ -288,12 +288,12 @@ const ProfileEdit = function () {
         </Grid>
         <Grid item xs={8} md={7}>
           <MuiPickersUtilsProvider utils={DateFnsUtils}>
-            <KeyboardDatePicker
+            <DatePicker
               value={values.birthDate || minDate}
               className={classes.select}
-			maxDate={ minDate }
-			format="dd/MM/yyyy"
-                  views={["year", "month", "date"]}
+              maxDate={minDate}
+              format="dd/MM/yyyy"
+              views={["year", "month", "date"]}
               disableFuture
               onChange={handleDateChange("birthDate")}
             />
@@ -309,8 +309,8 @@ const ProfileEdit = function () {
         <Grid container alignItems="center" item xs={8} md={7}>
           <Grid container item alignItems="center" justify="space-between">
             <PhoneInput
-			label={errors.phone || ""}
-			error={!!errors.phone}
+              label={errors.phone || ""}
+              error={!!errors.phone}
               defaultCountry="ca"
               className={classes.select}
               value={values.phone}

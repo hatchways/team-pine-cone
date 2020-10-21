@@ -6,11 +6,11 @@ const fileType = require("file-type")
 
 const upload = require("../utils/upload");
 const Profile = require("../models/Profile");
-const authenticate = require("../middleware/authenticate");
+const {authenticate} = require("../middleware/authenticate");
 
 const router = express.Router();
 
-router.post("/", authenticate, (req, res, next) =>{
+router.post("/", authenticate(), (req, res, next) =>{
     if (!req.user) {
       return next(createError(403));
     }
@@ -35,11 +35,11 @@ router.post("/", authenticate, (req, res, next) =>{
     }
 })
 
-router.put("/delete", authenticate, (req, res, next) => {
+router.put("/delete", authenticate(), (req, res, next) => {
     if (!req.user) {
       return next(createError(403));
     }
-    Profile.findById(user.profile).then(profile => {
+    Profile.findById(req.user.profile).then(profile => {
         profile.photo = null;
         profile.save();
         res.status(200).end();

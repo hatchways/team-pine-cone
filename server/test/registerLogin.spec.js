@@ -29,6 +29,8 @@ describe("/POST register", () => {
         password: "123456",
         firstName: "Michael",
         lastName: "Braga",
+		birthDate: "1988-12-24",
+		  phone: "+1 (416) 653-8266"
       })
       .end((err, res) => {
         res.should.have.status(201);

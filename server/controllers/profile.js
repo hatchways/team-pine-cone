@@ -1,5 +1,6 @@
 const createError = require('http-errors');
 const { Profile } = require('../models/');
+const { User } = require('../models/');
 const { validationResult } = require('express-validator');
 
 const checkDateErrors = err => ['Date ranges', 'User must be 18']
@@ -35,7 +36,7 @@ const createProfile = async (req, res, next) => {
 
 const updateProfile = async (req, res, next) => { 
 	const { id } = req.params;
-	const profileProps = req.body;
+	const { email, ...profileProps } = req.body;
 	const errors = validationResult(req);
 
 	if (!errors.isEmpty()) { 
@@ -51,6 +52,10 @@ const updateProfile = async (req, res, next) => {
 			{ ...profileProps }, 
 			options
 		);
+
+		if (email) { 
+			await User.findOneAndUpdate({ profile: id }, { email });
+		}
 
 		return res.status(200).json({ profile });
 	} catch (err) { 

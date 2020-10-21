@@ -40,7 +40,7 @@ userSchema.methods.verifyPassword = async function (password) {
 };
 
 //indexes
-userSchema.index({ email: 1 });
+userSchema.index({ email: 1, profile: 1 });
 
 const User = model("User", userSchema);
 

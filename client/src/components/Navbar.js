@@ -7,15 +7,16 @@ import {
   ListItem,
   ListItemText,
   Avatar,
-  withWidth, 
-  Menu, 
-  MenuItem, 
-  IconButton
+  withWidth,
+  Menu,
+  MenuItem,
+  IconButton,
 } from "@material-ui/core";
 import { makeStyles } from "@material-ui/core/styles";
 import MoreVertIcon from "@material-ui/icons/MoreVert";
+import { useUserContext } from "../contexts/user";
 
-const useStyles = makeStyles({
+const useStyles = makeStyles((theme) => ({
   navDisplay: {
     display: "flex",
     justifyContent: "space-between",
@@ -23,13 +24,13 @@ const useStyles = makeStyles({
   linkText: {
     textDecoration: "none",
     color: "#222222",
-    fontWeight: 700,
     marginRight: 5,
   },
   navbar: {
     backgroundColor: "#EEEEEE",
+    zIndex: theme.zIndex.drawer + 1,
   },
-});
+}));
 
 function getNavigation({ width, classes, anchorEl, handleClick, handleClose }) {
   const navLinks = [
@@ -102,6 +103,7 @@ function getNavigation({ width, classes, anchorEl, handleClick, handleClose }) {
 }
 
 function Navbar(props) {
+  const { user } = useUserContext();
   const classes = useStyles();
 
   const [anchorEl, setAnchorEl] = React.useState(null);
@@ -115,14 +117,14 @@ function Navbar(props) {
   };
 
   const navOptions = {
-      classes,
-      anchorEl,
-      handleClick,
-      handleClose,
-      width: props.width
-  }
-  return (
-    <AppBar position="static" className={classes.navbar}>
+    classes,
+    anchorEl,
+    handleClick,
+    handleClose,
+    width: props.width,
+  };
+  return user ? (
+    <AppBar position="fixed" className={classes.navbar}>
       <Toolbar className={classes.navDisplay}>
         <NavLink to="/">
           <img alt="Loving Sitter" src={window.origin + "/assets/logo.png"} />
@@ -130,7 +132,7 @@ function Navbar(props) {
         {getNavigation(navOptions)}
       </Toolbar>
     </AppBar>
-  );
+  ) : null;
 }
 
 export default withWidth()(Navbar);

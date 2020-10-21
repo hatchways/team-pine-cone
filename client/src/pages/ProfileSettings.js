@@ -141,7 +141,7 @@ function ProfileSettings({ children }) {
       <div className={classes.content}>
         <Toolbar />
         <Card className={classes.card}>
-          <Route path={`${origin}/edit-profile`} component={ProfileSettings} />
+          <Route path={`${origin}/edit-profile`} component={ProfileEdit} />
           <Route path={`${origin}/profile-photo`} component={EditProfilePhoto} />
           <Route path={`${origin}/payment`} />
           <Route path={`${origin}/security`} />

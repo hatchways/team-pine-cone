@@ -1,7 +1,7 @@
 const express = require("express");
 const router = express.Router();
 
-router.post("/", function(req, res, next) {
+router.post("/", function(req, res) {
   const teamName = req.body.teamName;
 
   if (

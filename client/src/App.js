@@ -8,6 +8,7 @@ import Login from "./pages/Login";
 import "./App.css";
 import Navbar from "./components/Navbar";
 import ProfileSettings from "./pages/ProfileSettings";
+import ProfileEdit from './components/ProfileEdit';
 
 import { AuthProvider } from "./contexts/user";
 import PrivateRoute from "./components/PrivateRoute/";

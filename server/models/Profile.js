@@ -58,6 +58,10 @@ const profileSchema = new Schema({
     },
     required: [true, "Phone number required"],
   },
+  requests: [{
+    type: Schema.Types.ObjectId,
+    ref: "Request"
+  }]
 });
 
 profileSchema.pre("save", function(next) {

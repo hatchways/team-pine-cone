@@ -5,6 +5,9 @@ const db = require("../models");
 
 chai.should();
 
+const ids = [];
+let request;
+
 describe("Database Tests", () => {
   before(done => {
     mongoose.connect("mongodb://localhost/team-pine-cone");
@@ -65,6 +68,7 @@ describe("Database Tests", () => {
         },
       });
       testProfile.save().then(profile => {
+        ids.push(profile._id);
         expect(profile.gender).to.eql("prefer not to say");
         done();
       });
@@ -82,6 +86,7 @@ describe("Database Tests", () => {
         },
       });
       testProfile.save().then((profile) => {
+        ids.push(profile._id);
         expect(profile.isSitter).to.eql(false);
         done();
       });
@@ -216,6 +221,159 @@ describe("Database Tests", () => {
           return done();
         }
         throw new Error("Negative date range should throw an error");
+      });
+    });
+  });
+
+  describe("Request Model", () => {
+    it("Saves with the required data", done => {
+      const newRequest = new db.Request({
+        user_id: ids[0],
+        sitter_id: ids[1],
+        start: new Date("10-01-20"),
+        end: new Date("10-14-20"),
+      });
+
+      newRequest.save().then(result => {
+        request = result;
+        done();
+      });
+    });
+
+    it("Retrieves data for a given id", done => {
+      db.Request.findById(request._id).then(() => {
+        done();
+      });
+    });
+
+    it("Saves accepted as false if not specified", () => {
+      expect(request.accepted).to.eql(false);
+    });
+
+    it("Saves declined as false if not specified", () => {
+      expect(request.declined).to.eql(false);
+    });
+
+    it("Saves paid as false if not specified", () => {
+      expect(request.paid).to.eql(false);
+    });
+
+    it("Accept method changes accepted to true and declined to false", () => {
+      request.accept();
+      expect(request.accepted).to.eql(true);
+      expect(request.declined).to.eql(false);
+    });
+
+    it("Decline method changes decline to true and accepted to false", () => {
+      request.decline();
+      expect(request.accepted).to.eql(false);
+      expect(request.declined).to.eql(true);
+    });
+
+    it("Pay method changes paid to true", () => {
+      request.pay();
+      expect(request.paid).to.eql(true);
+    });
+
+    it("Doesn't save if end date is before start date", done => {
+      const newRequest = new db.Request({
+        user_id: ids[0],
+        sitter_id: ids[1],
+        start: new Date("10-21-20"),
+        end: new Date("10-14-20"),
+      });
+
+      newRequest.save(err => {
+        if (err) {
+          done();
+        }
+        else {
+          throw new Error("Saving with end date before start should fail");
+        }
+      });
+    });
+
+    it("Doesn't save if accepted and declined are true", (done) => {
+      const newRequest = new db.Request({
+        user_id: ids[0],
+        sitter_id: ids[1],
+        start: new Date("10-01-20"),
+        end: new Date("10-14-20"),
+        accepted: true,
+        declined: true
+      });
+
+      newRequest.save((err) => {
+        if (err) {
+          done();
+        }
+        else {
+          throw new Error("Saving with accepted and declined true should fail");
+        }
+      });
+    });
+
+    it("Doesn't save without user_id", (done) => {
+      const newRequest = new db.Request({
+        sitter_id: ids[1],
+        start: new Date("10-01-20"),
+        end: new Date("10-14-20"),
+      });
+
+      newRequest.save((err) => {
+        if (err) {
+          done();
+        } else {
+          throw new Error("Saving without user_id should fail");
+        }
+      });
+    });
+
+    it("Doesn't save without sitter_id", (done) => {
+      const newRequest = new db.Request({
+        user_id: ids[0],
+        start: new Date("10-01-20"),
+        end: new Date("10-14-20"),
+      });
+
+      newRequest.save((err) => {
+        if (err) {
+          done();
+        } else {
+          throw new Error("Saving without sitter_id should fail");
+        }
+      });
+    });
+
+    it("Doesn't save without start date", (done) => {
+      const newRequest = new db.Request({
+        user_id: ids[0],
+        sitter_id: ids[1],
+        end: new Date("10-14-20"),
+      });
+
+      newRequest.save((err) => {
+        if (err) {
+          done();
+        } else {
+          throw new Error("Saving without start date should fail");
+        }
+      });
+    });
+
+    it("Doesn't save without end date", (done) => {
+      const newRequest = new db.Request({
+        user_id: ids[0],
+        sitter_id: ids[1],
+        start: new Date("10-01-20"),
+      });
+
+      newRequest.save((err) => {
+        if (err) {
+          done();
+        } else {
+          throw new Error("Saving without end date should fail");
+        }
       });
     });
   });

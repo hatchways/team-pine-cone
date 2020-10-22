@@ -8,6 +8,7 @@ import Login from "./pages/Login";
 import "./App.css";
 import Navbar from "./components/Navbar";
 import ProfileSettings from "./pages/ProfileSettings";
+import ProfileEdit from './components/ProfileEdit';
 import ProfileDetails from './pages/ProfileDetails';
 
 import { AuthProvider } from "./contexts/user";
@@ -19,7 +20,6 @@ function App() {
       <BrowserRouter>
         <AuthProvider>
           <Navbar />
-          <Route exact path="/" />
           <Route exact path="/"/>
           <Route exact path="/signup" component={SignUp} />
           <Route path="/login" component={Login} />

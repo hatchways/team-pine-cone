@@ -17,10 +17,17 @@ const userSchema = new Schema({
 });
 
 userSchema.statics.createUser = async function(email, password) {
-  const hashedPassword = await hash(password, 10);
-  const user = await User.create({ email, password: hashedPassword });
+  const user = await User.create({email, password});
   return user;
 };
+
+userSchema.pre("save", async function(next) {
+  const user = this;
+  if (user.isModified("password")) {
+    user.password = await hash(user.password, 10);
+  }
+  next();
+});
 
 userSchema.methods.verifyPassword = async function(password) {
   try { 

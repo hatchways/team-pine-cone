@@ -22,7 +22,6 @@ import {
 import EditProfilePhoto from "../components/EditProfilePhoto";
 import ProfileEdit from '../components/ProfileEdit'; 
 import { useUserContext } from "../contexts/user";
-import ProfileEdit from '../components/ProfileEdit';
 
 const drawerWidth = 240;
 const useStyles = makeStyles((theme) => ({

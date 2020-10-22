@@ -8,27 +8,29 @@ import Login from "./pages/Login";
 import "./App.css";
 import Navbar from "./components/Navbar";
 import ProfileSettings from "./pages/ProfileSettings";
-import ProfileEdit from './components/ProfileEdit';
 import ProfileDetails from './pages/ProfileDetails';
 
 import { AuthProvider } from "./contexts/user";
 import PrivateRoute from "./components/PrivateRoute/";
+import { ProfileProvider } from "./contexts/profile";
 
 function App() {
   return (
     <MuiThemeProvider theme={theme}>
       <BrowserRouter>
         <AuthProvider>
-          <Navbar />
-          <Route exact path="/"/>
           <Route exact path="/signup" component={SignUp} />
           <Route path="/login" component={Login} />
-		  <Route path="/profiles/:id" component={ProfileDetails} />
-          <PrivateRoute path="/me" component={ProfileSettings} />
-          <PrivateRoute exact path="/become-a-sitter" />
-          <PrivateRoute exact path="/my-sitters" />
-          <PrivateRoute exact path="/my-jobs" />
-          <PrivateRoute exact path="/messages" />
+          <ProfileProvider>
+            <Navbar />
+            <Route exact path="/"/>
+            <PrivateRoute path="/me" component={ProfileSettings} />
+            <Route path="/profiles/:id" component={ProfileDetails} />
+            <PrivateRoute exact path="/become-a-sitter" />
+            <PrivateRoute exact path="/my-sitters" />
+            <PrivateRoute exact path="/my-jobs" />
+            <PrivateRoute exact path="/messages" />
+          </ProfileProvider>
         </AuthProvider>
       </BrowserRouter>
     </MuiThemeProvider>

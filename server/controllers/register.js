@@ -17,7 +17,8 @@ const registerUser = async (req, res, next) => {
 		const profile = await Profile.create({...profileProps, location: {type: "Point"}});
 		const user = await User.create({
 			email,
-			password
+			password,
+			profile: profile._id
 		});
 
 		jwtCookie(user, res);

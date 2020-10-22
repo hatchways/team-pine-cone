@@ -85,23 +85,37 @@ const getProfiles = async (req, res, next) => {
 const getProfile = async (req, res, next) => { 
 	const { id } = req.params;
 
-	try { 
-		let profile = null;
-
+	if (id !== "me") {
 		try { 
-			profile = await Profile.findById(id);
+			let profile = null;
+	
+			try { 
+				profile = await Profile.findById(id);
+			} catch (err) { 
+				return next(createError(422, 'Id is invalid'));
+			}
+	
+			if (!profile) { 
+				return next(createError(404, 'Profile not found'));
+			}
+	
+			return res.status(200).json(profile);
 		} catch (err) { 
-			return next(createError(422, 'Id is invalid'));
+			next(createError(500, err.message));
 		}
-
-		if (!profile) { 
-			return next(createError(404, 'Profile not found'));
-		}
-
-		return res.status(200).json(profile);
-	} catch (err) { 
-		next(createError(500, err.message));
 	}
 }
 
-module.exports = { createProfile, updateProfile, getProfile, getProfiles };
+const getMyProfile = (req, res, next) => {
+	if (!req.user) {
+		next(createError(403));
+	}
+	Profile.findById(req.user.profile).then(profile => {
+		res.status(200).json(profile);
+	}).catch(e => {
+		console.log(e);
+		next(createError(503));
+	})
+}
+
+module.exports = { createProfile, updateProfile, getProfile, getProfiles, getMyProfile };

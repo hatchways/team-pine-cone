@@ -58,6 +58,9 @@ const profileSchema = new Schema({
     },
     required: [true, "Phone number required"],
   },
+  photo: {
+    type: String
+  },
   requests: [{
     type: Schema.Types.ObjectId,
     ref: "Request"

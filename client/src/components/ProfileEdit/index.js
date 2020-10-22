@@ -32,7 +32,7 @@ const useStyles = makeStyles((theme) => ({
   },
   mainContainer: {
     margin: "auto",
-    maxWidth: "900px",
+	  maxWidth: "900px"
   },
   input: {
     marginBottom: "1em",
@@ -51,6 +51,9 @@ const useStyles = makeStyles((theme) => ({
     ...theme.buttons.bigRedButton,
     marginTop: "2.5em",
   },
+	title: { 
+		marginBottom: '3em'
+	}
 }));
 
 const InputText = function ({
@@ -64,7 +67,7 @@ const InputText = function ({
 
   return (
     <Grid container item className={classes.input}>
-      <Grid item xs={4} md={2}>
+      <Grid item xs={4} md={3}>
         <Typography className={classes.label} component="label" htmlFor={id}>
           {children}
         </Typography>
@@ -204,7 +207,7 @@ const ProfileEdit = function () {
       onSubmit={handleSubmit}
     >
       <Grid item>
-        <Typography variant="h2">Edit Profile</Typography>
+		  <h2 className={classes.title}>Edit Profile</h2>
       </Grid>
 
       {/*FIRST NAME*/}
@@ -229,7 +232,7 @@ const ProfileEdit = function () {
 
       {/*EMAIL ADDRESS*/}
       <Grid container item className={classes.input}>
-        <Grid item xs={4} md={2}>
+        <Grid item xs={4} md={3}>
           <Label id="email">EMAIL ADDRESS</Label>
         </Grid>
         <Grid item xs={8} md={7}>
@@ -259,10 +262,10 @@ const ProfileEdit = function () {
 
       {/*GENDER*/}
       <Grid container item className={classes.input}>
-        <Grid item xs={4} md={2}>
+        <Grid item xs={4} md={3}>
           <Label id="gender">GENDER</Label>
         </Grid>
-        <Grid item xs={8} md={7}>
+        <Grid item xs={8} md={5}>
           <TextField
             id="gender"
             name="gender"
@@ -283,10 +286,10 @@ const ProfileEdit = function () {
 
       {/*BIRTH DATE*/}
       <Grid container item alignItems="center" className={classes.input}>
-        <Grid item xs={4} md={2}>
+        <Grid item xs={4} md={3}>
           <Label>BIRTH DATE</Label>
         </Grid>
-        <Grid item xs={8} md={7}>
+        <Grid item xs={8} md={5}>
           <MuiPickersUtilsProvider utils={DateFnsUtils}>
             <DatePicker
               value={values.birthDate || minDate}
@@ -303,10 +306,10 @@ const ProfileEdit = function () {
 
       {/*PHONE NUMBER*/}
       <Grid container item className={classes.input}>
-        <Grid item xs={4} md={2}>
+        <Grid item xs={4} md={3}>
           <Label id="phone">PHONE NUMBER</Label>
         </Grid>
-        <Grid container alignItems="center" item xs={8} md={7}>
+        <Grid container alignItems="center" item xs={8} md={5}>
           <Grid container item alignItems="center" justify="space-between">
             <PhoneInput
               label={errors.phone || ""}
@@ -323,7 +326,7 @@ const ProfileEdit = function () {
 
       {/*DESCRIPTION*/}
       <Grid item container className={classes.input}>
-        <Grid item xs={4} md={2}>
+        <Grid item xs={4} md={3}>
           <Label id="description">DESCRIBE YOURSELF</Label>
         </Grid>
         <Grid item xs={8} md={7}>

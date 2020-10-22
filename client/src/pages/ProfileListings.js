@@ -25,7 +25,7 @@ export const useStyle = makeStyles((theme) => ({
     height: "150px",
   },
   title: {
-    marginTop: "1em",
+    marginTop: "4em",
     marginBottom: "1em",
     fontWeight: "bold",
   },

@@ -50,6 +50,10 @@ function getNavigation({ width, classes, anchorEl, handleClick, handleClose }) {
       title: "Messages",
       path: "/messages",
     },
+    {
+      title: "Find a Sitter",
+      path: "/profiles",
+    },
   ];
   if (width === "sm" || width === "xs") {
     return (

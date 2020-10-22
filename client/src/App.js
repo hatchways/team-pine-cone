@@ -9,6 +9,7 @@ import "./App.css";
 import Navbar from "./components/Navbar";
 import ProfileSettings from "./pages/ProfileSettings";
 import ProfileEdit from './components/ProfileEdit';
+import ProfileDetails from './pages/ProfileDetails';
 
 import { AuthProvider } from "./contexts/user";
 import PrivateRoute from "./components/PrivateRoute/";
@@ -22,12 +23,8 @@ function App() {
           <Route exact path="/"/>
           <Route exact path="/signup" component={SignUp} />
           <Route path="/login" component={Login} />
+		  <Route path="/profiles/:id" component={ProfileDetails} />
           <PrivateRoute path="/me" component={ProfileSettings} />
-		  <PrivateRoute path="/me/profile-edit">
-			  <ProfileSettings>
-				<ProfileEdit/>
-			  </ProfileSettings>
-		  </PrivateRoute>
           <PrivateRoute exact path="/become-a-sitter" />
           <PrivateRoute exact path="/my-sitters" />
           <PrivateRoute exact path="/my-jobs" />

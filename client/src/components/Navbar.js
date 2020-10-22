@@ -107,7 +107,7 @@ function Navigation({ width, classes, anchorEl, handleClick, handleClose, profil
           </NavLink>
         ))}
         <NavLink className={classes.linkText} to="/me">
-          {profile && profile.photo ? <Avatar src={profile.photo} /> : <Avatar>{profile.firstName[0]}</Avatar>}
+          {profile && profile.photo ? <Avatar src={profile.photo} /> : <Avatar>{profile ? profile.firstName[0] : "?"}</Avatar>}
         </NavLink>
       </List>
     );

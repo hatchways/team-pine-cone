@@ -7,7 +7,7 @@ import { Rating } from "@material-ui/lab";
 import { makeStyles } from "@material-ui/core/styles";
 import RoomIcon from "@material-ui/icons/Room";
 import { DateTimePicker, MuiPickersUtilsProvider } from "@material-ui/pickers";
-import useScrollToTop from '../hooks/useScrollToTop';
+import useScrollToTop from "../hooks/useScrollToTop";
 
 export const useStyles = makeStyles((theme) => ({
   root: {
@@ -58,6 +58,10 @@ export const useStyles = makeStyles((theme) => ({
   },
   subtile: {
     color: theme.palette.grey[600],
+    fontWeight: "500",
+  },
+  para: {
+    fontWeight: "400",
   },
 }));
 
@@ -70,7 +74,7 @@ const ProfileDetails = function () {
   const [selectDropIn, setSelectDropIn] = useState(addHours(new Date(), 1));
   const [selectDropOff, setSelectDropOff] = useState(addHours(new Date(), 2));
   const classes = useStyles();
-	useScrollToTop();
+  useScrollToTop();
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -176,6 +180,21 @@ const ProfileDetails = function () {
             </Grid>
             <Grid item>
               <Rating value={4} name="read-only" readOnly />
+            </Grid>
+            <Grid item className={classes.mb2}>
+              <Typography className={classes.para} paragraph gutterBottom>
+                Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
+                eiusmod tempor incididunt ut labore et dolore magna aliqua. Sit
+                amet nulla facilisi morbi tempus. Tortor dignissim convallis
+                aenean et tortor at. Odio euismod lacinia at quis risus sed
+                vulputate odio. Venenatis tellus in metus vulputate eu. Duis
+                convallis convallis tellus id interdum. Sapien eget mi proin
+                sed. Risus nec feugiat in fermentum posuere urna. Dis parturient
+                montes nascetur ridiculus mus mauris vitae ultricies. Semper
+                risus in hendrerit gravida rutrum quisque non tellus orci.
+                Faucibus et molestie ac feugiat sed. Cras semper auctor neque
+                vitae tempus quam pellentesque.
+              </Typography>
             </Grid>
           </Grid>
           <Grid item className={classes.mb3}>

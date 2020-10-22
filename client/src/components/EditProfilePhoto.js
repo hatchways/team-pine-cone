@@ -9,7 +9,7 @@ const useStyles = makeStyles(theme => ({
         flexDirection: "column",
         alignItems: "center",
         justifyContent: "space-around",
-        height: "100%"
+        height: 400
     },
     photo: {
         width: 150,

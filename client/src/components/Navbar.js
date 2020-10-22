@@ -38,7 +38,7 @@ function Navigation({ width, classes, anchorEl, handleClick, handleClose, profil
     {
       title: "Become A Sitter",
       path: "/become-a-sitter",
-      show: !profile.isSitter
+      show: profile && !profile.isSitter
     },
     {
       title: "My Sitters",
@@ -48,7 +48,7 @@ function Navigation({ width, classes, anchorEl, handleClick, handleClose, profil
     {
       title: "My Jobs",
       path: "/my-jobs",
-      show: profile.isSitter
+      show: profile && profile.isSitter
     },
     {
       title: "Messages",

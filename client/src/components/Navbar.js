@@ -34,7 +34,6 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 function Navigation({ width, classes, anchorEl, handleClick, handleClose, profile }) {
-  console.log(profile)
   const navLinks = [
     {
       title: "Become A Sitter",

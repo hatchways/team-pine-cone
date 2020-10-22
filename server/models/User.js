@@ -16,9 +16,13 @@ const userSchema = new Schema({
 	}
 });
 
-userSchema.statics.createUser = async function(user) {
-	const user = await User.create(user);
-	return user;
+userSchema.methods.verifyPassword = async function(password) {
+	try { 
+		const match = await compare(password, this.password);
+		return match;
+	} catch (err) {
+		throw createError(500, err.message);
+	}
 };
 
 userSchema.pre("save", async function(next) {
@@ -28,15 +32,6 @@ userSchema.pre("save", async function(next) {
   }
   next();
 })
-
-userSchema.methods.verifyPassword = async function(password) {
-	try { 
-		const match = await compare(password, this.password);
-		return match;
-	} catch (err) {
-		throw createError(500, err.message);
-	}
-};
 
 //indexes
 userSchema.index({ email: 1 });

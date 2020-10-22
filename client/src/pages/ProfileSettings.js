@@ -70,7 +70,8 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 function ProfileSettings(props) {
-  const { handleLogOut} = useUserContext();
+  const { handleLogOut, user} = useUserContext();
+	console.log(user);
 
   const origin = "/me";
   const links = [

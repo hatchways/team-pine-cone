@@ -34,25 +34,28 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 function Navigation({ width, classes, anchorEl, handleClick, handleClose, profile }) {
-  console.log(profile)
   const navLinks = [
     {
       title: "Become A Sitter",
       path: "/become-a-sitter",
+      show: !profile.isSitter
     },
     {
       title: "My Sitters",
       path: "/my-sitters",
+      show: true
     },
     {
       title: "My Jobs",
       path: "/my-jobs",
+      show: profile.isSitter
     },
     {
       title: "Messages",
       path: "/messages",
+      show: true
     },
-  ];
+  ].filter(x => x.show);
   if (width === "sm" || width === "xs") {
     return (
       <Fragment>

@@ -14,7 +14,8 @@ export const useStyle = makeStyles((theme) => ({
   card: {
     boxShadow: "0px 0px 26px -5px rgba(0,0,0,0.75)",
     padding: "1.5em",
-    textAlign: "center",
+	  textAlign: "center",
+	  cursor: "pointer"
   },
   cardBottom: {
     width: "100%",

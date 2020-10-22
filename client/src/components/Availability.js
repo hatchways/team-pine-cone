@@ -7,10 +7,7 @@ import { useProfileContext } from '../contexts/profile';
 
 function Availability(props) {
     const { profile, setProfile } = useProfileContext()
-    const [availability, setAvailability] = useState([
-      { start: new Date(), end: new Date() },
-      { start: new Date(), end: new Date() },
-    ]);
+    const [availability, setAvailability] = useState((profile && profile.availability) || []);
     const createChangeHandler = (i, key) => {
         return e => {
             const newAvail = [...availability]
@@ -18,8 +15,14 @@ function Availability(props) {
             if (newAvail[i].end < newAvail[i].start) {
                 newAvail[i].end = newAvail[i].start;
             }
-            setAvailability(newAvail)
+            updateAvailability(newAvail)
         }
+    }
+    const updateAvailability = newAvail => {
+        const newProfile = { ...profile };
+        newProfile.availability = newAvail;
+        setAvailability(newAvail);
+        setProfile(newProfile);
     }
     const addRange = () => {
         const newAvail = [...availability];
@@ -27,7 +30,7 @@ function Availability(props) {
             start: new Date(),
             end: new Date()
         })
-        setAvailability(newAvail)
+        updateAvailability(newAvail)
     }
     return (
       <Grid container direction="column" alignItems="center">

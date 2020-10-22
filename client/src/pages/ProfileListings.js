@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import { Grid, Typography, Button } from "@material-ui/core/";
 import ProfileListingItem from "../components/ProfileListingItem";
+import { useFetch } from '../hooks/useFetch';
 
 export const useStyle = makeStyles((theme) => ({
   root: {

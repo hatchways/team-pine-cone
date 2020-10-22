@@ -55,11 +55,16 @@ const cardOptions = {
 const ProfilePayments = function() {
 	const classes = useStyles();
 	const stripe = useStripe();
-	const element = useElements();
+	const elements = useElements();
 	const [addingCard, setAddingCard] = useState(false);
 
 	const handleSubmit = e => {
 		e.preventDefaults();
+
+		if (!stripe || !elements)  return;
+
+		const cardElement = elements.getElement(CardNumberElement);
+		console.log(cardElement)
 	};
 
 	return (

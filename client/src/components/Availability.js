@@ -23,6 +23,14 @@ function Availability(props) {
         newProfile.availability = newAvail;
         setAvailability(newAvail);
         setProfile(newProfile);
+        const options = {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(newProfile),
+        };
+        fetch(`/profile/${profile._id}`, options)
     }
     const addRange = () => {
         const newAvail = [...availability];

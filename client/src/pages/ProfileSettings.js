@@ -72,7 +72,6 @@ const useStyles = makeStyles((theme) => ({
 
 function ProfileSettings(props) {
   const { handleLogOut} = useUserContext();
-	console.log(handleLogOut)
 
   const origin = "/me";
   const links = [

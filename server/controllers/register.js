@@ -12,7 +12,7 @@ const registerUser = async (req, res, next) => {
 	}
 
 	try {
-		const user = await User.createUser({
+		const user = await User.create({
 			email,
 			password
 		});

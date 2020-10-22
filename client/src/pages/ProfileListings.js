@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import { Route } from "react-router-dom";
 import { makeStyles } from "@material-ui/core/styles";
 import { Grid, Typography, Button } from "@material-ui/core/";
 import ProfileListingItem from "../components/ProfileListingItem";
@@ -14,8 +13,9 @@ export const useStyle = makeStyles((theme) => ({
   card: {
     boxShadow: "0px 0px 26px -5px rgba(0,0,0,0.75)",
     padding: "1.5em",
-	  textAlign: "center",
-	  cursor: "pointer"
+    textAlign: "center",
+    cursor: "pointer",
+    background: "white",
   },
   cardBottom: {
     width: "100%",

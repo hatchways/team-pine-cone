@@ -20,7 +20,7 @@ const Item = function (props) {
   const history = useHistory();
 
   // go to individual listing from here
-  const handleClick = () => history.push("/profile-details/:id");
+  const handleClick = () => history.push("/profiles/:id");
 
   return (
     <Grid item xs={12} className={classes.card} onClick={handleClick}>

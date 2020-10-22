@@ -15,6 +15,7 @@ export const useStyles = makeStyles((theme) => ({
     borderRadius: "10px",
     maxWidth: "1500px",
     width: "95%",
+	  background: "white",
     margin: "6em auto",
     [theme.breakpoints.up("md")]: {
       padding: "1.3em",

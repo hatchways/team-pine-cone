@@ -1,4 +1,4 @@
-import { Card, CircularProgress, makeStyles, Toolbar, Typography } from '@material-ui/core';
+import { CircularProgress, Toolbar } from '@material-ui/core';
 import React, { Fragment, useEffect, useState } from 'react';
 import { Redirect } from 'react-router-dom';
 import { useProfileContext } from '../contexts/profile';

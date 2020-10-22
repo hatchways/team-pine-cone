@@ -1,10 +1,10 @@
 import React, { useState } from "react";
+import { Route } from "react-router-dom";
 import { makeStyles } from "@material-ui/core/styles";
-import { Avatar, Grid, Typography, Button, Grow } from "@material-ui/core/";
-import { Rating } from "@material-ui/lab";
-import RoomIcon from "@material-ui/icons/Room";
+import { Grid, Typography, Button } from "@material-ui/core/";
+import ProfileListingItem from "../components/ProfileListingItem";
 
-const useStyle = makeStyles((theme) => ({
+export const useStyle = makeStyles((theme) => ({
   root: {
     flexWrap: "nowrap",
   },
@@ -47,74 +47,6 @@ const useStyle = makeStyles((theme) => ({
   },
 }));
 
-const Item = function (props) {
-  const {
-    src,
-    firstName,
-    lastName,
-    shortDescription,
-    rating,
-    hourlyRate,
-    location,
-  } = props;
-  const classes = useStyle();
-
-  return (
-    <Grid item xs={12} className={classes.card}>
-      <Grow in={true}>
-        <Grid container spacing={2} direction="column" alignItems="center">
-          <Grid item>
-            <Avatar className={classes.avatar} src={src} alt={lastName} />
-          </Grid>
-          <Grid item>
-            <Grid container alignItems="center" direction="column">
-              <Grid item>
-                <Typography cvariant="h5" className={classes.bold}>
-                  {firstName + " " + lastName}
-                </Typography>
-              </Grid>
-              <Grid item>
-                <Typography variant="body1" className={classes.subtile}>
-                  Loving Cat Sitter
-                </Typography>
-              </Grid>
-            </Grid>
-          </Grid>
-          <Grid item>
-            <Rating value={rating} name="read-only" readOnly />
-          </Grid>
-          <Grid item>
-            <Typography variant="body1" className={classes.description}>
-              {shortDescription}
-            </Typography>
-          </Grid>
-          <Grid item className={classes.cardBottom}>
-            <Grid container justify="space-around">
-              <Grid item>
-                <Grid container spacing={1}>
-                  <Grid item>
-                    <RoomIcon color="primary" />
-                  </Grid>
-                  <Grid item>
-                    <Typography className={classes.subtile}>
-                      {location}
-                    </Typography>
-                  </Grid>
-                </Grid>
-              </Grid>
-              <Grid item>
-                <Typography variant="body1" className={classes.bold}>
-                  {hourlyRate}
-                </Typography>
-              </Grid>
-            </Grid>
-          </Grid>
-        </Grid>
-      </Grow>
-    </Grid>
-  );
-};
-
 const user = {
   src: "https://cdn2.iconfinder.com/data/icons/avatar-2/512/Fred_man-256.png",
   firstName: "Michael",
@@ -145,7 +77,7 @@ const ProfileListings = function () {
       <Grid item>
         <div className={classes.cards}>
           {users.map((props, i) => (
-            <Item key={props.firstName + i} {...props} />
+            <ProfileListingItem key={props.firstName + i} {...props} />
           ))}
         </div>
       </Grid>

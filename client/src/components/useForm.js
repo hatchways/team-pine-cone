@@ -21,6 +21,13 @@ export default function useForm(initialFormValues) {
     });
   };
 
+	const handleDateChange = name => value => {
+		setValues({
+			...values,
+			[name]: value
+		});
+	};
+
   // Return object of re-usable variables or functions
   return {
     values,
@@ -28,6 +35,7 @@ export default function useForm(initialFormValues) {
     errors,
     setErrors,
     handleInputChange,
+	  handleDateChange,
     handleCheckboxChange
   }
 }

@@ -1,6 +1,7 @@
-import { Avatar, Button, makeStyles } from '@material-ui/core';
+import { Avatar, Button, CircularProgress, makeStyles, Snackbar } from '@material-ui/core';
 import { Delete } from '@material-ui/icons';
 import React, { useState } from 'react';
+import { useProfileContext } from '../contexts/profile';
 
 const useStyles = makeStyles(theme => ({
     root: {
@@ -8,7 +9,7 @@ const useStyles = makeStyles(theme => ({
         flexDirection: "column",
         alignItems: "center",
         justifyContent: "space-around",
-        height: "100%"
+        height: 400
     },
     photo: {
         width: 150,
@@ -23,19 +24,52 @@ const useStyles = makeStyles(theme => ({
 
 function EditProfilePhoto(props) {
     const classes = useStyles()
-    const [image, setImage] = useState(null);
+    const [openSnackbar, setOpenSnackbar] = useState(false)
+    const handleCloseSnackbar = (event, reason) => {
+      if (reason === "clickaway") {
+        return;
+      }
+
+      setOpenSnackbar(false);
+    };
+    const { profile, setProfile } = useProfileContext()
+    const [image, setImage] = useState(profile && profile.photo);
+    const [uploading, setUploading] = useState(false);
     const handleChange = e => {
-        const file = Array.from(e.target.files)[0]
+        const file = e.target.files[0]
         const formData = new FormData()
-        formData.append(0, file)
-        // POST formData to backend when integrating
-
-        // setImage to url
+        formData.append("file", file)
+        const options = {
+            method: "POST",
+            body: formData
+        }
+        setUploading(true)
+        handleDelete(false)
+        fetch("/upload", options).then(response => {
+            response.json().then(result => {
+                setImage(result.url)
+                profile.photo = result.url
+                setProfile(profile)
+                setUploading(false)
+            }).catch(() => {
+              setOpenSnackbar(true);
+              setUploading(false);
+            })
+        })
     }
-    const handleDelete = () => {
+    const handleDelete = (sendRequest=true) => {
         setImage(null)
-
-        // PUT to delete the image from the profile model and S3
+        if (sendRequest) {
+          setUploading(true)
+          const options = {
+            method: "PUT"
+          }
+          fetch("/upload/delete", options).then(() => {
+            profile.photo = null
+            setProfile(profile)
+            setUploading(false)
+          })
+        }
     }
     return (
       <div className={classes.root}>
@@ -43,7 +77,11 @@ function EditProfilePhoto(props) {
         {image ? (
           <Avatar className={classes.photo} alt="profile" src={image} />
         ) : (
-          <Avatar className={classes.photo}>No Photo</Avatar>
+            uploading ? (
+                <CircularProgress />
+            ) : (
+                <Avatar className={classes.photo}>No Photo</Avatar>
+            )
         )}
         <p className={classes.helper}>
           Please select a photo that clearly shows your face
@@ -63,6 +101,7 @@ function EditProfilePhoto(props) {
         <Button onClick={handleDelete} size="small" variant="outlined">
           <Delete fontSize="small" style={{ marginRight: 5 }} /> Delete Photo
         </Button>
+        <Snackbar open={openSnackbar} autoHideDuration={6000} onClose={handleCloseSnackbar} message="Sorry! Something Went Wrong!" />
       </div>
     );
 }

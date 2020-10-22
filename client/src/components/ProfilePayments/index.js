@@ -24,16 +24,9 @@ const ProfilePayments = function() {
 	const classes = useStyles();
 
 	return (
-		<Grid direction="column" container className={classes.root}>
+		<Grid direction="column" alignItems="center" container className={classes.root}>
 			<Grid item>
 				<h2 className={classes.title}>Payment Methods</h2>
-			</Grid>
-			<Grid item>
-				<Hidden smDown>
-					<Typography className={classes.typing}>
-						Saved Payment Profiles
-					</Typography>
-				</Hidden>
 			</Grid>
 			<Grid item>
 				<Button variant="outlined" size="large" color="primary" className={classes.button}>

@@ -20,6 +20,7 @@ import {
   PowerSettingsNew,
 } from "@material-ui/icons";
 import EditProfilePhoto from "../components/EditProfilePhoto";
+import ProfileEdit from '../components/ProfileEdit'; 
 import { useUserContext } from "../contexts/user";
 
 const drawerWidth = 240;
@@ -70,8 +71,7 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 function ProfileSettings(props) {
-  const { handleLogOut, user} = useUserContext();
-	console.log(user);
+  const { handleLogOut} = useUserContext();
 
   const origin = "/me";
   const links = [
@@ -141,7 +141,7 @@ function ProfileSettings(props) {
       <div className={classes.content}>
         <Toolbar />
         <Card className={classes.card}>
-          <Route path={`${origin}/edit-profile`} />
+          <Route path={`${origin}/edit-profile`} component={ProfileEdit}/>
           <Route path={`${origin}/profile-photo`} component={EditProfilePhoto} />
           <Route path={`${origin}/payment`} />
           <Route path={`${origin}/security`} />

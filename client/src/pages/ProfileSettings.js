@@ -55,15 +55,15 @@ const useStyles = makeStyles((theme) => ({
   content: {
     flexGrow: 1,
     padding: theme.spacing(3),
+    overflow: "scroll"
   },
   root: {
     display: "flex",
-    backgroundColor: "#fbfbfb",
     height: "100vh",
   },
   card: {
     padding: theme.spacing(3),
-    height: 500
+    height: "max-content",
   },
   logout: {
     cursor: "pointer",

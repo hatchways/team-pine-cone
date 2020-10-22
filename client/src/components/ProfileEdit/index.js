@@ -23,7 +23,6 @@ const useStyles = makeStyles((theme) => ({
     },
   },
   mainContainer: {
-    margin: "2em auto",
     maxWidth: "900px",
   },
   input: {
@@ -123,7 +122,7 @@ const ProfileEdit = function () {
       onSubmit={handleSubmit}
     >
       <Grid item>
-        <Typography variant="h2">Edit Profile</Typography>
+		  <h2>Edit Profile</h2>
       </Grid>
 
       {/*FIRST NAME*/}

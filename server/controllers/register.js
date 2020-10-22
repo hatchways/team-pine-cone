@@ -15,7 +15,11 @@ const registerUser = async (req, res, next) => {
 	try {
 		//need to inclue location for now this will relax it
 		const profile = await Profile.create({...profileProps, location: {type: "Point"}});
-		const user = await User.createUser(email, password, profile);
+		const user = await User.create({
+			email,
+			password,
+			profile
+		});
 
 		jwtCookie(user, res);
 

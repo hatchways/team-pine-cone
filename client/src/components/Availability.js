@@ -1,6 +1,6 @@
 import DateFnsUtils from '@date-io/date-fns';
 import { Grid, IconButton, Typography } from '@material-ui/core';
-import { Add, PlusOneRounded } from '@material-ui/icons';
+import { Add, Delete, PlusOneRounded } from '@material-ui/icons';
 import { DateTimePicker, MuiPickersUtilsProvider } from '@material-ui/pickers';
 import React, { useState } from 'react';
 import { useProfileContext } from '../contexts/profile';
@@ -40,6 +40,13 @@ function Availability(props) {
         })
         updateAvailability(newAvail)
     }
+    const createDeleteHandler = i => {
+        return () => {
+            const newAvail = [...availability];
+            newAvail.splice(i, 1)
+            updateAvailability(newAvail);
+        }
+    }
     return (
       <Grid container direction="column" alignItems="center">
         <Grid item>
@@ -57,6 +64,9 @@ function Availability(props) {
                 }}
                 item
                 >
+                    <IconButton onClick={createDeleteHandler(i)}>
+                        <Delete />
+                    </IconButton>
                     <Typography>Availability Range {i + 1}</Typography>
                     <MuiPickersUtilsProvider utils={DateFnsUtils}>
                         <DateTimePicker value={range.start} onChange={createChangeHandler(i, "start")} label="Start" />

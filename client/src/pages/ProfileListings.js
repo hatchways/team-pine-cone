@@ -1,9 +1,8 @@
-import React, { useState } from "react";
+import React from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import { Grid, Typography, Button } from "@material-ui/core/";
 import ProfileListingItem from "../components/ProfileListingItem";
-import { useFetch } from '../hooks/useFetch';
-
+import { useFetch } from "../hooks/useFetch";
 
 export const useStyle = makeStyles((theme) => ({
   root: {
@@ -27,7 +26,7 @@ export const useStyle = makeStyles((theme) => ({
     height: "150px",
   },
   title: {
-    marginTop: "4em",
+    marginTop: "3em",
     marginBottom: "1em",
     fontWeight: "bold",
   },
@@ -50,22 +49,12 @@ export const useStyle = makeStyles((theme) => ({
   },
 }));
 
-const user = {
-  src: "https://cdn2.iconfinder.com/data/icons/avatar-2/512/Fred_man-256.png",
-  firstName: "Michael",
-  lastName: "Braga",
-  rating: 4,
-  shortDescription: "The best cat sitter, walker, talker, over nght hours",
-  location: "Toronto, Ontario",
-  hourlyRate: "14$/hr",
-};
-const initUsers = [user, user, user, user, user, user, user, user];
-
 const ProfileListings = function () {
   const classes = useStyle();
-	const [data] = useFetch({url: '/profile', init: {profiles: []}});
+  const [data, loading] = useFetch({ url: "/profile", init: { profiles: [] } });
 
   const handleClickMore = () => {
+    //need to add pagination
   };
 
   return (
@@ -83,15 +72,17 @@ const ProfileListings = function () {
         </div>
       </Grid>
       <Grid item style={{ margin: "2em auto" }}>
-        <Button
-          onClick={handleClickMore}
-          className={classes.button}
-          color="primary"
-          size="large"
-          variant="contained"
-        >
-          Show More
-        </Button>
+        {!loading ? (
+          <Button
+            onClick={handleClickMore}
+            className={classes.button}
+            color="primary"
+            size="large"
+            variant="contained"
+          >
+            Show More
+          </Button>
+        ) : null}
       </Grid>
     </Grid>
   );

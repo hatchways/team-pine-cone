@@ -8,6 +8,8 @@ import { makeStyles } from "@material-ui/core/styles";
 import RoomIcon from "@material-ui/icons/Room";
 import { DateTimePicker, MuiPickersUtilsProvider } from "@material-ui/pickers";
 import useScrollToTop from "../hooks/useScrollToTop";
+import { useParams } from "react-router-dom";
+import { useFetch } from "../hooks/useFetch";
 
 export const useStyles = makeStyles((theme) => ({
   root: {
@@ -15,7 +17,7 @@ export const useStyles = makeStyles((theme) => ({
     borderRadius: "10px",
     maxWidth: "1500px",
     width: "95%",
-	  background: "white",
+    background: "white",
     margin: "6em auto",
     [theme.breakpoints.up("md")]: {
       padding: "1.3em",
@@ -64,17 +66,30 @@ export const useStyles = makeStyles((theme) => ({
   para: {
     fontWeight: "400",
   },
+  profile: {
+    width: "100%",
+  },
 }));
-
-//DELETE
-const SD = [
-  "https://www.equafleece.co.uk/public/uploads/products/dog-suit/dog-suit-10.jpg",
-];
 
 const ProfileDetails = function () {
   const [selectDropIn, setSelectDropIn] = useState(addHours(new Date(), 1));
   const [selectDropOff, setSelectDropOff] = useState(addHours(new Date(), 2));
   const classes = useStyles();
+  const params = useParams();
+  const [profile] = useFetch({ init: {}, url: `/profile/${params.id}` });
+
+  const {
+    photo,
+    firstName,
+    lastName,
+    description,
+    images = [],
+    hourlyRate = "$14.25",
+    ratings = 0,
+    location = {},
+  } = profile;
+  const fullName = firstName ? firstName + " " + lastName : "";
+
   useScrollToTop();
 
   const handleSubmit = (e) => {
@@ -86,22 +101,18 @@ const ProfileDetails = function () {
   return (
     <Grow in={true}>
       <Grid className={classes.root} container>
-        <Grid item md={7}>
+        <Grid item md={7} className={classes.profile}>
           <Grid direction="column" container>
             <Grid item>
               <div className={classes.banner}></div>
             </Grid>
             <Grid item direction="column" container alignItems="center">
               <Grid item>
-                <Avatar
-                  className={classes.avatar}
-                  src="https://cdn2.iconfinder.com/data/icons/avatar-2/512/Fred_man-256.png"
-                  alt="User name"
-                />
+                <Avatar className={classes.avatar} src={photo} alt={fullName} />
               </Grid>
               <Grid item>
                 <Typography className={classes.name} variant="h4">
-                  Michael Braga
+                  {fullName}
                 </Typography>
               </Grid>
               <Grid item>
@@ -110,7 +121,7 @@ const ProfileDetails = function () {
                   className={classes.subtile}
                   paragraph
                 >
-                  Loving Cat Sitter
+                  Loving Dog Sitter
                 </Typography>
               </Grid>
               <Grid container spacing={2} justify="center" alignItems="center">
@@ -119,12 +130,13 @@ const ProfileDetails = function () {
                 </Grid>
                 <Grid item>
                   <Typography className={classes.subtile}>
-                    Toronto, Ontario
+                    {/*TEMP*/}
+                    {location.address || "Toronto, Ontario"}
                   </Typography>
                 </Grid>
               </Grid>
             </Grid>
-            <Grid container className={classes.about}>
+            <Grid container direction="column" className={classes.about}>
               <Grid item>
                 <Typography className={classes.name} gutterBottom variant="h5">
                   About me
@@ -132,21 +144,11 @@ const ProfileDetails = function () {
               </Grid>
               <Grid item className={classes.mb2}>
                 <Typography paragraph gutterBottom>
-                  Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed
-                  do eiusmod tempor incididunt ut labore et dolore magna aliqua.
-                  Sit amet nulla facilisi morbi tempus. Tortor dignissim
-                  convallis aenean et tortor at. Odio euismod lacinia at quis
-                  risus sed vulputate odio. Venenatis tellus in metus vulputate
-                  eu. Duis convallis convallis tellus id interdum. Sapien eget
-                  mi proin sed. Risus nec feugiat in fermentum posuere urna. Dis
-                  parturient montes nascetur ridiculus mus mauris vitae
-                  ultricies. Semper risus in hendrerit gravida rutrum quisque
-                  non tellus orci. Faucibus et molestie ac feugiat sed. Cras
-                  semper auctor neque vitae tempus quam pellentesque.
+                  {description}
                 </Typography>
               </Grid>
               <Grid container>
-                {[SD, SD, SD, SD].map((url, i) => (
+                {images.map((url, i) => (
                   <Grid item key={url + i} xs={6} sm={3}>
                     <img
                       className={classes.pet}
@@ -176,26 +178,11 @@ const ProfileDetails = function () {
           >
             <Grid item>
               <Typography paragraph variant="h4">
-                $14/hr
+                {hourlyRate}
               </Typography>
             </Grid>
             <Grid item>
-              <Rating value={4} name="read-only" readOnly />
-            </Grid>
-            <Grid item className={classes.mb2}>
-              <Typography className={classes.para} paragraph gutterBottom>
-                Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
-                eiusmod tempor incididunt ut labore et dolore magna aliqua. Sit
-                amet nulla facilisi morbi tempus. Tortor dignissim convallis
-                aenean et tortor at. Odio euismod lacinia at quis risus sed
-                vulputate odio. Venenatis tellus in metus vulputate eu. Duis
-                convallis convallis tellus id interdum. Sapien eget mi proin
-                sed. Risus nec feugiat in fermentum posuere urna. Dis parturient
-                montes nascetur ridiculus mus mauris vitae ultricies. Semper
-                risus in hendrerit gravida rutrum quisque non tellus orci.
-                Faucibus et molestie ac feugiat sed. Cras semper auctor neque
-                vitae tempus quam pellentesque.
-              </Typography>
+              <Rating value={ratings} name="read-only" readOnly />
             </Grid>
           </Grid>
           <Grid item className={classes.mb3}>

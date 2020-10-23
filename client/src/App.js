@@ -26,8 +26,8 @@ function App() {
             <Navbar />
             <Route exact path="/"/>
             <PrivateRoute path="/me" component={ProfileSettings} />
-			<Route path="/profiles/" component={ProfileListings} />
-            <Route path="/profiles/:id" component={ProfileDetails} />
+			<Route exact path="/profiles/" component={ProfileListings} />
+            <Route exact path="/profiles/:id" component={ProfileDetails} />
             <PrivateRoute exact path="/become-a-sitter" />
             <PrivateRoute exact path="/my-sitters" />
             <PrivateRoute exact path="/my-jobs" />

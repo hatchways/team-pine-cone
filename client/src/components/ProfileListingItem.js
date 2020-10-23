@@ -8,6 +8,7 @@ import { useStyle } from "../pages/ProfileListings";
 
 const Item = function (props) {
   const {
+    _id,
     photo,
     firstName,
     lastName,
@@ -20,8 +21,7 @@ const Item = function (props) {
   const history = useHistory();
 
   // go to individual listing from here
-  const handleClick = () => history.push("/profiles/:id");
-	console.log(firstName)
+  const handleClick = () => history.push(`/profiles/${_id}`);
 
   return (
     <Grid item xs={12} className={classes.card} onClick={handleClick}>
@@ -65,8 +65,8 @@ const Item = function (props) {
                   {/*location*/}
                   <Grid item id="location">
                     <Typography className={classes.subtile}>
-						{/*temp*/}
-                      Toronto Ontario
+                      {/*TEMP*/}
+                      {location.address || "Toronto Ontario"}
                     </Typography>
                   </Grid>
                 </Grid>

@@ -1,4 +1,4 @@
-import React, {useContext, createContext, useState, useEffect} from 'react';
+import React, {useContext, createContext } from 'react';
 
 export const ProfileContext = createContext(null);
 

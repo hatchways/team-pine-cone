@@ -72,7 +72,7 @@ const ProfileListings = function () {
       <Grid item>
         <div className={classes.cards}>
           {sitters.map((props, i) => (
-            <ProfileListingItem key={props.firstName + i} {...props} />
+            <ProfileListingItem key={props._id} {...props} />
           ))}
         </div>
       </Grid>

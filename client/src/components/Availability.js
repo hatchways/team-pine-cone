@@ -77,7 +77,7 @@ function Availability(props) {
     return (
       <Grid container direction="column" alignItems="center">
         <Grid item>
-          <Typography variant="h2">Availability</Typography>
+          <h2>Availability</h2>
         </Grid>
         {availability.map((range, i) => (
           <Grid key={`range-${i}`} className={classes.row} item>

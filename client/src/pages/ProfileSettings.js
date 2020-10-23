@@ -20,8 +20,8 @@ import {
   PowerSettingsNew, CalendarToday
 } from "@material-ui/icons";
 import EditProfilePhoto from "../components/EditProfilePhoto";
+import ProfileEdit from '../components/ProfileEdit'; 
 import { useUserContext } from "../contexts/user";
-import ProfileEdit from '../components/ProfileEdit';
 import Availability from "../components/Availability";
 import { useProfileContext } from "../contexts/profile";
 
@@ -150,7 +150,7 @@ function ProfileSettings({ children }) {
       <div className={classes.content}>
         <Toolbar />
         <Card className={classes.card}>
-          <Route path={`${origin}/edit-profile`} component={ProfileEdit} />
+          <Route path={`${origin}/edit-profile`} component={ProfileEdit}/>
           <Route path={`${origin}/profile-photo`} component={EditProfilePhoto} />
           {profile && profile.isSitter && <Route path={`${origin}/availability`} component={Availability} />}
           <Route path={`${origin}/payment`} />

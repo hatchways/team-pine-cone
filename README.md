@@ -1,21 +1,15 @@
-# EXPRESS-STARTER
+# LovingSitter.
 
-## Running the Database Locally
+## Technologies Used
 
-Running this application locally requires you to have MongoDB installed on your computer, for more information on installing MongoDB see [here](https://docs.mongodb.com/manual/installation/).
+This is a MERN application:
 
-Once installed, you must start the Mongo Daemon by running
-
-```
-mongod
-```
-
-in the terminal. Once the Daemon has started, navigate in the terminal to this project repository if you are not already in it, and run:
-
-```
-cd server
-npm run dev
-```
+- MongoDB
+- ExpressJS
+- React
+- NodeJS
+- Amazon S3
+- Stripe
 
 This is the necessary .env file needed to run the application:
 ```
@@ -29,6 +23,9 @@ S3_BUCKET=<S3_BUCKET>
 STRIPE_KEY=<STRIPE_KEY>
 STRIPE_SECRET=<STRIPE_SECRET>
 ```
+### NOTE
+
+_ACCESS_TOKEN_NAME_, _ACCESS_TOKEN_SECRET_, _ACCESS_TOKEN_LIFE_ is used for _passport-jwt_
 
 ## Links to APIS
 
@@ -55,21 +52,26 @@ server
 
 ### API End Points
 
+#### NOTE
+- User and Profile refer to MongoDB Document objects.
+- Responses are always JSON unless stated.
+- Body may only be some properties of the Document object.
+
 | End Point       | Method | Private/Protected Route | Params       |                Body               | Status |    Response   |
 |-----------------|--------|:-----------------------:|--------------|:---------------------------------:|--------|:-------------:|
-| /welcome        | GET    |            []           |              |                                   | 200    |      text     |
-| /ping           | POST   |            []           |              |         {teamName: String}        | 200    |      text     |
-| /profile/create | POST   |            []           |              |              Profile              | 201    |    Profile    |
-| /profile/:id    | PUT    |            []           | {id: String} |      Profile, {email: String}     | 200    |    Profile    |
-| /profile        | GET    |            []           |              |                                   | 200    |   [Profile]   |
-| /profile/me     | GET    |           [x]           |              |                                   | 200    |    Profile    |
-| /profile/:id    | GET    |            []           | {id: String} |                                   | 200    |    Profile    |
-| /user/me        | GET    |           [x]           |              |                                   | 200    |  {user: User} |
-| /register       | POST   |            []           |              |           User, Profile           | 201    |      User     |
-| /login          | POST   |            []           |              | {email: String, password: String} | 200    |  {user: User} |
-| /logout         | POST   |           [x]           |              |                                   | 200    |  {user: User} |
-| /upload         | POST   |           [x]           |              |        Multipart/Form-data        |        | {url: String} |
-| /upload/delete  | PUT    |           [x]           |              |                                   | 200    |               |
+| /welcome        | GET    |                         |              |                                   | 200    |      text     |
+| /ping           | POST   |                         |              |         {teamName: String}        | 200    |      text     |
+| /profile/create | POST   |                         |              |              Profile              | 201    |    Profile    |
+| /profile/:id    | PUT    |                         | {id: String} |      Profile, {email: String}     | 200    |    Profile    |
+| /profile        | GET    |                         |              |                                   | 200    |   [Profile]   |
+| /profile/me     | GET    |           Yes           |              |                                   | 200    |    Profile    |
+| /profile/:id    | GET    |                         | {id: String} |                                   | 200    |    Profile    |
+| /user/me        | GET    |           Yes           |              |                                   | 200    |  {user: User} |
+| /register       | POST   |                         |              |           User, Profile           | 201    |      User     |
+| /login          | POST   |                         |              | {email: String, password: String} | 200    |  {user: User} |
+| /logout         | POST   |           Yes           |              |                                   | 200    |  {user: User} |
+| /upload         | POST   |           Yes           |              |        Multipart/Form-data        |        | {url: String} |
+| /upload/delete  | PUT    |           Yes           |              |                                   | 200    |               |
 
 ### Starting the backend
 
@@ -107,16 +109,24 @@ client
 | /                |                 |
 | /signup          |                 |
 | /login           |                 |
+| /profiles        |                 |
 | /profiles/:id    |                 |
-| /me              | Yes             |
-| /become-a-sitter | Yes             |
-| /my-sitters      | Yes             |
-| /my-jobs         | Yes             |
-| /messages        | Yes             |
+| /me              |       Yes       |
+| /become-a-sitter |       Yes       |
+| /my-sitters      |       Yes       |
+| /my-jobs         |       Yes       |
+| /messages        |       Yes       |
 
-### Nav Routes
+### Profile Routes
 
-
+| Route          | Private/Protected |
+|----------------|-------------------|
+| /edit-profile  |                   |
+| /profile-photo |                   |
+| /payment       |                   |
+| /security      |                   |
+| /settings      |                   |
+| /availability  |                   |
 
 ### Starting the frontend
 

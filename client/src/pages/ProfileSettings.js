@@ -17,12 +17,14 @@ import {
   CreditCard,
   Security,
   Settings,
-  PowerSettingsNew,
+  PowerSettingsNew, CalendarToday
 } from "@material-ui/icons";
 import EditProfilePhoto from "../components/EditProfilePhoto";
 import ProfilePayments from "../components/ProfilePayments/";
 import ProfileEdit from '../components/ProfileEdit'; 
 import { useUserContext } from "../contexts/user";
+import Availability from "../components/Availability";
+import { useProfileContext } from "../contexts/profile";
 
 const drawerWidth = 240;
 const useStyles = makeStyles((theme) => ({
@@ -56,23 +58,24 @@ const useStyles = makeStyles((theme) => ({
   content: {
     flexGrow: 1,
     padding: theme.spacing(3),
+    overflow: "scroll"
   },
   root: {
     display: "flex",
-    backgroundColor: "#fbfbfb",
     height: "100vh",
   },
   card: {
     padding: theme.spacing(3),
-    height: 500
+    height: "max-content",
   },
   logout: {
     cursor: "pointer",
   },
 }));
 
-function ProfileSettings(props) {
+function ProfileSettings({ children }) {
   const { handleLogOut} = useUserContext();
+  const { profile } = useProfileContext();
 
   const origin = "/me";
   const links = [
@@ -85,6 +88,12 @@ function ProfileSettings(props) {
       title: "Profile Photo",
       path: `${origin}/profile-photo`,
       icon: <Photo />,
+    },
+    {
+      title: "Availability",
+      path: `${origin}/availability`,
+      icon: <CalendarToday />,
+      hide: !(profile && profile.isSitter)
     },
     {
       title: "Payment",
@@ -101,7 +110,7 @@ function ProfileSettings(props) {
       path: `${origin}/settings`,
       icon: <Settings />,
     },
-  ];
+  ].filter(x => !x.hide);
   const classes = useStyles();
   return (
     <div className={classes.root}>
@@ -144,7 +153,8 @@ function ProfileSettings(props) {
         <Card className={classes.card}>
           <Route path={`${origin}/edit-profile`} component={ProfileEdit}/>
           <Route path={`${origin}/profile-photo`} component={EditProfilePhoto} />
-          <Route path={`${origin}/payment`} component={ProfilePayments} />
+          {profile && profile.isSitter && <Route path={`${origin}/availability`} component={Availability} />}
+          <Route path={`${origin}/payment`} />
           <Route path={`${origin}/security`} />
           <Route path={`${origin}/settings`} />
         </Card>

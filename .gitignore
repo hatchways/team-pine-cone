@@ -21,4 +21,4 @@ yarn-error.log*
 debug.log
 
 #TODO add .env to your gitignore
-
+.env

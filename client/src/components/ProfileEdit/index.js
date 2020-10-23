@@ -1,14 +1,22 @@
-import React, { useState } from "react";
+import "date-fns";
+import React, { useState, useEffect } from "react";
+import { useUserContext } from "../../contexts/user";
 import {
   Grid,
   Typography,
   TextField,
   MenuItem,
   Button,
+  Snackbar,
 } from "@material-ui/core";
 import { makeStyles } from "@material-ui/styles";
 import PhoneInput from "material-ui-phone-number";
 import { genders } from "./data";
+import { Alert } from "@material-ui/lab/";
+import { DatePicker, MuiPickersUtilsProvider } from "@material-ui/pickers";
+import { addYears } from "date-fns";
+import DateFnsUtils from "@date-io/date-fns";
+import useForm from "../useForm";
 
 const useStyles = makeStyles((theme) => ({
   label: {
@@ -23,7 +31,8 @@ const useStyles = makeStyles((theme) => ({
     },
   },
   mainContainer: {
-    maxWidth: "900px",
+    margin: "auto",
+	  maxWidth: "900px"
   },
   input: {
     marginBottom: "1em",
@@ -42,24 +51,35 @@ const useStyles = makeStyles((theme) => ({
     ...theme.buttons.bigRedButton,
     marginTop: "2.5em",
   },
+	title: { 
+		marginBottom: '3em'
+	}
 }));
 
-const InputText = function ({ id, placeholder, children, handleChange }) {
+const InputText = function ({
+  id,
+  placeholder,
+  children,
+  value,
+  handleChange,
+}) {
   const classes = useStyles();
 
   return (
     <Grid container item className={classes.input}>
-      <Grid item xs={4}>
+      <Grid item xs={4} md={3}>
         <Typography className={classes.label} component="label" htmlFor={id}>
           {children}
         </Typography>
       </Grid>
-      <Grid item xs={6}>
+      <Grid item xs={8} md={7}>
         <TextField
           onChange={handleChange}
           id={id}
-          variant="outlined"
+          name={id}
           fullWidth
+          variant="outlined"
+          value={value}
           placeholder={placeholder}
         />
       </Grid>
@@ -77,11 +97,19 @@ const Label = function ({ children, id }) {
   );
 };
 
+const capitaleachword = (str) =>
+  str
+    .split(" ")
+    .map((s) => s.charAt(0).toUpperCase() + s.slice(1, s.length))
+    .join(" ");
+
+const minDate = addYears(new Date(), -18);
+
 const initialForm = {
   firstName: "",
   lastName: "",
   gender: "",
-  birthDate: "",
+  birthDate: minDate,
   email: "",
   address: "",
   phone: "",
@@ -89,27 +117,84 @@ const initialForm = {
 };
 
 const ProfileEdit = function () {
+  const { user } = useUserContext();
   const classes = useStyles();
-  const [form, setForm] = useState(initialForm);
+  const [isSaved, setIsSaved] = useState(false);
+  const [disableSubmit, setDisableSubmit] = useState(false);
+  const {
+    values,
+    setValues,
+    errors,
+    setErrors,
+    handleInputChange,
+    handleDateChange,
+  } = useForm(initialForm);
 
-  const handle = (eventProp) => (formProp) => (e) => {
-    setForm({ ...form, [formProp]: e[eventProp].value });
-  };
-  const handleText = handle("currentTarget");
-  const handleSelect = handle("target");
+  useEffect(() => {
+    fetch(`/profile/${user.profile}`)
+      .then((res) => res.json())
+      .then((profile) =>
+        setValues((values) => ({
+          ...values,
+          ...profile,
+          gender:
+            profile.gender === "non-binary"
+              ? "Non-Binary"
+              : capitaleachword(profile.gender),
+          birthDate: new Date(profile.birthDate),
+          email: user.email,
+        }))
+      );
+  }, [user.email, user.profile, setValues]);
 
   const handlePhone = (value) => {
-    setForm({ ...form, phone: value });
+    if (!/\+1 \(\d{3}\) \d{3}-\d{4}/.test(value)) {
+      setErrors({ ...errors, phone: "Phone number is invalid" });
+      setDisableSubmit(true);
+    } else {
+      setErrors({ ...errors, phone: "" });
+      setDisableSubmit(false);
+    }
+
+    setValues({ ...values, phone: value });
   };
 
   const handleEmail = (e) => {
-    //validate email here
-    setForm({ ...form, email: e.currentTarget.value });
+    const text = e.currentTarget.value;
+    if (!/.+@.+..+/.test(text)) {
+      setErrors({ ...errors, email: "Email is not valid" });
+      setDisableSubmit(true);
+    } else {
+      setErrors({ ...errors, email: "" });
+      setDisableSubmit(false);
+    }
+
+    setValues({ ...values, email: text });
+  };
+
+  const handleCloseSaved = () => {
+    setIsSaved(false);
+    setDisableSubmit(false);
   };
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    console.log("Success");
+
+    const cleanForm = {
+      ...values,
+      gender: values.gender.toLowerCase(),
+    };
+
+    setDisableSubmit(true);
+
+    fetch(`/profile/${user.profile}`, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(cleanForm),
+    })
+      .then(() => setIsSaved(true))
   };
 
   return (
@@ -122,38 +207,43 @@ const ProfileEdit = function () {
       onSubmit={handleSubmit}
     >
       <Grid item>
-		  <h2>Edit Profile</h2>
+		  <h2 className={classes.title}>Edit Profile</h2>
       </Grid>
 
       {/*FIRST NAME*/}
       <InputText
-        id="first-name"
+        id="firstName"
         placeholder="John"
-        handleChange={handleText("firstName")}
+        value={values.firstName}
+        handleChange={handleInputChange}
       >
         FIRST NAME
       </InputText>
 
       {/*LAST NAME*/}
       <InputText
-        id="last-name"
+        id="lastName"
         placeholder="Doe"
-        handleChange={handleText("lastName")}
+        value={values.lastName}
+        handleChange={handleInputChange}
       >
         LAST NAME
       </InputText>
 
       {/*EMAIL ADDRESS*/}
       <Grid container item className={classes.input}>
-        <Grid item xs={4}>
+        <Grid item xs={4} md={3}>
           <Label id="email">EMAIL ADDRESS</Label>
         </Grid>
-        <Grid item xs={6}>
+        <Grid item xs={8} md={7}>
           <TextField
             id="email"
             fullWidth
             variant="outlined"
             type="email"
+            error={!!errors.email}
+            label={errors.email || ""}
+            value={values.email}
             placeholder="john-doe@gmail.com"
             onChange={handleEmail}
           />
@@ -164,21 +254,23 @@ const ProfileEdit = function () {
       <InputText
         id="address"
         placeholder="Address"
-        handleChange={handleText("address")}
+        value={values.address}
+        handleChange={handleInputChange}
       >
         WHERE YOU LIVE
       </InputText>
 
       {/*GENDER*/}
       <Grid container item className={classes.input}>
-        <Grid item xs={4}>
+        <Grid item xs={4} md={3}>
           <Label id="gender">GENDER</Label>
         </Grid>
-        <Grid item xs={4} sm={3}>
+        <Grid item xs={8} md={5}>
           <TextField
             id="gender"
-            value={form.gender}
-            onChange={handleSelect("gender")}
+            name="gender"
+            value={values.gender}
+            onChange={handleInputChange}
             select
             className={classes.select}
             variant="outlined"
@@ -194,29 +286,37 @@ const ProfileEdit = function () {
 
       {/*BIRTH DATE*/}
       <Grid container item alignItems="center" className={classes.input}>
-        <Grid item xs={4}>
+        <Grid item xs={4} md={3}>
           <Label>BIRTH DATE</Label>
         </Grid>
-        <Grid item xs={4} sm={3}>
-          <TextField
-            id="birth-date"
-            type="date"
-            className={classes.select}
-            onChange={handleText("birthDate")}
-          />
+        <Grid item xs={8} md={5}>
+          <MuiPickersUtilsProvider utils={DateFnsUtils}>
+            <DatePicker
+              value={values.birthDate || minDate}
+              className={classes.select}
+              maxDate={minDate}
+              format="dd/MM/yyyy"
+              views={["year", "month", "date"]}
+              disableFuture
+              onChange={handleDateChange("birthDate")}
+            />
+          </MuiPickersUtilsProvider>
         </Grid>
       </Grid>
 
       {/*PHONE NUMBER*/}
       <Grid container item className={classes.input}>
-        <Grid item xs={4}>
+        <Grid item xs={4} md={3}>
           <Label id="phone">PHONE NUMBER</Label>
         </Grid>
-        <Grid container alignItems="center" item xs={5} sm={4}>
+        <Grid container alignItems="center" item xs={8} md={5}>
           <Grid container item alignItems="center" justify="space-between">
             <PhoneInput
+              label={errors.phone || ""}
+              error={!!errors.phone}
               defaultCountry="ca"
               className={classes.select}
+              value={values.phone}
               regions="north-america"
               onChange={handlePhone}
             />
@@ -226,18 +326,20 @@ const ProfileEdit = function () {
 
       {/*DESCRIPTION*/}
       <Grid item container className={classes.input}>
-        <Grid item xs={4}>
+        <Grid item xs={4} md={3}>
           <Label id="description">DESCRIBE YOURSELF</Label>
         </Grid>
-        <Grid item xs={6}>
+        <Grid item xs={8} md={7}>
           <TextField
             id="description"
+            name="description"
             multiline
             fullWidth
+            value={values.description}
             rows={6}
             variant="outlined"
             placeholder="About you"
-            onChange={handleText("description")}
+            onChange={handleInputChange}
           />
         </Grid>
       </Grid>
@@ -245,6 +347,7 @@ const ProfileEdit = function () {
         <Button
           variant="contained"
           color="primary"
+          disabled={isSaved || disableSubmit}
           size="large"
           className={classes.bigRedButton}
           type="submit"
@@ -252,6 +355,15 @@ const ProfileEdit = function () {
           Save
         </Button>
       </Grid>
+      <Snackbar
+        open={isSaved}
+        onClose={handleCloseSaved}
+        autoHideDuration={3000}
+      >
+        <Alert severity="success" variant="filled">
+          Saved!
+        </Alert>
+      </Snackbar>
     </Grid>
   );
 };

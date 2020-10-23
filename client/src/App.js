@@ -12,7 +12,7 @@ import ProfileDetails from './pages/ProfileDetails';
 
 import { AuthProvider } from "./contexts/user";
 import PrivateRoute from "./components/PrivateRoute/";
-import { ProfileProvider } from "./contexts/profile";
+import ProfileProvider from "./contexts/profile";
 import BecomeASitter from "./pages/BecomeASitter";
 
 function App() {

@@ -16,12 +16,10 @@ import ProfileListings from './pages/ProfileListings';
 import BecomeASitter from "./pages/BecomeASitter";
 
 import { AuthProvider } from "./contexts/user";
-import { ProfileProvider } from "./contexts/profile";
+import ProfileProvider from "./contexts/profile";
 import { STRIPE_PUBLIC_KEY } from "./data/stripe";
 
-
 const stripe = loadStripe(STRIPE_PUBLIC_KEY);
-
 
 function App() {
   return (

@@ -17,11 +17,13 @@ import {
   CreditCard,
   Security,
   Settings,
-  PowerSettingsNew,
+  PowerSettingsNew, CalendarToday
 } from "@material-ui/icons";
 import EditProfilePhoto from "../components/EditProfilePhoto";
 import ProfileEdit from '../components/ProfileEdit'; 
 import { useUserContext } from "../contexts/user";
+import Availability from "../components/Availability";
+import { useProfileContext } from "../contexts/profile";
 
 const drawerWidth = 240;
 const useStyles = makeStyles((theme) => ({
@@ -72,6 +74,7 @@ const useStyles = makeStyles((theme) => ({
 
 function ProfileSettings({ children }) {
   const { handleLogOut} = useUserContext();
+  const { profile } = useProfileContext();
 
   const origin = "/me";
   const links = [
@@ -84,6 +87,12 @@ function ProfileSettings({ children }) {
       title: "Profile Photo",
       path: `${origin}/profile-photo`,
       icon: <Photo />,
+    },
+    {
+      title: "Availability",
+      path: `${origin}/availability`,
+      icon: <CalendarToday />,
+      hide: !(profile && profile.isSitter)
     },
     {
       title: "Payment",
@@ -100,7 +109,7 @@ function ProfileSettings({ children }) {
       path: `${origin}/settings`,
       icon: <Settings />,
     },
-  ];
+  ].filter(x => !x.hide);
   const classes = useStyles();
   return (
     <div className={classes.root}>
@@ -143,6 +152,7 @@ function ProfileSettings({ children }) {
         <Card className={classes.card}>
           <Route path={`${origin}/edit-profile`} component={ProfileEdit}/>
           <Route path={`${origin}/profile-photo`} component={EditProfilePhoto} />
+          {profile && profile.isSitter && <Route path={`${origin}/availability`} component={Availability} />}
           <Route path={`${origin}/payment`} />
           <Route path={`${origin}/security`} />
           <Route path={`${origin}/settings`} />

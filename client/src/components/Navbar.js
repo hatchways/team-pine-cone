@@ -38,24 +38,29 @@ function Navigation({ width, classes, anchorEl, handleClick, handleClose, profil
     {
       title: "Become A Sitter",
       path: "/become-a-sitter",
+      show: profile && !profile.isSitter
     },
     {
       title: "My Sitters",
       path: "/my-sitters",
+      show: true
     },
     {
       title: "My Jobs",
       path: "/my-jobs",
+      show: profile && profile.isSitter
     },
     {
       title: "Messages",
       path: "/messages",
+      show: true
     },
     {
       title: "Find a Sitter",
       path: "/profiles",
+		show: profile && !profile.isSitter
     },
-  ];
+  ].filter(x => x.show);
   if (width === "sm" || width === "xs") {
     return (
       <Fragment>

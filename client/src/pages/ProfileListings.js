@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useMemo } from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import { Grid, Typography, Button } from "@material-ui/core/";
 import ProfileListingItem from "../components/ProfileListingItem";
@@ -53,6 +53,11 @@ const ProfileListings = function () {
   const classes = useStyle();
   const [data, loading] = useFetch({ url: "/profile", init: { profiles: [] } });
 
+  const sitters = useMemo(
+    () => data.profiles.filter((profile) => profile.isSitter),
+    [data]
+  );
+
   const handleClickMore = () => {
     //need to add pagination
   };
@@ -66,7 +71,7 @@ const ProfileListings = function () {
       </Grid>
       <Grid item>
         <div className={classes.cards}>
-          {data.profiles.map((props, i) => (
+          {sitters.map((props, i) => (
             <ProfileListingItem key={props.firstName + i} {...props} />
           ))}
         </div>

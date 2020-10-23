@@ -109,8 +109,8 @@ client
 | /                |                 |
 | /signup          |                 |
 | /login           |                 |
-| /profiles        |                 |
-| /profiles/:id    |                 |
+| /profiles        |       Yes       |
+| /profiles/:id    |       Yes       |
 | /me              |       Yes       |
 | /become-a-sitter |       Yes       |
 | /my-sitters      |       Yes       |

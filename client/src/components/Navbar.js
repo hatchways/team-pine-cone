@@ -33,29 +33,41 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-function Navigation({ width, classes, anchorEl, handleClick, handleClose, profile }) {
+function Navigation({
+  width,
+  classes,
+  anchorEl,
+  handleClick,
+  handleClose,
+  profile,
+}) {
   const navLinks = [
     {
       title: "Become A Sitter",
       path: "/become-a-sitter",
-      show: profile && !profile.isSitter
+      show: profile && !profile.isSitter,
     },
     {
       title: "My Sitters",
       path: "/my-sitters",
-      show: true
+      show: true,
     },
     {
       title: "My Jobs",
       path: "/my-jobs",
-      show: profile && profile.isSitter
+      show: profile && profile.isSitter,
     },
     {
       title: "Messages",
       path: "/messages",
-      show: true
+      show: true,
     },
-  ].filter(x => x.show);
+    {
+      title: "Find a Sitter",
+      path: "/profiles",
+      show: true,
+    },
+  ].filter((x) => x.show);
   if (width === "sm" || width === "xs") {
     return (
       <Fragment>
@@ -84,14 +96,9 @@ function Navigation({ width, classes, anchorEl, handleClick, handleClose, profil
               {title}
             </MenuItem>
           ))}
-            <MenuItem
-              component={Link}
-              to={"/me"}
-              key="me"
-              onClick={handleClose}
-            >
-              Me
-            </MenuItem>
+          <MenuItem component={Link} to={"/me"} key="me" onClick={handleClose}>
+            Me
+          </MenuItem>
         </Menu>
       </Fragment>
     );
@@ -110,7 +117,11 @@ function Navigation({ width, classes, anchorEl, handleClick, handleClose, profil
           </NavLink>
         ))}
         <NavLink className={classes.linkText} to="/me">
-          {profile && profile.photo ? <Avatar src={profile.photo} /> : <Avatar>{profile ? profile.firstName[0] : "?"}</Avatar>}
+          {profile && profile.photo ? (
+            <Avatar src={profile.photo} />
+          ) : (
+            <Avatar>{profile ? profile.firstName[0] : "?"}</Avatar>
+          )}
         </NavLink>
       </List>
     );
@@ -136,15 +147,18 @@ function Navbar(props) {
     anchorEl,
     handleClick,
     handleClose,
-    width: props.width
+    width: props.width,
   };
   return user ? (
     <ProfileContext.Consumer>
-      {value => (
+      {(value) => (
         <AppBar position="fixed" className={classes.navbar}>
           <Toolbar className={classes.navDisplay}>
             <NavLink to="/">
-              <img alt="Loving Sitter" src={window.origin + "/assets/logo.png"} />
+              <img
+                alt="Loving Sitter"
+                src={window.origin + "/assets/logo.png"}
+              />
             </NavLink>
             <Navigation profile={value.profile} {...navOptions} />
           </Toolbar>

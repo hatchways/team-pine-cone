@@ -8,26 +8,27 @@ import { useStyle } from "../pages/ProfileListings";
 
 const Item = function (props) {
   const {
-    src,
+    photo,
     firstName,
     lastName,
-    shortDescription,
-    rating,
-    hourlyRate,
-    location,
+    description,
+    rating = 0,
+    hourlyRate = "$14.25",
+    location = "Toronto, Ontario",
   } = props;
   const classes = useStyle();
   const history = useHistory();
 
   // go to individual listing from here
   const handleClick = () => history.push("/profiles/:id");
+	console.log(firstName)
 
   return (
     <Grid item xs={12} className={classes.card} onClick={handleClick}>
       <Grow in={true}>
         <Grid container spacing={2} direction="column" alignItems="center">
           <Grid item>
-            <Avatar className={classes.avatar} src={src} alt={lastName} />
+            <Avatar className={classes.avatar} src={photo} alt={lastName} />
           </Grid>
           <Grid item>
             <Grid container alignItems="center" direction="column">
@@ -40,7 +41,7 @@ const Item = function (props) {
               {/*title*/}
               <Grid item id="title">
                 <Typography variant="body1" className={classes.subtile}>
-                  Loving Cat Sitter
+                  Loving Dog Sitter
                 </Typography>
               </Grid>
             </Grid>
@@ -51,7 +52,7 @@ const Item = function (props) {
           <Grid item id="shortDescription">
             {/*shortDescription*/}
             <Typography variant="body1" className={classes.description}>
-              {shortDescription}
+              {description}
             </Typography>
           </Grid>
           <Grid item className={classes.cardBottom}>
@@ -64,7 +65,8 @@ const Item = function (props) {
                   {/*location*/}
                   <Grid item id="location">
                     <Typography className={classes.subtile}>
-                      {location}
+						{/*temp*/}
+                      Toronto Ontario
                     </Typography>
                   </Grid>
                 </Grid>

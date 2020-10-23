@@ -4,7 +4,6 @@ import { Grid, Typography, Button } from "@material-ui/core/";
 import ProfileListingItem from "../components/ProfileListingItem";
 import { useFetch } from '../hooks/useFetch';
 
-const initUsers = [user, user, user, user, user, user, user, user];
 
 export const useStyle = makeStyles((theme) => ({
   root: {
@@ -60,10 +59,11 @@ const user = {
   location: "Toronto, Ontario",
   hourlyRate: "14$/hr",
 };
+const initUsers = [user, user, user, user, user, user, user, user];
 
 const ProfileListings = function () {
   const classes = useStyle();
-	const [profiles] = useFetch({url: '/profile'});
+	const [data] = useFetch({url: '/profile', init: {profiles: []}});
 
   const handleClickMore = () => {
   };
@@ -77,7 +77,7 @@ const ProfileListings = function () {
       </Grid>
       <Grid item>
         <div className={classes.cards}>
-          {profiles.map((props, i) => (
+          {data.profiles.map((props, i) => (
             <ProfileListingItem key={props.firstName + i} {...props} />
           ))}
         </div>

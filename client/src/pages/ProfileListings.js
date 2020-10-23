@@ -4,6 +4,8 @@ import { Grid, Typography, Button } from "@material-ui/core/";
 import ProfileListingItem from "../components/ProfileListingItem";
 import { useFetch } from '../hooks/useFetch';
 
+const initUsers = [user, user, user, user, user, user, user, user];
+
 export const useStyle = makeStyles((theme) => ({
   root: {
     flexWrap: "nowrap",
@@ -59,14 +61,11 @@ const user = {
   hourlyRate: "14$/hr",
 };
 
-const initUsers = [user, user, user, user, user, user, user, user];
-
 const ProfileListings = function () {
   const classes = useStyle();
-  const [users, setUsers] = useState(initUsers);
+	const [profiles] = useFetch({url: '/profile'});
 
   const handleClickMore = () => {
-    setUsers([...users, user]);
   };
 
   return (
@@ -78,7 +77,7 @@ const ProfileListings = function () {
       </Grid>
       <Grid item>
         <div className={classes.cards}>
-          {users.map((props, i) => (
+          {profiles.map((props, i) => (
             <ProfileListingItem key={props.firstName + i} {...props} />
           ))}
         </div>

@@ -1,6 +1,6 @@
 import DateFnsUtils from '@date-io/date-fns';
 import { Grid, IconButton, makeStyles, Typography } from '@material-ui/core';
-import { Add, Delete, PlusOneRounded } from '@material-ui/icons';
+import { Add, Delete } from '@material-ui/icons';
 import { DateTimePicker, MuiPickersUtilsProvider } from '@material-ui/pickers';
 import React, { useState } from 'react';
 import { useProfileContext } from '../contexts/profile';

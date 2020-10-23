@@ -3,6 +3,7 @@ import { makeStyles } from "@material-ui/core/styles";
 import { Grid, Typography, Button } from "@material-ui/core/";
 import ProfileListingItem from "../components/ProfileListingItem";
 import { useFetch } from "../hooks/useFetch";
+import SnackBar from '../components/DefaultSnackbar';
 
 export const useStyle = makeStyles((theme) => ({
   root: {
@@ -51,7 +52,7 @@ export const useStyle = makeStyles((theme) => ({
 
 const ProfileListings = function () {
   const classes = useStyle();
-  const [data, loading] = useFetch({ url: "/profile", init: { profiles: [] } });
+  const [data, loading, error] = useFetch({ url: "/profile", init: { profiles: [] } });
 
   const sitters = useMemo(
     () => data.profiles.filter((profile) => profile.isSitter),
@@ -61,6 +62,7 @@ const ProfileListings = function () {
   const handleClickMore = () => {
     //need to add pagination
   };
+	console.log(error)
 
   return (
     <Grid container direction="column" className={classes.root}>

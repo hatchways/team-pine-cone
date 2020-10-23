@@ -16,3 +16,16 @@ in the terminal. Once the Daemon has started, navigate in the terminal to this p
 cd server
 npm run dev
 ```
+
+This is the necessary .env file needed to run the application:
+```
+MONGODB_URI=<MONGODB_URI>
+ACCESS_TOKEN_NAME=<ACCESS_TOKEN_NAME>
+ACCESS_TOKEN_SECRET=<ACCESS_TOKEN_SECRET>
+ACCESS_TOKEN_LIFE=<ACCESS_TOKEN_LIFE>
+AWSAccessKeyId=<AWSAccessKeyId>
+AWSSecretKey=<AWSSecretKey>
+S3_BUCKET=<S3_BUCKET>
+STRIPE_KEY=<STRIPE_KEY>
+STRIPE_SECRET=<STRIPE_SECRET>
+```

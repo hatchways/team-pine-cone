@@ -2,7 +2,8 @@ import { useState, useEffect } from "react";
 
 export const useFetch = function (options) {
   const [value, setValue] = useState(options.init);
-  const [meta, setMeta] = useState({ loading: true, error: null });
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
     const req = !options.method
@@ -17,13 +18,13 @@ export const useFetch = function (options) {
       .then((res) => res.json())
       .then((data) => setValue(data))
       .catch((err) => {
-        setMeta({ ...meta, error: err });
+        setError(err.message);
         console.log(err);
       })
-      .finally(() => setMeta({ ...meta, loading: false }));
+      .finally(() => setLoading(false));
   }, [options.url, options.method, options.params]);
 
   const updateValue = (newValue) => setValue(newValue);
 
-  return [value, meta.loading, meta.error, updateValue];
+  return [value, loading, error, updateValue];
 };

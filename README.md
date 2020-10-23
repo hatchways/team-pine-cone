@@ -29,3 +29,27 @@ S3_BUCKET=<S3_BUCKET>
 STRIPE_KEY=<STRIPE_KEY>
 STRIPE_SECRET=<STRIPE_SECRET>
 ```
+
+## Links to APIS
+
+- [Amazon S3](https://aws.amazon.com/s3/)
+- [Amazon Web Services](https://aws.amazon.com/products/)
+- [Stripe](https://stripe.com/en-ca)
+
+### Passport
+
+## Backend
+-----------
+
+```
+server
+|-----bin
+|      └---- www*  # HTTP Server entry point
+|-----controllers  # 
+|-----middleware
+|-----models
+|-----routes
+|-----test
+└----utils
+
+```

@@ -12,9 +12,7 @@ const useStyles = makeStyles(theme => ({
     alignItems: "center",
     width: "100%",
     marginBottom: 10,
-    backgroundColor: theme.palette.primary.light,
-    color: "#fcfcfc",
-    fontWeight: 700,
+    color: theme.palette.primary.light,
     padding: 10,
     [theme.breakpoints.between("xs", "sm")]: {
         flexDirection: "column"

@@ -20,6 +20,7 @@ const useStyles = makeStyles(theme => ({
   },
   label: {
       margin: "0px 25px",
+      fontWeight: 700,
       [theme.breakpoints.between("xs", "sm")]: {
           margin: 25
       }

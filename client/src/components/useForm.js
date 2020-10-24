@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState } from "react";
 
 export default function useForm(initialFormValues) {
 
@@ -10,7 +10,7 @@ export default function useForm(initialFormValues) {
     setValues({
       ...values,
       [name]: value
-    })
+    });
   };
 
   const handleCheckboxChange = (e) => {
@@ -21,12 +21,12 @@ export default function useForm(initialFormValues) {
     });
   };
 
-	const handleDateChange = name => value => {
-		setValues({
-			...values,
-			[name]: value
-		});
-	};
+  const handleDateChange = name => value => {
+    setValues({
+      ...values,
+      [name]: value
+    });
+  };
 
   // Return object of re-usable variables or functions
   return {
@@ -35,7 +35,7 @@ export default function useForm(initialFormValues) {
     errors,
     setErrors,
     handleInputChange,
-	  handleDateChange,
+    handleDateChange,
     handleCheckboxChange
-  }
+  };
 }

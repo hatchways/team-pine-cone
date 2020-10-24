@@ -11,30 +11,32 @@ const loginUser = async (req, res, next) => {
     return next(createError(422, "Email and password are both required."));
   }
 	
-  try {
-    const user = await User.findOne({email: email.toLowerCase()});
+	try {
+		console.log(email, password)
+		const user = await User.findOne({email: email.toLowerCase()});
 
-    if (!user) {
-      return next(createError(404, "User not found."));
-    }
+		if (!user) {
+			return next(createError(404, 'User not found.'));
+		}
 
-    const passwordsMatch = await user.verifyPassword(password);
+		const passwordsMatch = await user.verifyPassword(password);
 
-    if (!passwordsMatch) {
-      return next(createError(403));
-    }
+		if (!passwordsMatch) {
+			return next(createError(403));
+		}
 
-    jwtCookie(user, res);
+		jwtCookie(user, res);
 
-    return res
-      .status(200)
-      .json({ user: {
-        id: user.id,
-        email: user.email
-      }});
-  } catch (err) {
-    next(createError(500, err.message));
-  }
+		return res
+			.status(200)
+			.json({ user: {
+				id: user.id,
+				email: user.email,
+				profile: user.profile
+			}});
+	} catch (err) {
+		next(createError(500, err.message));
+	}
 };
 
 module.exports = { loginUser };

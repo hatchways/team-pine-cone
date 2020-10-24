@@ -1,6 +1,9 @@
 import React from "react";
+import "date-fns";
+import { addYears } from "date-fns";
 import { Redirect } from "react-router-dom";
 import { NavLink } from "react-router-dom";
+import DateFnsUtils from "@date-io/date-fns";
 
 import Button from "@material-ui/core/Button";
 import Grid from "@material-ui/core/Grid";
@@ -10,11 +13,15 @@ import Container from "@material-ui/core/Container";
 import useForm from "../components/useForm";
 import Input from "../components/controls/Input";
 import { Toolbar } from "@material-ui/core";
+import { MuiPickersUtilsProvider, DatePicker } from "@material-ui/pickers";
+import PhoneInput from "material-ui-phone-number";
 
 import Copyright from "../components/Copyright";
 import useFormStyles from "../themes/useFormStyles";
 
 import { useUserContext } from "../contexts/user";
+
+const minDate = addYears(new Date(), -18);
 
 const initialFormValues = {
   firstName: "",
@@ -22,6 +29,8 @@ const initialFormValues = {
   email: "",
   password: "",
   confirmPassword: "",
+  birthDate: minDate,
+  phone: "",
 };
 
 export default function SignUp() {
@@ -33,6 +42,7 @@ export default function SignUp() {
     temp.firstName = values.firstName ? "" : "This field is required.";
     temp.lastName = values.lastName ? "" : "This field is required.";
     temp.email = /.+@.+..+/.test(values.email) ? "" : "Email is not valid";
+	  temp.phone = /\+1 \(\d{3}\) \d{3}-\d{4}/.test(values.phone) ? "" : "Phone number is not valid";
     temp.password =
       values.password.length >= 6 ? "" : "Minimum of 6 charactes required.";
     temp.confirmPassword =
@@ -47,9 +57,13 @@ export default function SignUp() {
     return Object.values(temp).every((x) => x === "");
   };
 
-  const { values, errors, setErrors, handleInputChange } = useForm(
-    initialFormValues
-  );
+  const {
+    values,
+    errors,
+    setErrors,
+    handleInputChange,
+    handleDateChange,
+  } = useForm(initialFormValues);
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -90,6 +104,34 @@ export default function SignUp() {
                 name="lastName"
                 autoComplete="lname"
                 error={errors.lastName}
+              />
+            </Grid>
+            <Grid item xs={6}>
+              <MuiPickersUtilsProvider utils={DateFnsUtils}>
+                <DatePicker
+                  disableFuture
+                  fullWidth
+                  maxDate={minDate}
+                  format="dd/MM/yyyy"
+                  inputVariant="outlined"
+                  openTo="year"
+                  label="Date of birth"
+                  views={["year", "month", "date"]}
+                  value={values.birthDate}
+                  onChange={handleDateChange("birthDate")}
+                />
+              </MuiPickersUtilsProvider>
+            </Grid>
+            <Grid item xs={6}>
+              <PhoneInput
+                defaultCountry="ca"
+                fullWidth
+                variant="outlined"
+                regions="north-america"
+                onChange={handleDateChange("phone")}
+                value={values.phone}
+			  error={!!errors.phone}
+			  label={errors.phone || 'Phone Number'}
               />
             </Grid>
             <Grid item xs={12}>

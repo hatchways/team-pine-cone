@@ -1,18 +1,25 @@
-const createError = require("http-errors");
-const { validationResult } = require("express-validator");
-const { User } = require("../models/");
-const { jwtCookie } = require("../utils/jwt");
+const createError = require('http-errors');
+const { validationResult } = require('express-validator');
+const { User } = require('../models/');
+const { Profile } = require('../models/');
+const { jwtCookie } = require('../utils/jwt');
 
 const registerUser = async (req, res, next) => {
-  const {email, password} = req.body;
-  const errors = validationResult(req);
+	const {email, password, ...profileProps} = req.body;
+	const errors = validationResult(req);
 
   if (!errors.isEmpty()) {
     return res.status(422).json({ errors });
   }
 
-  try {
-    const user = await User.createUser(email, password);
+	try {
+		//need to inclue location for now this will relax it
+		const profile = await Profile.create({...profileProps, location: {type: "Point"}});
+		const user = await User.create({
+			email,
+			password,
+			profile: profile._id
+		});
 
     jwtCookie(user, res);
 

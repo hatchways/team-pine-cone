@@ -3,6 +3,8 @@ import { makeStyles } from "@material-ui/core/styles";
 import { Grid, Typography, Button } from "@material-ui/core/";
 import ProfileListingItem from "../components/ProfileListingItem";
 import { useFetch } from "../hooks/useFetch";
+import Snackbar from "../components/DefaultSnackbar";
+import Splash from "../components/Splash";
 
 export const useStyle = makeStyles((theme) => ({
   root: {
@@ -51,7 +53,10 @@ export const useStyle = makeStyles((theme) => ({
 
 const ProfileListings = function () {
   const classes = useStyle();
-  const [data, loading] = useFetch({ url: "/profile", init: { profiles: [] } });
+  const [data, loading, error] = useFetch({
+    url: "/profile",
+    init: { profiles: [] },
+  });
 
   const sitters = useMemo(
     () => data.profiles.filter((profile) => profile.isSitter),
@@ -68,16 +73,27 @@ const ProfileListings = function () {
         <Typography className={classes.title} variant="h3" align="center">
           Search Results
         </Typography>
+        <Snackbar open={error} />
       </Grid>
-      <Grid item>
-        <div className={classes.cards}>
-          {sitters.map((props, i) => (
-            <ProfileListingItem key={props._id} {...props} />
-          ))}
-        </div>
-      </Grid>
+
+      <Splash loading={loading}>
+        {!loading && !error && sitters.length === 0 ? (
+          <Grid item>
+            <Typography color="primary" variant="h5" align="center">
+              No Results Found
+            </Typography>
+          </Grid>
+        ) : null}
+        <Grid item>
+          <div className={classes.cards}>
+            {sitters.map((props, i) => (
+              <ProfileListingItem key={props._id} {...props} />
+            ))}
+          </div>
+        </Grid>
+      </Splash>
       <Grid item style={{ margin: "2em auto" }}>
-        {!loading ? (
+        {!error && !loading && sitters.length > 0 ? (
           <Button
             onClick={handleClickMore}
             className={classes.button}
@@ -89,6 +105,7 @@ const ProfileListings = function () {
           </Button>
         ) : null}
       </Grid>
+      <Snackbar open={error} />
     </Grid>
   );
 };

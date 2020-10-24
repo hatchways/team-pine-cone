@@ -64,7 +64,10 @@ const profileSchema = new Schema({
   requests: [{
     type: Schema.Types.ObjectId,
     ref: "Request"
-  }]
+  }],
+	stripeId: { 
+		type: String
+	}
 });
 
 profileSchema.pre("save", function(next) {

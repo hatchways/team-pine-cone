@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Zoom, Button, Fade, Grid } from "@material-ui/core";
+import { Zoom, Button, Fade, Grid, CircularProgress } from "@material-ui/core";
 import { makeStyles } from "@material-ui/styles";
 import {
   CardNumberElement,
@@ -11,6 +11,8 @@ import {
 import StripeInput from "./StripeInput";
 import Card from "./Card";
 import Snackbar from "../DefaultSnackbar";
+import { useUserContext } from "../../contexts/user";
+import { useFetch } from "../../hooks/useFetch";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -49,13 +51,27 @@ const useStyles = makeStyles((theme) => ({
   },
   container: {
     minHeight: "300px",
+	  position: "relative"
   },
+	loader: { 
+		position: "absolute",
+		top: 0,
+		bottom: 0,
+		left: 0,
+		right: 0,
+		margin: "auto"
+	}
 }));
 
 const ProfilePayments = function () {
   const classes = useStyles();
   const stripe = useStripe();
   const elements = useElements();
+  const { user } = useUserContext();
+  const [{ data: cards }, loading, error, setCards] = useFetch({
+    init: { data: [] },
+    url: `/payment/payment_methods/${user.profile}`,
+  });
   const [cardData, setCardData] = useState(null);
   const [addingCard, setAddingCard] = useState(false);
 
@@ -73,8 +89,21 @@ const ProfilePayments = function () {
       })
       .then((data) => {
         if (data.error) return;
+		  console.log(data)
+
+        fetch("/payment/payment_methods", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            user_id: user._id,
+            card_id: data.paymentMethod.id,
+          }),
+        })
+          .then((res) => res.json())
         setAddingCard(false);
-        setCardData(data.paymentMethod.card);
+        setCards({ data: [...cards, data.paymentMethod]});
       });
   };
 
@@ -82,8 +111,9 @@ const ProfilePayments = function () {
     <Grid container direction="column">
       <h2 className={classes.title}>Payment Methods</h2>
       <div className={classes.container}>
-        {!!cardData && !addingCard ? (
-          <Card active={cardData.brand} last4={cardData.last4} exp="10/22" />
+		  { loading && <CircularProgress className={classes.loader} /> }
+        {cards.length > 0 && !addingCard ? (
+          cards.map(data => <Card key={data.id} {...data.card} />)
         ) : (
           <Fade in={addingCard}>
             <form className={classes.form} onSubmit={handleSubmit}>
@@ -130,10 +160,13 @@ const ProfilePayments = function () {
           variant="outlined"
           size="large"
           color="primary"
+			disabled={ loading }
           className={classes.button}
           onClick={() => setAddingCard(true)}
         >
-          {cardData ? "Change payment profile" : "Add new payment profile"}
+          {cards.length > 0
+            ? "Change payment profile"
+            : "Add new payment profile"}
         </Button>
       </Zoom>
     </Grid>

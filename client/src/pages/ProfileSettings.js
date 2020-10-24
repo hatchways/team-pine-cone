@@ -20,7 +20,7 @@ import {
   PowerSettingsNew, CalendarToday
 } from "@material-ui/icons";
 import EditProfilePhoto from "../components/EditProfilePhoto";
-import ProfileEdit from '../components/ProfileEdit'; 
+import ProfileEdit from "../components/ProfileEdit"; 
 import { useUserContext } from "../contexts/user";
 import Availability from "../components/Availability";
 import { useProfileContext } from "../contexts/profile";
@@ -72,7 +72,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-function ProfileSettings({ children }) {
+function ProfileSettings() {
   const { handleLogOut} = useUserContext();
   const { profile } = useProfileContext();
 

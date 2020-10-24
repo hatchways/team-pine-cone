@@ -8,26 +8,26 @@ export const initalState = {
 
 export const AuthReducer = (initalState, action) => {
   switch (action.type) {
-    case "REQUEST":
-      return {
-        ...initalState,
-        loading: true,
-        errorMessage: null,
-      };
-    case "SUCCESS":
-      return {
-        ...initalState,
-        user: action.payload.user,
-        loading: false,
-      };
-    case "ERROR":
-      return {
-        ...initalState,
-        loading: false,
-        errorMessage: action.error,
-      };
-    default:
-      throw new Error(`Action type: ${action.type} not found.`);
+  case "REQUEST":
+    return {
+      ...initalState,
+      loading: true,
+      errorMessage: null,
+    };
+  case "SUCCESS":
+    return {
+      ...initalState,
+      user: action.payload.user,
+      loading: false,
+    };
+  case "ERROR":
+    return {
+      ...initalState,
+      loading: false,
+      errorMessage: action.error,
+    };
+  default:
+    throw new Error(`Action type: ${action.type} not found.`);
   }
 };
 
@@ -40,12 +40,12 @@ export default function () {
       const req = !params
         ? fetch(url)
         : fetch(url, {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify({ ...params }),
-          });
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ ...params }),
+        });
 
       const res = await req;
       if (res.status === 401)

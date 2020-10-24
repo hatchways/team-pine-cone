@@ -7,7 +7,7 @@ import {
   ListItemIcon,
   ListItemText,
   makeStyles,
-  Toolbar
+  Toolbar,
 } from "@material-ui/core";
 import React from "react";
 import { Link, Route } from "react-router-dom";
@@ -17,11 +17,12 @@ import {
   CreditCard,
   Security,
   Settings,
-  PowerSettingsNew, CalendarToday
+  PowerSettingsNew,
+  CalendarToday,
 } from "@material-ui/icons";
 import EditProfilePhoto from "../components/EditProfilePhoto";
 import ProfilePayments from "../components/ProfilePayments/";
-import ProfileEdit from '../components/ProfileEdit'; 
+import ProfileEdit from "../components/ProfileEdit";
 import { useUserContext } from "../contexts/user";
 import Availability from "../components/Availability";
 import { useProfileContext } from "../contexts/profile";
@@ -49,7 +50,7 @@ const useStyles = makeStyles((theme) => ({
   noMobileText: {
     display: "auto",
     [theme.breakpoints.between("xs", "sm")]: {
-      display: "none"
+      display: "none",
     },
   },
   drawerContainer: {
@@ -58,7 +59,7 @@ const useStyles = makeStyles((theme) => ({
   content: {
     flexGrow: 1,
     padding: theme.spacing(3),
-    overflow: "scroll"
+    overflow: "scroll",
   },
   root: {
     display: "flex",
@@ -67,6 +68,7 @@ const useStyles = makeStyles((theme) => ({
   card: {
     padding: theme.spacing(3),
     height: "max-content",
+	  minHeight: "75vh"
   },
   logout: {
     cursor: "pointer",
@@ -74,7 +76,7 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 function ProfileSettings({ children }) {
-  const { handleLogOut} = useUserContext();
+  const { handleLogOut } = useUserContext();
   const { profile } = useProfileContext();
 
   const origin = "/me";
@@ -93,7 +95,7 @@ function ProfileSettings({ children }) {
       title: "Availability",
       path: `${origin}/availability`,
       icon: <CalendarToday />,
-      hide: !(profile && profile.isSitter)
+      hide: !(profile && profile.isSitter),
     },
     {
       title: "Payment",
@@ -110,7 +112,7 @@ function ProfileSettings({ children }) {
       path: `${origin}/settings`,
       icon: <Settings />,
     },
-  ].filter(x => !x.hide);
+  ].filter((x) => !x.hide);
   const classes = useStyles();
   return (
     <div className={classes.root}>
@@ -151,10 +153,15 @@ function ProfileSettings({ children }) {
       <div className={classes.content}>
         <Toolbar />
         <Card className={classes.card}>
-          <Route path={`${origin}/edit-profile`} component={ProfileEdit}/>
-          <Route path={`${origin}/profile-photo`} component={EditProfilePhoto} />
-          {profile && profile.isSitter && <Route path={`${origin}/availability`} component={Availability} />}
-          <Route path={`${origin}/payment`} />
+          <Route path={`${origin}/edit-profile`} component={ProfileEdit} />
+          <Route
+            path={`${origin}/profile-photo`}
+            component={EditProfilePhoto}
+          />
+          {profile && profile.isSitter && (
+            <Route path={`${origin}/availability`} component={Availability} />
+          )}
+          <Route path={`${origin}/payment`} component={ProfilePayments} />
           <Route path={`${origin}/security`} />
           <Route path={`${origin}/settings`} />
         </Card>

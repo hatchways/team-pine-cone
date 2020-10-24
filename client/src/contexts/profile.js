@@ -5,7 +5,7 @@ import React, {
   useEffect,
   useRef,
 } from "react";
-import { useLocation, withRouter } from "react-router-dom";
+import { useLocation } from "react-router-dom";
 
 export const ProfileContext = createContext(null);
 
@@ -53,4 +53,4 @@ function ProfileProvider(props) {
   );
 }
 
-export default withRouter(ProfileProvider);
+export default ProfileProvider;

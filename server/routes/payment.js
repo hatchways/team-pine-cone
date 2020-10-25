@@ -1,9 +1,13 @@
 const express = require("express");
-const { createPaymentMethod, getPaymentMethods } = require("../controllers/payment");
+const {
+  createPaymentMethod,
+  getPaymentMethods,
+} = require("../controllers/payment");
+const { authenticate } = require("../middleware/authenticate");
 
 const Router = express.Router();
 
-Router.post("/payment_methods", createPaymentMethod);
-Router.get("/payment_methods/:profile_id", getPaymentMethods);
+Router.post("/methods", authenticate(), createPaymentMethod);
+Router.get("/methods/:profile_id", authenticate(), getPaymentMethods);
 
 module.exports = Router;

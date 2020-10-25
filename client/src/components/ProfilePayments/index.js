@@ -21,7 +21,7 @@ const useStyles = makeStyles((theme) => ({
   },
   title: {
     textAlign: "center",
-    marginBottom: "2em",
+    marginBottom: "3em",
   },
   typing: {
     fontWeight: "500",
@@ -63,6 +63,9 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
+const cardErrorMessage =
+  "Your credit card may be invalid or could not be processed at this time.";
+
 const ProfilePayments = function () {
   const classes = useStyles();
   const stripe = useStripe();
@@ -85,6 +88,7 @@ const ProfilePayments = function () {
   const handleSubmit = (e) => {
     e.preventDefault();
 
+    if (error) setError(null);
     if (!stripe || !elements) return;
 
     const cardElement = elements.getElement(CardNumberElement);
@@ -95,11 +99,9 @@ const ProfilePayments = function () {
         card: cardElement,
       })
       .then((data) => {
-        if (data.error) return;
+        if (data.error) return setError(cardErrorMessage);
 
         setLoading(true);
-
-        if (error) setError(null);
 
         fetch("/payment/payment_methods", {
           method: "POST",
@@ -114,13 +116,10 @@ const ProfilePayments = function () {
           .then((res) => res.json())
           .then((profile) => {
             setAddingCard(false);
-            setCards({ data: [...cards, data.paymentMethod] });
+            //when adding more then one card spread the array here
+            setCards({ data: [data.paymentMethod] });
           })
-          .catch(() =>
-            setError(
-              "Your credit card may be invalid or could not be processed at this time."
-            )
-          )
+          .catch(() => setError(cardErrorMessage))
           .finally(() => setLoading(false));
       });
   };

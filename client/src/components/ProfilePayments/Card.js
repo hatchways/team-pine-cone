@@ -13,7 +13,7 @@ const useStyles = makeStyles((theme) => ({
     boxShadow: theme.boxShadows.main,
     margin: "0 auto",
     cursor: "pointer",
-	  background: "rgba(220,220,220, 0.5)"
+    background: "rgba(220,220,220, 0.5)",
   },
   text: {
     fontWeight: "500",
@@ -33,7 +33,7 @@ const CreditCard = function ({ last4, brand, exp_month, exp_year }) {
   return (
     <Grid direction="column" container className={classes.card}>
       <Grid container justify="space-between">
-        <CardDisplay active={brand} expand />
+        <CardDisplay active={brand === "mastercard" ? "mc" : brand} expand />
         <CheckCircle color="primary" fontSize="large" />
       </Grid>
       <Grid item className={classes.bottomCard}>

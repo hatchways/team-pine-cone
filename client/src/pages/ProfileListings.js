@@ -1,6 +1,7 @@
 import React, { useMemo } from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import { Grid, Typography, Button } from "@material-ui/core/";
+import PetsIcon from "@material-ui/icons/Pets";
 import ProfileListingItem from "../components/ProfileListingItem";
 import { useFetch } from "../hooks/useFetch";
 import Snackbar from "../components/DefaultSnackbar";
@@ -49,6 +50,11 @@ export const useStyle = makeStyles((theme) => ({
   button: {
     padding: "1.5em 3em",
   },
+  paw: {
+    width: "5em",
+    height: "5em",
+    marginTop: "2em",
+  },
 }));
 
 const ProfileListings = function () {
@@ -78,9 +84,18 @@ const ProfileListings = function () {
 
       <Splash loading={loading}>
         {!loading && !error && sitters.length === 0 ? (
-          <Grid item>
-            <Typography color="primary" variant="h5" align="center">
-              No Results Found
+          <Grid container direction="column" alignItems="center">
+            <PetsIcon
+              fontSize="large"
+              color="primary"
+              className={classes.paw}
+            />
+            <Typography
+              variant="h4"
+              align="center"
+              className={classes.description}
+            >
+              No Pet Sitters Available
             </Typography>
           </Grid>
         ) : null}

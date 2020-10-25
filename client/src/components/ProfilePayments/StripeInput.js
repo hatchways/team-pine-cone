@@ -3,8 +3,7 @@ import { FormControl, InputLabel, Input } from "@material-ui/core";
 
 const StripeInput = function ({ Component, label }) {
   const [error, setError] = useState(null);
-  const [input, setInput] = useState("");
-	const [test, sdfsd] = useState('');
+  const [input] = useState("");
 
   const handleChange = (e) => {
     if (e.error) {

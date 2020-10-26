@@ -1,17 +1,14 @@
-import "date-fns";
-import { addHours } from "date-fns";
 import React, { useState } from "react";
-import DateFnsUtils from "@date-io/date-fns";
 import { Grid, Avatar, Typography, Button, Grow } from "@material-ui/core";
 import { Rating } from "@material-ui/lab";
 import { makeStyles } from "@material-ui/core/styles";
 import RoomIcon from "@material-ui/icons/Room";
-import { DateTimePicker, MuiPickersUtilsProvider } from "@material-ui/pickers";
 import useScrollToTop from "../hooks/useScrollToTop";
 import { useParams } from "react-router-dom";
 import { useFetch } from "../hooks/useFetch";
 import Snackbar from "../components/DefaultSnackbar";
 import Splash from "../components/Splash";
+import DateTimePickerRanges from "../components/DateTimePickerRanges";
 
 export const useStyles = makeStyles((theme) => ({
   root: {
@@ -74,8 +71,8 @@ export const useStyles = makeStyles((theme) => ({
 }));
 
 const ProfileDetails = function () {
-  const [selectDropIn, setSelectDropIn] = useState(addHours(new Date(), 1));
-  const [selectDropOff, setSelectDropOff] = useState(addHours(new Date(), 2));
+  const [selectDropIn, setSelectDropIn] = useState(null);
+  const [selectDropOff, setSelectDropOff] = useState(null);
   const classes = useStyles();
   const params = useParams();
   const [profile, loading, error] = useFetch({
@@ -92,6 +89,7 @@ const ProfileDetails = function () {
     hourlyRate = "$14.25",
     ratings = 0,
     location = {},
+    availability,
   } = profile;
   const fullName = firstName ? firstName + " " + lastName : "";
 
@@ -206,37 +204,17 @@ const ProfileDetails = function () {
               </Grid>
             </Grid>
             <Grid item className={classes.mb3}>
-              <MuiPickersUtilsProvider utils={DateFnsUtils}>
-                <Grid
-                  container
-                  alignItems="center"
-                  direction="column"
-                  spacing={2}
-                >
-                  <Grid item xs={6}>
-                    <DateTimePicker
-                      strictCompareDates
-                      disablePast
-                      fullWidth
-                      value={selectDropIn}
-                      onChange={setSelectDropIn}
-                      label="Drop In"
-                      inputVariant="outlined"
-                    />
-                  </Grid>
-                  <Grid item xs={6}>
-                    <DateTimePicker
-                      disablePast
-                      strictCompareDates
-                      fullWidth
-                      value={selectDropOff}
-                      onChange={setSelectDropOff}
-                      label="Drop Off"
-                      inputVariant="outlined"
-                    />
-                  </Grid>
-                </Grid>
-              </MuiPickersUtilsProvider>
+              {!loading && (
+                <DateTimePickerRanges
+                  onChangeLeft={setSelectDropIn}
+                  onChangeRight={setSelectDropOff}
+                  leftValue={selectDropIn}
+                  rightValue={selectDropOff}
+                  labelLeft="Drop In"
+                  labelRight="Drop Off"
+                  ranges={availability}
+                />
+              )}
             </Grid>
             <Grid item>
               <Button

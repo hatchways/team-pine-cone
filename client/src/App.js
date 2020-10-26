@@ -14,6 +14,7 @@ import ProfileSettings from "./pages/ProfileSettings";
 import ProfileDetails from "./pages/ProfileDetails";
 import ProfileListings from "./pages/ProfileListings";
 import BecomeASitter from "./pages/BecomeASitter";
+import PaymentSuccess from "./pages/PaymentSuccess";
 
 import { AuthProvider } from "./contexts/user";
 import ProfileProvider from "./contexts/profile";
@@ -35,6 +36,7 @@ function App() {
               <PrivateRoute path="/me" component={ProfileSettings} />
               <Route exact path="/profiles/" component={ProfileListings} />
               <Route path="/profiles/:id" component={ProfileDetails} />
+			  <PrivateRoute exact path="/payment/success" component={PaymentSuccess}/>
               <PrivateRoute
                 exact
                 path="/become-a-sitter"

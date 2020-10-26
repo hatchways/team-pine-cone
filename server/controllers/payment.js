@@ -84,4 +84,24 @@ const getPaymentMethods = async (req, res, next) => {
   }
 };
 
+const createCheckoutSession = async (req, res, next) => {
+	//validators
+	const { price } = req.body;
+
+	const session = await stripe.checkout.sessions.create({
+		payment_method_types: ["card"],
+		mode: "payment",
+		line_items: [
+			{ 
+				quantity: 1,
+				amount: price,
+				currency: "cad",
+				description: "dog sitting service",
+			}
+		],
+		success_url: ``,
+		cancel_url: ``
+	});
+};
+
 module.exports = { createPaymentMethod, getPaymentMethods };

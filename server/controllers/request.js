@@ -37,12 +37,14 @@ const updateRequest = (req, res, next) => {
   if (!req.user) {
     return next(createError(403));
   }
-  Request.findById(req.body.request_id).then(request => {
-    if (req.body.approved) {
-      request.accept().save();
+  Request.findById(req.params.id).then(request => {
+    if (req.body.accepted) {
+      request.accept();
+      request.save();
     }
-    else {
-      request.decline().save();
+    else if (req.body.declined) {
+      request.decline();
+      request.save();
     }
     res.status(200).json(request);
   }).catch(e => {

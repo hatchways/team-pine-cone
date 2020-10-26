@@ -19,7 +19,6 @@ function Bookings({ isMyJobs }) {
     const subcardDummyData = {
         photoSrc: "https://team-pine-cone.s3.amazonaws.com/26233331_1999431303611867_6513675455554858596_o-Mon%20Oct%2026%202020%2018%3A37%3A06%20GMT-0400%20%28Eastern%20Daylight%20Time%29.jpg",
         name: "Dan Proctor",
-        cost: 72,
         start: new Date(),
         end: new Date()
     }

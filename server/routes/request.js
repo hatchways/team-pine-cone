@@ -6,8 +6,8 @@ const Router = express.Router();
 
 Router.get("/me", authenticate(), getRequestsByUser);
 
-Router.post("/request", authenticate(), createRequest);
+Router.post("/create", authenticate(), createRequest);
 
-Router.put("/request/:id", authenticate(), updateRequest);
+Router.put("/update/:id", authenticate(), updateRequest);
 
 module.exports= Router;

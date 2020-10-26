@@ -1,10 +1,14 @@
-import React from 'react';
+import { Card, Toolbar } from '@material-ui/core';
+import React, { Fragment } from 'react';
 
-function Bookings(props) {
+function Bookings({ isMyJobs }) {
     return (
-        <div>
-            
-        </div>
+        <Fragment>
+            <Toolbar />
+            <Card>
+                <h2>{isMyJobs ? "My Jobs" : "My Sitters"}</h2>
+            </Card>
+        </Fragment>
     );
 }
 

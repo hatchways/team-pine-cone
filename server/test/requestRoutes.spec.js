@@ -115,6 +115,19 @@ describe("Request Routes", () => {
         done();
       });
   });
+  it("PUT /request/update/:id To decline, removes acceptance of a request", (done) => {
+    request.declined = true;
+    request.accepted = false;
+    agent
+      .put(`/request/update/${requestId}`)
+      .send(request)
+      .end((err, res) => {
+        res.should.have.status(200);
+        expect(res.body.accepted).to.eql(false);
+        expect(res.body.declined).to.eql(true);
+        done();
+      });
+  });
   it("POST /request/create Returns 401 if not logged in", (done) => {
     chai.request(app)
       .post("/request/create")

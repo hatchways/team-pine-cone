@@ -15,6 +15,8 @@ import { AuthProvider } from "./contexts/user";
 import PrivateRoute from "./components/PrivateRoute/";
 import ProfileProvider from "./contexts/profile";
 import BecomeASitter from "./pages/BecomeASitter";
+import MySitters from "./pages/MySitters";
+import MyJobs from "./pages/MyJobs";
 
 function App() {
   return (
@@ -27,11 +29,11 @@ function App() {
             <Navbar />
             <Route exact path="/"/>
             <PrivateRoute path="/me" component={ProfileSettings} />
-			<Route exact path="/profiles/" component={ProfileListings} />
+			      <Route exact path="/profiles/" component={ProfileListings} />
             <Route path="/profiles/:id" component={ProfileDetails} />
             <PrivateRoute exact path="/become-a-sitter" component={BecomeASitter} />
-            <PrivateRoute exact path="/my-sitters" />
-            <PrivateRoute exact path="/my-jobs" />
+            <PrivateRoute exact path="/my-sitters" component={MySitters} />
+            <PrivateRoute exact path="/my-jobs" component={MyJobs} />
             <PrivateRoute exact path="/messages" />
           </ProfileProvider>
         </AuthProvider>

@@ -8,45 +8,56 @@ const useStyles = makeStyles({
     gridAutoRows: "auto",
     padding: 20,
     alignItems: "center",
-    textAlign: "left"
+    textAlign: "left",
   },
   photo: {
-      gridColumn: "1 / span 1",
-      marginLeft: 0
+    gridColumn: "1 / span 1",
+    marginLeft: 0,
   },
   name: {
-      gridColumn: "2 / span 1"
+    gridColumn: "2 / span 1",
   },
   date: {
-    gridColumn: "3 / span 1"
+    gridColumn: "3 / span 1",
   },
   button1: {
-      gridColumn: "4 / span 1",
-      marginLeft: 10
+    gridColumn: "4 / span 1",
+    marginLeft: 10,
   },
   button2: {
-      gridColumn: "5 / span 1",
-      marginLeft: 10
-  } 
+    gridColumn: "5 / span 1",
+    marginLeft: 10,
+  },
+  button3: {
+    gridColumn: "6 / span 1",
+    marginLeft: 10,
+  },
 });
 
 const formatDate = date => (
     `${date.getMonth()}/${date.getDate()} ${date.getHours()}:${date.getMinutes()}`
 )
 
-function Subcard({ isBooking, photoSrc, name, start, end }) {
+function Subcard({ isBooking, photoSrc, name, start, end, isPaid }) {
   const classes = useStyles();
   return (
     <Card variant="outlined" className={classes.subCard}>
       <Avatar src={photoSrc} className={classes.photo} />
       <h2 className={classes.name}>{name}</h2>
-      <h3 className={classes.date}>{formatDate(start)} - {formatDate(end)}</h3>
+      <h3 className={classes.date}>
+        {formatDate(start)} - {formatDate(end)}
+      </h3>
       <Button color="primary" variant="contained" className={classes.button1}>
         {isBooking ? "Message" : "Accept"}
       </Button>
       <Button color="primary" variant="contained" className={classes.button2}>
-        {isBooking ? "Cancel" : "Decline"}
+        {isBooking ? (isPaid ? "Cancel" : "Pay") : "Decline"}
       </Button>
+      {isBooking && !isPaid && (
+        <Button color="primary" variant="contained" className={classes.button3}>
+          Cancel
+        </Button>
+      )}
     </Card>
   );
 }

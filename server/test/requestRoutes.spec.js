@@ -1,4 +1,3 @@
-const { IdentityStore } = require("aws-sdk");
 const chai = require("chai");
 const chaiHttp = require("chai-http");
 const app = require("../app.js");
@@ -57,5 +56,26 @@ describe("Request Routes", () => {
         });
       });
     });
+  });
+  
+  it("Creates a request with a correct POST request", done => {
+    chai
+      .request(app)
+      .post("/requests/request")
+      .send({
+        sitter_id: testingIds[1],
+        start: new Date(),
+        end: new Date()
+      })
+      .end(res => {
+        res.should.have.status(200);
+        res.json().then(data => {
+          expect(data).to.have.property("user_id");
+          expect(data.user_id).to.eql(testingIds[0]);
+          expect(data).to.have.property("sitter_id");
+          expect(data).to.have.property("start");
+          expect(data).to.have.property("end");
+        });
+      });
   });
 });

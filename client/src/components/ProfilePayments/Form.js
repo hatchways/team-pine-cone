@@ -4,7 +4,6 @@ import { makeStyles } from '@material-ui/styles';
 import StripeInput from './StripeInput';
 
 const useStyles = makeStyles(theme => ({
-
 }));
 
 const Form = function () {

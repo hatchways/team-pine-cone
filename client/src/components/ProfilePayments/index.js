@@ -80,7 +80,7 @@ const ProfilePayments = function () {
     setError,
   ] = useFetch({
     init: { data: [] },
-    url: `/payment/payment_methods/${user.profile}`,
+    url: `/payment/methods/${user.profile}`,
   });
 
   const [addingCard, setAddingCard] = useState(false);
@@ -103,7 +103,7 @@ const ProfilePayments = function () {
 
         setLoading(true);
 
-        fetch("/payment/payment_methods", {
+        fetch("/payment/methods", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",

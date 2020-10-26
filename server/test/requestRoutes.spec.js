@@ -125,7 +125,7 @@ describe("Request Routes", () => {
       })
       .end((err, res) => {
         res.should.have.status(401);
-        done()
+        done();
       });
   });
   it("GET /request/me Returns 401 if not logged in", done => {
@@ -133,7 +133,7 @@ describe("Request Routes", () => {
       .get("/request/me")
       .end((err, res) => {
         res.should.have.status(401);
-        done()
+        done();
       });
   });
   it("PUT /request/update/:id Returns 401 if the user is not logged in", done => {

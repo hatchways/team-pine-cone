@@ -53,6 +53,13 @@ const updateRequest = (req, res, next) => {
       request.decline();
       request.save();
     }
+    const notifyId = req.user.profile === request.user_id ? request.sitter_id : request.user_id;
+    Profile.findById(req.user.profile).then(profile => {
+      socket.io.to(notifyId.toString()).emit("notification", {
+        title: `Booking ${req.body.accepted ? "Accepted" : "Declined"}`,
+        message: `${req.body.accepted ? "Yay!" : "Sorry!"} ${profile.firstName} ${profile.lastName} ${req.body.accepted ? "accepted" : "declined"} your booking.`,
+      });
+    });
     res.status(200).json(request);
   }).catch(e => {
     console.log(e);

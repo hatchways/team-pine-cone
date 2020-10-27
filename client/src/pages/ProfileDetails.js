@@ -10,6 +10,7 @@ import { DateTimePicker, MuiPickersUtilsProvider } from "@material-ui/pickers";
 import useScrollToTop from "../hooks/useScrollToTop";
 import { useParams } from "react-router-dom";
 import { useFetch } from "../hooks/useFetch";
+import { useProfileContext } from "../contexts/profile";
 
 export const useStyles = makeStyles((theme) => ({
   root: {
@@ -76,6 +77,7 @@ const ProfileDetails = function () {
   const [selectDropOff, setSelectDropOff] = useState(addHours(new Date(), 2));
   const classes = useStyles();
   const params = useParams();
+  const { setProfile } = useProfileContext();
   const [profile] = useFetch({ init: {}, url: `/profile/${params.id}` });
 
   const {
@@ -94,8 +96,23 @@ const ProfileDetails = function () {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    console.log(selectDropIn, selectDropOff);
-    //api call
+    fetch("/request/create", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        sitter_id: params.id,
+        start: selectDropIn,
+        end: selectDropOff,
+      }),
+    }).then(() => {
+      fetch("/profile/me").then((profile) => {
+        profile.json().then((result) => {
+          setProfile(result);
+        });
+      });
+    });
   };
 
   return (

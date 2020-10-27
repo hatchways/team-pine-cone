@@ -15,6 +15,8 @@ const useStyles = makeStyles({
   photo: {
     gridColumn: "1 / span 1",
     marginLeft: 0,
+    width: 75,
+    height: 75
   },
   name: {
     gridColumn: "2 / span 1",
@@ -101,7 +103,7 @@ function Booking({ _id, isBooking, isMyJobs, sitter_id, user_id, start, end, pai
         {isBooking ? "Message" : "Accept"}
       </Button>
       <Button
-        onClick={isBooking ? null : handleDecline}
+        onClick={isBooking ? (paid ? handleDecline : null) : handleDecline}
         color="primary"
         variant="contained"
         className={classes.button2}
@@ -109,7 +111,7 @@ function Booking({ _id, isBooking, isMyJobs, sitter_id, user_id, start, end, pai
         {isBooking ? (paid ? "Cancel" : "Pay") : "Decline"}
       </Button>
       {isBooking && !paid && (
-        <Button color="primary" variant="contained" className={classes.button3}>
+        <Button onClick={handleDecline} color="primary" variant="contained" className={classes.button3}>
           Cancel
         </Button>
       )}

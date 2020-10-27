@@ -140,7 +140,7 @@ function Booking({ _id, isBooking, isMyJobs, sitter_id, user_id, start, end, pai
               variant="contained"
               className={classes.button}
             >
-              {isBooking ? (paid ? "Cancel" : "Pay") : "Decline"}
+              {isBooking ? (isMyJobs || paid ? "Cancel" : "Pay") : "Decline"}
             </Button>
             {isBooking && !paid && (
               <Button

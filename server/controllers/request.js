@@ -26,6 +26,8 @@ const createRequest = (req, res, next) => {
   });
 
   request.save().then(result => {
+    addRequestToProfile(result, result.user_id);
+    addRequestToProfile(result, result.sitter_id);
     res.status(200).json(result);
   }).catch(e => {
     console.log(e);
@@ -58,3 +60,10 @@ module.exports = {
   createRequest,
   updateRequest
 };
+
+function addRequestToProfile(result, id) {
+  Profile.findById(id).then(profile => {
+    profile.requests.push(result);
+    profile.save();
+  });
+}

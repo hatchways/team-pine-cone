@@ -46,9 +46,14 @@ const registerValidators = [checkFirstName, checkLastName];
 
 const loginValidators = [checkEmail, checkPassword];
 
+const requestChargePayValidators = [
+  check("amount", "Amount must be an interger").exists().isInt(),
+];
+
 module.exports = {
   profileCreateValidator,
   profileUpdateValidator,
   registerValidators,
   loginValidators,
+  requestChargePayValidators,
 };

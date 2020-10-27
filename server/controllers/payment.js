@@ -1,13 +1,13 @@
 const STRIPE_SECRECT = process.env.STRIPE_SECRET;
 const stripe = require("stripe")(STRIPE_SECRECT);
 const createError = require("http-errors");
-const { User } = require("../models/");
-const { Profile } = require("../models/");
+const { User, Profile, Request } = require("../models/");
 
 const checkErrors = (err, next) => {
   if (err.code) {
     return next(createError(err.code, err.message));
   }
+  console.error(err.message);
   next(createError(500));
 };
 
@@ -59,13 +59,14 @@ const createPaymentMethod = async (req, res, next) => {
 
     return res.status(201).json({ ...profile.toJSON() });
   } catch (err) {
-    console.log(err);
     checkErrors(err, next);
   }
 };
 
 const getPaymentMethods = async (req, res, next) => {
   const { profile_id } = req.params;
+
+  if (!profile_id) return next(createError(422, "profile_id not provided"));
 
   try {
     const profile = await Profile.findById(profile_id).populate("profile");
@@ -85,23 +86,82 @@ const getPaymentMethods = async (req, res, next) => {
 };
 
 const createCheckoutSession = async (req, res, next) => {
-	//validators
-	const { price } = req.body;
+  const { price } = req.body;
 
-	const session = await stripe.checkout.sessions.create({
-		payment_method_types: ["card"],
-		mode: "payment",
-		line_items: [
-			{ 
-				quantity: 1,
-				amount: price,
-				currency: "cad",
-				description: "dog sitting service",
-			}
-		],
-		success_url: ``,
-		cancel_url: ``
-	});
+  if (!price) return next(createError(422, "price is not provided"));
+
+  try {
+    const session = await stripe.checkout.sessions.create({
+      payment_method_types: ["card"],
+      mode: "payment",
+      line_items: [
+        {
+          price_data: {
+            currency: "cad",
+            product_data: {
+              name: "Dog Sitting",
+            },
+            unit_amount: 2000,
+          },
+          quantity: 1,
+        },
+      ],
+      success_url: `http://localhost:3001/payment/success`,
+      cancel_url: `http://localhost:3001/me`,
+    });
+
+    res.json({ id: session.id });
+  } catch (err) {
+    checkErrors(err, next);
+  }
 };
 
-module.exports = { createPaymentMethod, getPaymentMethods };
+const charge = async (req, res, next) => {
+  const { amount, request_id } = req.body;
+  const user = req.user;
+
+  try {
+    const request = await Request.findById(request_id).populate(
+      "user_id sitter_id"
+    );
+    const { user_id: customer, sitter_id: sitter } = request;
+
+    if (!request) return next(createError(404, "Request cannot be found"));
+    if (!customer.stripeId)
+      return next(createError(422, "Customer does not have a payment method."));
+    if (!sitter.stripeId)
+      return next(createError(422, "Sitter does not have a payment method"));
+
+    const {
+      data: [card],
+    } = await stripe.paymentMethods.list({
+      customer: customer.stripeId,
+      type: "card",
+    });
+
+    const paymentIntent = await stripe.paymentIntents.create({
+      amount,
+      currency: "cad",
+      customer: sitter.stripeId,
+      description: "LovingSitter Dog Sitting Service",
+      payment_method: card.id,
+      application_fee_amount: amount * 0.03,
+      confirm: true,
+      transfer_data: {
+        destinatiom: customer.stripeId,
+      },
+    });
+
+    return res.status(200).json({ paymentIntent });
+  } catch (err) {
+    console.log(err);
+    checkErrors(err, next);
+  }
+};
+
+module.exports = {
+  createPaymentMethod,
+  getPaymentMethods,
+  createCheckoutSession,
+  charge,
+};

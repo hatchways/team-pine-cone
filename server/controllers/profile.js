@@ -98,7 +98,6 @@ const getProfile = async (req, res, next) => {
       if (!profile) { 
         return next(createError(404, "Profile not found"));
       }
-	
       return res.status(200).json(profile);
     } catch (err) { 
       next(createError(500, err.message));
@@ -110,7 +109,7 @@ const getMyProfile = (req, res, next) => {
   if (!req.user) {
     next(createError(403));
   }
-  Profile.findById(req.user.profile).then(profile => {
+  Profile.findById(req.user.profile).populate("requests").then(profile => {
     res.status(200).json(profile);
   }).catch(e => {
     console.log(e);

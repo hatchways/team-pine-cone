@@ -5,7 +5,7 @@ import { useProfileContext } from "../contexts/profile";
 const useStyles = makeStyles({
   booking: {
     display: "grid",
-    gridAutoColumns: "auto",
+    gridTemplateColumns: "1fr 3fr 3fr 3fr",
     gridAutoRows: "auto",
     padding: 20,
     alignItems: "center",
@@ -24,18 +24,14 @@ const useStyles = makeStyles({
   date: {
     gridColumn: "3 / span 1",
   },
-  button1: {
+  buttons: {
     gridColumn: "4 / span 1",
-    marginLeft: 10,
+    display: "flex",
+    justifyContent: "center"
   },
-  button2: {
-    gridColumn: "5 / span 1",
+  button: {
     marginLeft: 10,
-  },
-  button3: {
-    gridColumn: "6 / span 1",
-    marginLeft: 10,
-  },
+  }
 });
 
 const formatDate = dateStr => {
@@ -94,27 +90,29 @@ function Booking({ _id, isBooking, isMyJobs, sitter_id, user_id, start, end, pai
       <h3 className={classes.date}>
         {formatDate(start)} - {formatDate(end)}
       </h3>
-      <Button
-        onClick={isBooking ? null : handleAccept}
-        color="primary"
-        variant="contained"
-        className={classes.button1}
-      >
-        {isBooking ? "Message" : "Accept"}
-      </Button>
-      <Button
-        onClick={isBooking ? (paid ? handleDecline : null) : handleDecline}
-        color="primary"
-        variant="contained"
-        className={classes.button2}
-      >
-        {isBooking ? (paid ? "Cancel" : "Pay") : "Decline"}
-      </Button>
-      {isBooking && !paid && (
-        <Button onClick={handleDecline} color="primary" variant="contained" className={classes.button3}>
-          Cancel
+      <div className={classes.buttons}>
+        <Button
+          onClick={isBooking ? null : handleAccept}
+          color="primary"
+          variant="contained"
+          className={classes.button}
+        >
+          {isBooking ? "Message" : "Accept"}
         </Button>
-      )}
+        <Button
+          onClick={isBooking ? (paid ? handleDecline : null) : handleDecline}
+          color="primary"
+          variant="contained"
+          className={classes.button}
+        >
+          {isBooking ? (paid ? "Cancel" : "Pay") : "Decline"}
+        </Button>
+        {isBooking && !paid && (
+          <Button onClick={handleDecline} color="primary" variant="contained" className={classes.button}>
+            Cancel
+          </Button>
+        )}
+      </div>
     </Card>
   );
 }

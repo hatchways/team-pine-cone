@@ -32,7 +32,7 @@ const useStyles = makeStyles((theme) => ({
   },
   mainContainer: {
     margin: "auto",
-	  maxWidth: "900px"
+    maxWidth: "900px"
   },
   input: {
     marginBottom: "1em",
@@ -51,9 +51,9 @@ const useStyles = makeStyles((theme) => ({
     ...theme.buttons.bigRedButton,
     marginTop: "2.5em",
   },
-	title: { 
-		marginBottom: '3em'
-	}
+  title: { 
+    marginBottom: "3em"
+  }
 }));
 
 const InputText = function ({
@@ -194,7 +194,7 @@ const ProfileEdit = function () {
       },
       body: JSON.stringify(cleanForm),
     })
-      .then(() => setIsSaved(true))
+      .then(() => setIsSaved(true));
   };
 
   return (
@@ -207,7 +207,7 @@ const ProfileEdit = function () {
       onSubmit={handleSubmit}
     >
       <Grid item>
-		  <h2 className={classes.title}>Edit Profile</h2>
+        <h2 className={classes.title}>Edit Profile</h2>
       </Grid>
 
       {/*FIRST NAME*/}

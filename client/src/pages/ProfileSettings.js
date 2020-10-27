@@ -68,7 +68,7 @@ const useStyles = makeStyles((theme) => ({
   card: {
     padding: theme.spacing(3),
     height: "max-content",
-	  minHeight: "75vh"
+    minHeight: "75vh",
   },
   logout: {
     cursor: "pointer",
@@ -76,7 +76,7 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 function ProfileSettings() {
-  const { handleLogOut} = useUserContext();
+  const { handleLogOut } = useUserContext();
   const { profile } = useProfileContext();
 
   const origin = "/me";
@@ -154,10 +154,7 @@ function ProfileSettings() {
         <Toolbar />
         <Card className={classes.card}>
           <Route path={`${origin}/edit-profile`} component={ProfileEdit} />
-          <Route
-            path={`${origin}/profile-photo`}
-            component={EditProfilePhoto}
-          />
+          <Route path={`${origin}/profile-photo`} component={EditProfilePhoto} />
           {profile && profile.isSitter && (
             <Route path={`${origin}/availability`} component={Availability} />
           )}

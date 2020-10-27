@@ -36,7 +36,11 @@ function App() {
               <PrivateRoute path="/me" component={ProfileSettings} />
               <Route exact path="/profiles/" component={ProfileListings} />
               <Route path="/profiles/:id" component={ProfileDetails} />
-			  <PrivateRoute exact path="/payment/success" component={PaymentSuccess}/>
+              <PrivateRoute
+                exact
+                path="/payment/success"
+                component={PaymentSuccess}
+              />
               <PrivateRoute
                 exact
                 path="/become-a-sitter"

@@ -1,7 +1,7 @@
 const STRIPE_SECRECT = process.env.STRIPE_SECRET;
 const stripe = require("stripe")(STRIPE_SECRECT);
 const createError = require("http-errors");
-const { User, Profile, Request } = require("../models/");
+const { User, Profile } = require("../models/");
 
 const checkErrors = (err, next) => {
   if (err.code) {
@@ -44,7 +44,7 @@ const createPaymentMethod = async (req, res, next) => {
     } else {
       customer = await stripe.customers.create({
         description: "LovingSitter customer",
-        email: user.eamil,
+        email: user.email,
         name: profile.firstName + " " + profile.lastName,
         phone: profile.phone,
         payment_method: card_id,
@@ -69,7 +69,7 @@ const getPaymentMethods = async (req, res, next) => {
   if (!profile_id) return next(createError(422, "profile_id not provided"));
 
   try {
-    const profile = await Profile.findById(profile_id).populate("profile");
+    const profile = await Profile.findById(profile_id);
     if (!profile) return next(createError(404, "Profile not found"));
 
     if (!profile.stripeId) return res.status(200).json({ data: [] });
@@ -85,40 +85,7 @@ const getPaymentMethods = async (req, res, next) => {
   }
 };
 
-//This might not be needed
-const createCheckoutSession = async (req, res, next) => {
-  const { price } = req.body;
-
-  if (!price) return next(createError(422, "price is not provided"));
-
-  try {
-    const session = await stripe.checkout.sessions.create({
-      payment_method_types: ["card"],
-      mode: "payment",
-      line_items: [
-        {
-          price_data: {
-            currency: "cad",
-            product_data: {
-              name: "Dog Sitting",
-            },
-            unit_amount: price,
-          },
-          quantity: 1,
-        },
-      ],
-      success_url: "http://localhost:3001/payment/success",
-      cancel_url: "http://localhost:3001/me",
-    });
-
-    res.json({ id: session.id });
-  } catch (err) {
-    checkErrors(err, next);
-  }
-};
-
 module.exports = {
   createPaymentMethod,
   getPaymentMethods,
-  createCheckoutSession,
 };

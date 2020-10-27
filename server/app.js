@@ -3,6 +3,7 @@ const express = require("express");
 const { join } = require("path");
 const cookieParser = require("cookie-parser");
 const logger = require("morgan");
+const socketIO = require("socket.io");
 
 require("dotenv").config();
 
@@ -30,6 +31,8 @@ const uploadRouter = require("./routes/upload");
 const { json, urlencoded } = express;
 
 let app = express();
+
+const io = socketIO.listen(app);
 
 app.use(logger("dev"));
 app.use(json());

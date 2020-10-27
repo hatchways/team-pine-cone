@@ -21,21 +21,21 @@ const userSchema = new Schema({
 });
 
 userSchema.methods.verifyPassword = async function(password) {
-	try { 
-		const match = await compare(password, this.password);
-		return match;
-	} catch (err) {
-		throw createError(500, err.message);
-	}
+  try { 
+    const match = await compare(password, this.password);
+    return match;
+  } catch (err) {
+    throw createError(500, err.message);
+  }
 };
 
 userSchema.pre("save", async function(next) {
-	const user = this;
+  const user = this;
   if (user.isModified("password")) {
     user.password = await hash(user.password, 10);
   }
   next();
-})
+});
 
 //indexes
 userSchema.index({ email: 1, profile: 1 });

@@ -1,8 +1,8 @@
 import { Avatar, Button, Card, makeStyles } from "@material-ui/core";
-import React from "react";
+import React, { useEffect, useState } from "react";
 
 const useStyles = makeStyles({
-  subCard: {
+  Booking: {
     display: "grid",
     gridAutoColumns: "auto",
     gridAutoRows: "auto",
@@ -38,11 +38,20 @@ const formatDate = date => (
     `${date.getMonth()}/${date.getDate()} ${date.getHours()}:${date.getMinutes()}`
 )
 
-function Subcard({ isBooking, photoSrc, name, start, end, isPaid }) {
+function Booking({ isBooking, isMyJobs, sitter_id, user_id, start, end, paid }) {
   const classes = useStyles();
+  const [src, setSrc] = useState(null);
+  const [name, setName] = useState("");
+  useEffect(() => {
+      const id = isMyJobs ? user_id : sitter_id
+      fetch(`/profile/${id}`).then(response => {
+          setSrc(response.body.photo);
+          setName(`${response.body.firstName} ${response.body.lastName}`);
+      })
+  },[setSrc, isMyJobs, sitter_id, user_id])
   return (
-    <Card variant="outlined" className={classes.subCard}>
-      <Avatar src={photoSrc} className={classes.photo} />
+    <Card variant="outlined" className={classes.Booking}>
+      <Avatar src={src} className={classes.photo} />
       <h2 className={classes.name}>{name}</h2>
       <h3 className={classes.date}>
         {formatDate(start)} - {formatDate(end)}
@@ -51,9 +60,9 @@ function Subcard({ isBooking, photoSrc, name, start, end, isPaid }) {
         {isBooking ? "Message" : "Accept"}
       </Button>
       <Button color="primary" variant="contained" className={classes.button2}>
-        {isBooking ? (isPaid ? "Cancel" : "Pay") : "Decline"}
+        {isBooking ? (paid ? "Cancel" : "Pay") : "Decline"}
       </Button>
-      {isBooking && !isPaid && (
+      {isBooking && !paid && (
         <Button color="primary" variant="contained" className={classes.button3}>
           Cancel
         </Button>
@@ -62,4 +71,4 @@ function Subcard({ isBooking, photoSrc, name, start, end, isPaid }) {
   );
 }
 
-export default Subcard;
+export default Booking;

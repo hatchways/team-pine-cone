@@ -1,7 +1,7 @@
 import { Card, makeStyles, Toolbar } from '@material-ui/core';
 import React, { Fragment } from 'react';
 import { useProfileContext } from '../contexts/profile';
-import Subcard from './Subcard';
+import Booking from './Booking';
 
 const useStyles = makeStyles({
     mainCard: {
@@ -37,14 +37,14 @@ function Bookings({ isMyJobs }) {
           <h1>{isMyJobs ? "My Jobs" : "My Sitters"}</h1>
           <h2>Upcoming Bookings</h2>
           {bookings.map((booking) => (
-            <Subcard isMyJobs={isMyJobs} {...booking} isBooking={true} />
+            <Booking isMyJobs={isMyJobs} {...booking} isBooking={true} />
           ))}
           {bookings.length === 0 && (
             <p className={classes.emptyText}>No upcoming bookings</p>
           )}
           <h2>Pending Requests</h2>
           {requests.map((request) => (
-            <Subcard isMyJobs={isMyJobs} {...request} />
+            <Booking isMyJobs={isMyJobs} {...request} />
           ))}
           {requests.length === 0 && (
             <p className={classes.emptyText}>No pending requests</p>

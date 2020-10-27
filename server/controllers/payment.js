@@ -17,7 +17,7 @@ const createPaymentMethod = async (req, res, next) => {
   const { card_id, user_id } = req.body;
 
   if (!card_id && !user_id) {
-    return next(createError(422, "customer_id or profile_id not provided"));
+    return next(createError(422, "card_id or profile_id not provided"));
   }
 
   try {
@@ -85,6 +85,7 @@ const getPaymentMethods = async (req, res, next) => {
   }
 };
 
+//This might not be needed
 const createCheckoutSession = async (req, res, next) => {
   const { price } = req.body;
 
@@ -101,13 +102,13 @@ const createCheckoutSession = async (req, res, next) => {
             product_data: {
               name: "Dog Sitting",
             },
-            unit_amount: 2000,
+            unit_amount: price,
           },
           quantity: 1,
         },
       ],
-      success_url: `http://localhost:3001/payment/success`,
-      cancel_url: `http://localhost:3001/me`,
+      success_url: "http://localhost:3001/payment/success",
+      cancel_url: "http://localhost:3001/me",
     });
 
     res.json({ id: session.id });
@@ -116,52 +117,8 @@ const createCheckoutSession = async (req, res, next) => {
   }
 };
 
-const charge = async (req, res, next) => {
-  const { amount, request_id } = req.body;
-  const user = req.user;
-
-  try {
-    const request = await Request.findById(request_id).populate(
-      "user_id sitter_id"
-    );
-    const { user_id: customer, sitter_id: sitter } = request;
-
-    if (!request) return next(createError(404, "Request cannot be found"));
-    if (!customer.stripeId)
-      return next(createError(422, "Customer does not have a payment method."));
-    if (!sitter.stripeId)
-      return next(createError(422, "Sitter does not have a payment method"));
-
-    const {
-      data: [card],
-    } = await stripe.paymentMethods.list({
-      customer: customer.stripeId,
-      type: "card",
-    });
-
-    const paymentIntent = await stripe.paymentIntents.create({
-      amount,
-      currency: "cad",
-      customer: sitter.stripeId,
-      description: "LovingSitter Dog Sitting Service",
-      payment_method: card.id,
-      application_fee_amount: amount * 0.03,
-      confirm: true,
-      transfer_data: {
-        destinatiom: customer.stripeId,
-      },
-    });
-
-    return res.status(200).json({ paymentIntent });
-  } catch (err) {
-    console.log(err);
-    checkErrors(err, next);
-  }
-};
-
 module.exports = {
   createPaymentMethod,
   getPaymentMethods,
   createCheckoutSession,
-  charge,
 };

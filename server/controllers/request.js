@@ -1,5 +1,6 @@
 const createError = require("http-errors");
 const { Request, Profile } = require("../models/");
+const socket = require("../utils/socket");
 
 const getRequestsByUser = (req, res, next) => {
   if (!req.user) {
@@ -26,6 +27,12 @@ const createRequest = (req, res, next) => {
   });
 
   request.save().then(result => {
+    Profile.findById(result.user_id).then(profile => {
+      socket.io.to(result.sitter_id.toString()).emit("notification", {
+        title: "New Request",
+        message: `${profile.firstName} ${profile.lastName} wants you to watch their dog!`
+      });
+    });
     res.status(200).json(result);
   }).catch(e => {
     console.log(e);

@@ -21,13 +21,13 @@ function Bookings({ isMyJobs }) {
     const bookings = profile && profile.requests.filter(
       (request) =>
         ((isMyJobs && request.sitter_id === profile._id) ||
-          request.user_id === profile._id) &&
+          (!isMyJobs && request.user_id === profile._id)) &&
         request.accepted
     );
     const requests = profile && profile.requests.filter(
       (request) =>
         ((isMyJobs && request.sitter_id === profile._id) ||
-          request.user_id === profile._id) &&
+          (!isMyJobs && request.user_id === profile._id)) &&
         !request.accepted && !request.declined
     );
     return (

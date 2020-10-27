@@ -114,7 +114,14 @@ function Booking({ _id, isBooking, isMyJobs, sitter_id, user_id, start, end, pai
       </h3>
       <div className={classes.buttons}>
         {!isBooking && !isMyJobs ? (
-          <p>Awaiting response...</p>
+          <Button
+            onClick={handleDecline}
+            color="primary"
+            variant="contained"
+            className={classes.button}
+          >
+            Cancel
+          </Button>
         ) : (
           <Fragment>
             <Button

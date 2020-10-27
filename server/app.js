@@ -32,8 +32,6 @@ const { json, urlencoded } = express;
 
 let app = express();
 
-const io = socketIO.listen(app);
-
 app.use(logger("dev"));
 app.use(json());
 app.use(urlencoded({ extended: false }));

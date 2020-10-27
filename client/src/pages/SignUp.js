@@ -42,7 +42,7 @@ export default function SignUp() {
     temp.firstName = values.firstName ? "" : "This field is required.";
     temp.lastName = values.lastName ? "" : "This field is required.";
     temp.email = /.+@.+..+/.test(values.email) ? "" : "Email is not valid";
-	  temp.phone = /\+1 \(\d{3}\) \d{3}-\d{4}/.test(values.phone) ? "" : "Phone number is not valid";
+    temp.phone = /\+1 \(\d{3}\) \d{3}-\d{4}/.test(values.phone) ? "" : "Phone number is not valid";
     temp.password =
       values.password.length >= 6 ? "" : "Minimum of 6 charactes required.";
     temp.confirmPassword =
@@ -130,8 +130,8 @@ export default function SignUp() {
                 regions="north-america"
                 onChange={handleDateChange("phone")}
                 value={values.phone}
-			  error={!!errors.phone}
-			  label={errors.phone || 'Phone Number'}
+                error={!!errors.phone}
+                label={errors.phone || "Phone Number"}
               />
             </Grid>
             <Grid item xs={12}>

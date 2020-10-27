@@ -1,6 +1,5 @@
-const { check, param } = require("express-validator");
+const { check } = require("express-validator");
 const { Profile } = require("../../models/");
-const { Types } = require("mongoose");
 
 const genders = Profile.schema.paths.gender.enumValues;
 

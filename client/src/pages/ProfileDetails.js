@@ -27,7 +27,7 @@ export const useStyles = makeStyles((theme) => ({
     },
   },
   banner: {
-    background: `radial-gradient(circle, rgba(255,255,255,1) 0%, rgba(223,27,27,1) 100%);`,
+    background: "radial-gradient(circle, rgba(255,255,255,1) 0%, rgba(223,27,27,1) 100%);",
     width: "100%",
     height: "300px",
     borderRadius: "10px",

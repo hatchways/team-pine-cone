@@ -75,8 +75,8 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-function ProfileSettings({ children }) {
-  const { handleLogOut } = useUserContext();
+function ProfileSettings() {
+  const { handleLogOut} = useUserContext();
   const { profile } = useProfileContext();
 
   const origin = "/me";

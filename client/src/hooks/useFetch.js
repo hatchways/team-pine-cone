@@ -9,10 +9,10 @@ export const useFetch = function (options) {
     const req = !options.method
       ? fetch(options.url)
       : fetch(options.url, {
-          method: options.method,
-          headers: { "Content-type": "application/json; charset=UTF-8" },
-          body: JSON.stringify(options.params),
-        });
+        method: options.method,
+        headers: { "Content-type": "application/json; charset=UTF-8" },
+        body: JSON.stringify(options.params),
+      });
 
     req
       .then((res) => res.json())

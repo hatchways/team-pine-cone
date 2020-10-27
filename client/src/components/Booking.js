@@ -1,8 +1,8 @@
 import { Avatar, Button, Card, makeStyles } from "@material-ui/core";
-import React, { useEffect, useState } from "react";
+import React, { Fragment, useEffect, useState } from "react";
 import { useProfileContext } from "../contexts/profile";
 
-const useStyles = makeStyles({
+const useStyles = makeStyles((theme) => ({
   booking: {
     display: "grid",
     gridTemplateColumns: "1fr 3fr 3fr 3fr",
@@ -10,29 +10,51 @@ const useStyles = makeStyles({
     padding: 20,
     alignItems: "center",
     textAlign: "left",
-    marginTop: 10
+    marginTop: 10,
+    [theme.breakpoints.between("xs", "sm")]: {
+      textAlign: "center",
+      gridTemplateColumns: "1fr",
+    },
   },
   photo: {
     gridColumn: "1 / span 1",
     marginLeft: 0,
     width: 75,
-    height: 75
+    height: 75,
+    [theme.breakpoints.between("xs", "sm")]: {
+      gridRow: "1 / span 1",
+      gridColumn: "1 / span 1",
+      margin: "5px auto"
+    },
   },
   name: {
     gridColumn: "2 / span 1",
+    marginBottom: 10,
+    [theme.breakpoints.between("xs", "sm")]: {
+      gridRow: "2 / span 1",
+      gridColumn: "1 / span 1",
+    },
   },
   date: {
     gridColumn: "3 / span 1",
+    [theme.breakpoints.between("xs", "sm")]: {
+      gridRow: "3 / span 1",
+      gridColumn: "1 / span 1",
+    },
   },
   buttons: {
     gridColumn: "4 / span 1",
     display: "flex",
-    justifyContent: "center"
+    justifyContent: "center",
+    [theme.breakpoints.between("xs", "sm")]: {
+      gridRow: "4 / span 1",
+      gridColumn: "1 / span 1",
+    },
   },
   button: {
     marginLeft: 10,
-  }
-});
+  },
+}));
 
 const formatDate = dateStr => {
   const date = new Date(dateStr)
@@ -91,26 +113,39 @@ function Booking({ _id, isBooking, isMyJobs, sitter_id, user_id, start, end, pai
         {formatDate(start)} - {formatDate(end)}
       </h3>
       <div className={classes.buttons}>
-        <Button
-          onClick={isBooking ? null : handleAccept}
-          color="primary"
-          variant="contained"
-          className={classes.button}
-        >
-          {isBooking ? "Message" : "Accept"}
-        </Button>
-        <Button
-          onClick={isBooking ? (paid ? handleDecline : null) : handleDecline}
-          color="primary"
-          variant="contained"
-          className={classes.button}
-        >
-          {isBooking ? (paid ? "Cancel" : "Pay") : "Decline"}
-        </Button>
-        {isBooking && !paid && (
-          <Button onClick={handleDecline} color="primary" variant="contained" className={classes.button}>
-            Cancel
-          </Button>
+        {!isBooking && !isMyJobs ? (
+          <p>Awaiting response...</p>
+        ) : (
+          <Fragment>
+            <Button
+              onClick={isBooking ? null : handleAccept}
+              color="primary"
+              variant="contained"
+              className={classes.button}
+            >
+              {isBooking ? "Message" : "Accept"}
+            </Button>
+            <Button
+              onClick={
+                isBooking ? (paid ? handleDecline : null) : handleDecline
+              }
+              color="primary"
+              variant="contained"
+              className={classes.button}
+            >
+              {isBooking ? (paid ? "Cancel" : "Pay") : "Decline"}
+            </Button>
+            {isBooking && !paid && (
+              <Button
+                onClick={handleDecline}
+                color="primary"
+                variant="contained"
+                className={classes.button}
+              >
+                Cancel
+              </Button>
+            )}
+          </Fragment>
         )}
       </div>
     </Card>

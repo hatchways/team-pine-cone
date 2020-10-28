@@ -1,9 +1,9 @@
-import DateFnsUtils from '@date-io/date-fns';
-import { Grid, IconButton, makeStyles, Typography } from '@material-ui/core';
-import { Add, Delete } from '@material-ui/icons';
-import { DateTimePicker, MuiPickersUtilsProvider } from '@material-ui/pickers';
-import React, { useState } from 'react';
-import { useProfileContext } from '../contexts/profile';
+import DateFnsUtils from "@date-io/date-fns";
+import { Grid, IconButton, makeStyles, Typography } from "@material-ui/core";
+import { Add, Delete } from "@material-ui/icons";
+import { DateTimePicker, MuiPickersUtilsProvider } from "@material-ui/pickers";
+import React, { useState } from "react";
+import { useProfileContext } from "../contexts/profile";
 
 const useStyles = makeStyles(theme => ({
   row: {
@@ -15,102 +15,102 @@ const useStyles = makeStyles(theme => ({
     color: theme.palette.primary.light,
     padding: 10,
     [theme.breakpoints.between("xs", "sm")]: {
-        flexDirection: "column"
+      flexDirection: "column"
     }
   },
   label: {
-      margin: "0px 25px",
-      fontWeight: 700,
-      [theme.breakpoints.between("xs", "sm")]: {
-          margin: 25
-      }
+    margin: "0px 25px",
+    fontWeight: 700,
+    [theme.breakpoints.between("xs", "sm")]: {
+      margin: 25
+    }
   },
   date: {
-      padding: 5
+    padding: 5
   }
 }));
 
-function Availability(props) {
-    const classes = useStyles()
-    const { profile, setProfile } = useProfileContext()
-    const [availability, setAvailability] = useState((profile && profile.availability) || []);
-    const createChangeHandler = (i, key) => {
-        return e => {
-            const newAvail = [...availability]
-            newAvail[i][key] = e
-            if (newAvail[i].end < newAvail[i].start) {
-                newAvail[i].end = newAvail[i].start;
-            }
-            updateAvailability(newAvail)
-        }
-    }
-    const updateAvailability = newAvail => {
-        const newProfile = { ...profile };
-        newProfile.availability = newAvail;
-        setAvailability(newAvail);
-        setProfile(newProfile);
-        const options = {
-          method: "PUT",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(newProfile),
-        };
-        fetch(`/profile/${profile._id}`, options)
-    }
-    const addRange = () => {
-        const newAvail = [...availability];
-        newAvail.push({
-            start: new Date(),
-            end: new Date()
-        })
-        updateAvailability(newAvail)
-    }
-    const createDeleteHandler = i => {
-        return () => {
-            const newAvail = [...availability];
-            newAvail.splice(i, 1)
-            updateAvailability(newAvail);
-        }
-    }
-    return (
-      <Grid container direction="column" alignItems="center">
-        <Grid item>
-          <h2>Availability</h2>
-        </Grid>
-        {availability.map((range, i) => (
-          <Grid key={`range-${i}`} className={classes.row} item>
-            <IconButton onClick={createDeleteHandler(i)}>
-              <Delete />
-            </IconButton>
-            <Typography className={classes.label}>
-              Availability Range {i + 1}
-            </Typography>
-            <MuiPickersUtilsProvider utils={DateFnsUtils}>
-              <DateTimePicker
-                inputVariant="outlined"
-                className={classes.date}
-                value={range.start}
-                onChange={createChangeHandler(i, "start")}
-                label="Start"
-              />
-              <Typography className={classes.label}>to</Typography>
-              <DateTimePicker
-                inputVariant="outlined"
-                className={classes.date}
-                minDate={range.start}
-                value={range.end}
-                onChange={createChangeHandler(i, "end")}
-                label="End"
-              />
-            </MuiPickersUtilsProvider>
-          </Grid>
-        ))}
-        <IconButton onClick={addRange}>
-          <Add />
-        </IconButton>
+function Availability() {
+  const classes = useStyles();
+  const { profile, setProfile } = useProfileContext();
+  const [availability, setAvailability] = useState((profile && profile.availability) || []);
+  const createChangeHandler = (i, key) => {
+    return e => {
+      const newAvail = [...availability];
+      newAvail[i][key] = e;
+      if (newAvail[i].end < newAvail[i].start) {
+        newAvail[i].end = newAvail[i].start;
+      }
+      updateAvailability(newAvail);
+    };
+  };
+  const updateAvailability = newAvail => {
+    const newProfile = { ...profile };
+    newProfile.availability = newAvail;
+    setAvailability(newAvail);
+    setProfile(newProfile);
+    const options = {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(newProfile),
+    };
+    fetch(`/profile/${profile._id}`, options);
+  };
+  const addRange = () => {
+    const newAvail = [...availability];
+    newAvail.push({
+      start: new Date(),
+      end: new Date()
+    });
+    updateAvailability(newAvail);
+  };
+  const createDeleteHandler = i => {
+    return () => {
+      const newAvail = [...availability];
+      newAvail.splice(i, 1);
+      updateAvailability(newAvail);
+    };
+  };
+  return (
+    <Grid container direction="column" alignItems="center">
+      <Grid item>
+        <h2>Availability</h2>
       </Grid>
-    );
+      {availability.map((range, i) => (
+        <Grid key={`range-${i}`} className={classes.row} item>
+          <IconButton onClick={createDeleteHandler(i)}>
+            <Delete />
+          </IconButton>
+          <Typography className={classes.label}>
+              Availability Range {i + 1}
+          </Typography>
+          <MuiPickersUtilsProvider utils={DateFnsUtils}>
+            <DateTimePicker
+              inputVariant="outlined"
+              className={classes.date}
+              value={range.start}
+              onChange={createChangeHandler(i, "start")}
+              label="Start"
+            />
+            <Typography className={classes.label}>to</Typography>
+            <DateTimePicker
+              inputVariant="outlined"
+              className={classes.date}
+              minDate={range.start}
+              value={range.end}
+              onChange={createChangeHandler(i, "end")}
+              label="End"
+            />
+          </MuiPickersUtilsProvider>
+        </Grid>
+      ))}
+      <IconButton onClick={addRange}>
+        <Add />
+      </IconButton>
+    </Grid>
+  );
 }
 
 export default Availability;

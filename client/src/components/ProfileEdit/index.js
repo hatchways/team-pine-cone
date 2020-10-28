@@ -1,13 +1,15 @@
 import "date-fns";
 import React, { useState, useEffect } from "react";
 import { useUserContext } from "../../contexts/user";
+import { useProfileContext } from "../../contexts/profile";
 import {
   Grid,
   Typography,
   TextField,
   MenuItem,
   Button,
-  Snackbar,
+  Snackbar, 
+  Switch
 } from "@material-ui/core";
 import { makeStyles } from "@material-ui/styles";
 import PhoneInput from "material-ui-phone-number";
@@ -32,7 +34,7 @@ const useStyles = makeStyles((theme) => ({
   },
   mainContainer: {
     margin: "auto",
-	  maxWidth: "900px"
+    maxWidth: "900px"
   },
   input: {
     marginBottom: "1em",
@@ -51,9 +53,12 @@ const useStyles = makeStyles((theme) => ({
     ...theme.buttons.bigRedButton,
     marginTop: "2.5em",
   },
-	title: { 
-		marginBottom: '3em'
-	}
+  title: { 
+    marginBottom: "3em"
+  },
+  switch: {
+    margin: "10px 5px"
+  }
 }));
 
 const InputText = function ({
@@ -114,10 +119,12 @@ const initialForm = {
   address: "",
   phone: "",
   description: "",
+  isSitter: false
 };
 
 const ProfileEdit = function () {
   const { user } = useUserContext();
+  const { pullProfile } = useProfileContext();
   const classes = useStyles();
   const [isSaved, setIsSaved] = useState(false);
   const [disableSubmit, setDisableSubmit] = useState(false);
@@ -128,6 +135,7 @@ const ProfileEdit = function () {
     setErrors,
     handleInputChange,
     handleDateChange,
+    handleCheckboxChange
   } = useForm(initialForm);
 
   useEffect(() => {
@@ -194,7 +202,10 @@ const ProfileEdit = function () {
       },
       body: JSON.stringify(cleanForm),
     })
-      .then(() => setIsSaved(true))
+      .then(() => {
+        pullProfile()
+        setIsSaved(true)
+      });
   };
 
   return (
@@ -207,7 +218,7 @@ const ProfileEdit = function () {
       onSubmit={handleSubmit}
     >
       <Grid item>
-		  <h2 className={classes.title}>Edit Profile</h2>
+        <h2 className={classes.title}>Edit Profile</h2>
       </Grid>
 
       {/*FIRST NAME*/}
@@ -229,6 +240,21 @@ const ProfileEdit = function () {
       >
         LAST NAME
       </InputText>
+
+      <Grid container item className={classes.input}>
+        <Grid item xs={4} md={3}>
+          <Label id="isSitter">I AM {!values.isSitter && "NOT "}A SITTER</Label>
+        </Grid>
+        <Grid item xs={8} md={7}>
+          <Switch
+            id="isSitter"
+            name="isSitter"
+            checked={values.isSitter}
+            onChange={handleCheckboxChange}
+            className={classes.switch}
+          />
+        </Grid>
+      </Grid>
 
       {/*EMAIL ADDRESS*/}
       <Grid container item className={classes.input}>

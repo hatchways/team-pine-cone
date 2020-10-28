@@ -1,5 +1,4 @@
 const createError = require("http-errors");
-const { User } = require("../models/");
 
 const getUser = (req, res, next) => {
   if (!req.user) {

@@ -7,8 +7,7 @@ import {
   TextField,
   MenuItem,
   Button,
-  Snackbar, 
-  Switch
+  Snackbar,
 } from "@material-ui/core";
 import { makeStyles } from "@material-ui/styles";
 import PhoneInput from "material-ui-phone-number";
@@ -54,9 +53,6 @@ const useStyles = makeStyles((theme) => ({
   },
   title: { 
     marginBottom: "3em"
-  },
-  switch: {
-    margin: "10px 5px"
   }
 }));
 
@@ -118,7 +114,6 @@ const initialForm = {
   address: "",
   phone: "",
   description: "",
-  isSitter: false
 };
 
 const ProfileEdit = function () {
@@ -133,7 +128,6 @@ const ProfileEdit = function () {
     setErrors,
     handleInputChange,
     handleDateChange,
-    handleCheckboxChange
   } = useForm(initialForm);
 
   useEffect(() => {
@@ -235,21 +229,6 @@ const ProfileEdit = function () {
       >
         LAST NAME
       </InputText>
-
-      <Grid container item className={classes.input}>
-        <Grid item xs={4} md={3}>
-          <Label id="isSitter">I AM {!values.isSitter && "NOT "}A SITTER</Label>
-        </Grid>
-        <Grid item xs={8} md={7}>
-          <Switch
-            id="isSitter"
-            name="isSitter"
-            checked={values.isSitter}
-            onChange={handleCheckboxChange}
-            className={classes.switch}
-          />
-        </Grid>
-      </Grid>
 
       {/*EMAIL ADDRESS*/}
       <Grid container item className={classes.input}>

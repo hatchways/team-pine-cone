@@ -3,7 +3,7 @@ import React from "react";
 
 function Copyright() {
   return (
-    <Typography style={{marginTop: 20}} variant="body2" color="textSecondary" align="center">
+    <Typography variant="body2" color="textSecondary" align="center">
       {"Copyright © "}
       <Link color="inherit" href="#">
           LovingSitter

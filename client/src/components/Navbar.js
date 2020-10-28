@@ -10,7 +10,8 @@ import {
   withWidth,
   Menu,
   MenuItem,
-  IconButton,
+  IconButton, 
+  Badge
 } from "@material-ui/core";
 import { makeStyles } from "@material-ui/core/styles";
 import MoreVertIcon from "@material-ui/icons/MoreVert";
@@ -30,7 +31,7 @@ const useStyles = makeStyles((theme) => ({
   navbar: {
     backgroundColor: "#EEEEEE",
     zIndex: theme.zIndex.drawer + 1,
-  },
+  }
 }));
 
 function Navigation({
@@ -117,11 +118,13 @@ function Navigation({
           </NavLink>
         ))}
         <NavLink className={classes.linkText} to="/me">
-          {profile && profile.photo ? (
-            <Avatar src={profile.photo} />
-          ) : (
-            <Avatar>{profile ? profile.firstName[0] : "?"}</Avatar>
-          )}
+          <Badge badgeContent={4} className={classes.notification} color="primary">
+            {profile && profile.photo ? (
+              <Avatar src={profile.photo} />
+              ) : (
+                <Avatar>{profile ? profile.firstName[0] : "?"}</Avatar>
+                )}
+          </Badge>
         </NavLink>
       </List>
     );

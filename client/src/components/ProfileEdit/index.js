@@ -1,14 +1,8 @@
 import "date-fns";
 import React, { useState, useEffect } from "react";
 import { useUserContext } from "../../contexts/user";
-import {
-  Grid,
-  Typography,
-  TextField,
-  MenuItem,
-  Button,
-  Snackbar,
-} from "@material-ui/core";
+import { useProfileContext } from "../../contexts/profile";
+import { Grid, TextField, MenuItem, Button, Snackbar } from "@material-ui/core";
 import { makeStyles } from "@material-ui/styles";
 import PhoneInput from "material-ui-phone-number";
 import { genders } from "./data";
@@ -17,8 +11,10 @@ import { DatePicker, MuiPickersUtilsProvider } from "@material-ui/pickers";
 import { addYears } from "date-fns";
 import DateFnsUtils from "@date-io/date-fns";
 import useForm from "../useForm";
+import InputText from "./InputText";
+import Label from "./Label";
 
-const useStyles = makeStyles((theme) => ({
+export const useStyles = makeStyles((theme) => ({
   label: {
     fontWeight: "bold",
     letterSpacing: "0.7px",
@@ -32,7 +28,7 @@ const useStyles = makeStyles((theme) => ({
   },
   mainContainer: {
     margin: "auto",
-    maxWidth: "900px"
+    maxWidth: "900px",
   },
   input: {
     marginBottom: "1em",
@@ -51,51 +47,10 @@ const useStyles = makeStyles((theme) => ({
     ...theme.buttons.bigRedButton,
     marginTop: "2.5em",
   },
-  title: { 
-    marginBottom: "3em"
-  }
+  title: {
+    marginBottom: "3em",
+  },
 }));
-
-const InputText = function ({
-  id,
-  placeholder,
-  children,
-  value,
-  handleChange,
-}) {
-  const classes = useStyles();
-
-  return (
-    <Grid container item className={classes.input}>
-      <Grid item xs={4} md={3}>
-        <Typography className={classes.label} component="label" htmlFor={id}>
-          {children}
-        </Typography>
-      </Grid>
-      <Grid item xs={8} md={7}>
-        <TextField
-          onChange={handleChange}
-          id={id}
-          name={id}
-          fullWidth
-          variant="outlined"
-          value={value}
-          placeholder={placeholder}
-        />
-      </Grid>
-    </Grid>
-  );
-};
-
-const Label = function ({ children, id }) {
-  const classes = useStyles();
-
-  return (
-    <Typography className={classes.label} component="label" htmlFor={id}>
-      {children}
-    </Typography>
-  );
-};
 
 const capitaleachword = (str) =>
   str
@@ -104,6 +59,9 @@ const capitaleachword = (str) =>
     .join(" ");
 
 const minDate = addYears(new Date(), -18);
+
+const genderCheck = (gender) =>
+  gender === "non-binary" ? "Non-Binary" : capitaleachword(gender);
 
 const initialForm = {
   firstName: "",
@@ -118,9 +76,11 @@ const initialForm = {
 
 const ProfileEdit = function () {
   const { user } = useUserContext();
+  const { profile, setProfile } = useProfileContext();
   const classes = useStyles();
   const [isSaved, setIsSaved] = useState(false);
   const [disableSubmit, setDisableSubmit] = useState(false);
+
   const {
     values,
     setValues,
@@ -131,21 +91,14 @@ const ProfileEdit = function () {
   } = useForm(initialForm);
 
   useEffect(() => {
-    fetch(`/profile/${user.profile}`)
-      .then((res) => res.json())
-      .then((profile) =>
-        setValues((values) => ({
-          ...values,
-          ...profile,
-          gender:
-            profile.gender === "non-binary"
-              ? "Non-Binary"
-              : capitaleachword(profile.gender),
-          birthDate: new Date(profile.birthDate),
-          email: user.email,
-        }))
-      );
-  }, [user.email, user.profile, setValues]);
+    setValues((values) => ({
+      ...values,
+      ...profile,
+      gender: genderCheck(profile.gender),
+      birthDate: new Date(profile.birthDate),
+      email: user.email,
+    }));
+  }, [profile, user, setValues]);
 
   const handlePhone = (value) => {
     if (!/\+1 \(\d{3}\) \d{3}-\d{4}/.test(value)) {
@@ -194,6 +147,8 @@ const ProfileEdit = function () {
       },
       body: JSON.stringify(cleanForm),
     })
+      .then((res) => res.json())
+      .then(({ profile }) => setProfile(profile))
       .then(() => setIsSaved(true));
   };
 

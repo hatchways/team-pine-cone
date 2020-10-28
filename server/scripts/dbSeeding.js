@@ -1,8 +1,8 @@
 require("dotenv").config();
 
 const { Profile } = require("../models/");
-const mongodbUri = process.env.MONGODB_URI;
 const mongoose = require("mongoose");
+const got = require("got");
 const { addMonths, subYears } = require("date-fns");
 const {
   name,
@@ -11,9 +11,9 @@ const {
   lorem,
   phone,
   image,
-  address,
 } = require("faker/locale/en_CA");
 
+const mongodbUri = process.env.MONGODB_URI;
 const genders = Profile.schema.paths.gender.enumValues;
 
 const randomDateBetweenNowAndAMonth = () => {
@@ -30,13 +30,13 @@ const mainCitiesGPS = [Toronto, QuebecCity, Montreal, Calgary];
 
 (async function () {
   try {
-    let profiles = [];
-
-    const connection = await mongoose.connect(mongodbUri, {
+    await mongoose.connect(mongodbUri, {
       useNewUrlParser: true,
       useUnifiedTopology: true,
       useCreateIndex: true,
     });
+
+    await mongoose.connection.db.dropDatabase();
 
     for (let i = 0; i < 15; i++) {
       let availabilityStart = randomDateBetweenNowAndAMonth();
@@ -53,13 +53,13 @@ const mainCitiesGPS = [Toronto, QuebecCity, Montreal, Calgary];
         availabilityStart = temp;
       }
 
-      const user = {
+      const mock = {
         firstName: name.firstName(),
         lastName: name.lastName(),
         gender: random.arrayElement(genders),
         birthDate: randomBirthDate,
         description: lorem.paragraph(),
-        isSitter: true,
+        isSitter: i > 1,
         availability: [
           {
             start: availabilityStart,
@@ -74,15 +74,30 @@ const mainCitiesGPS = [Toronto, QuebecCity, Montreal, Calgary];
         photo: image.avatar(),
       };
 
-      profiles.push(user);
-    }
+      const { body } = await got.post("http://localhost:3001/register", {
+        json: {
+          firstName: mock.firstName,
+          lastName: mock.lastName,
+          birthDate: mock.birthDate,
+          phone: mock.phone,
+          email: `${i}@test.com`,
+          password: "123456",
+        },
+        responseType: "json",
+      });
 
-    await Profile.insertMany(profiles);
+      await got.put(`http://localhost:3001/profile/${body.user.profile}`, {
+        json: {
+          ...mock,
+        },
+      });
+    }
 
     console.log("Seeding successful");
     process.exit();
   } catch (err) {
     console.log(err.message);
-    console.log("Seeding profiles failed");
+    console.log("Seeding failed");
+    process.exit();
   }
 })();

@@ -10,15 +10,17 @@ const { requestChargePayValidators } = require("../utils/validators/");
 
 const Router = express.Router();
 
-Router.get("/requests", authenticate(), getRequestsByUser);
-
-Router.post("/request", authenticate(), createRequest);
-
-Router.put("/request/:id", authenticate(), updateRequest);
-
 Router.post(
   "/request/:id/pay",
   authenticate(),
   requestChargePayValidators,
   chargeAndPayRequest
 );
+
+Router.get("/me", authenticate(), getRequestsByUser);
+
+Router.post("/create", authenticate(), createRequest);
+
+Router.put("/update/:id", authenticate(), updateRequest);
+
+module.exports = Router;

@@ -1,15 +1,13 @@
 import "date-fns";
 import React, { useState, useEffect } from "react";
 import { useUserContext } from "../../contexts/user";
-import { useProfileContext } from "../../contexts/profile";
 import {
   Grid,
   Typography,
   TextField,
   MenuItem,
   Button,
-  Snackbar, 
-  Switch
+  Snackbar,
 } from "@material-ui/core";
 import { makeStyles } from "@material-ui/styles";
 import PhoneInput from "material-ui-phone-number";
@@ -55,9 +53,6 @@ const useStyles = makeStyles((theme) => ({
   },
   title: { 
     marginBottom: "3em"
-  },
-  switch: {
-    margin: "10px 5px"
   }
 }));
 
@@ -119,12 +114,10 @@ const initialForm = {
   address: "",
   phone: "",
   description: "",
-  isSitter: false
 };
 
 const ProfileEdit = function () {
   const { user } = useUserContext();
-  const { pullProfile } = useProfileContext();
   const classes = useStyles();
   const [isSaved, setIsSaved] = useState(false);
   const [disableSubmit, setDisableSubmit] = useState(false);
@@ -135,7 +128,6 @@ const ProfileEdit = function () {
     setErrors,
     handleInputChange,
     handleDateChange,
-    handleCheckboxChange
   } = useForm(initialForm);
 
   useEffect(() => {
@@ -202,10 +194,7 @@ const ProfileEdit = function () {
       },
       body: JSON.stringify(cleanForm),
     })
-      .then(() => {
-        pullProfile()
-        setIsSaved(true)
-      });
+      .then(() => setIsSaved(true));
   };
 
   return (
@@ -240,21 +229,6 @@ const ProfileEdit = function () {
       >
         LAST NAME
       </InputText>
-
-      <Grid container item className={classes.input}>
-        <Grid item xs={4} md={3}>
-          <Label id="isSitter">I AM {!values.isSitter && "NOT "}A SITTER</Label>
-        </Grid>
-        <Grid item xs={8} md={7}>
-          <Switch
-            id="isSitter"
-            name="isSitter"
-            checked={values.isSitter}
-            onChange={handleCheckboxChange}
-            className={classes.switch}
-          />
-        </Grid>
-      </Grid>
 
       {/*EMAIL ADDRESS*/}
       <Grid container item className={classes.input}>

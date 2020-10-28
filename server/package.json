@@ -6,7 +6,7 @@
     "dev": "nodemon ./bin/www",
     "debug": "nodemon  --inspect ./bin/www",
     "test": "NODE_ENV=test ./node_modules/.bin/mocha --exit --timeout 30000",
-	"seed": "node ./scripts/dbSeeding"
+    "seed": "node ./scripts/dbSeeding"
   },
   "dependencies": {
     "aws-sdk": "^2.773.0",
@@ -22,7 +22,6 @@
     "faker": "^5.1.0",
     "file-type": "^15.0.1",
     "got": "^11.8.0",
-    "file-type": "^15.0.1",
     "http-errors": "~1.6.3",
     "jsonwebtoken": "^8.5.1",
     "mongoose": "^5.10.9",

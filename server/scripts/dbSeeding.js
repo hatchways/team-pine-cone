@@ -48,9 +48,10 @@ const mainCitiesGPS = [Toronto, QuebecCity, Montreal, Calgary];
       );
 
       if (availabilityStart > availabilityEnd) {
-        let temp = availabilityEnd;
-        availabilityEnd = availabilityStart;
-        availabilityStart = temp;
+        [availabilityEnd, availabilityStart] = [
+          availabilityStart,
+          availabilityEnd,
+        ];
       }
 
       const mock = {
@@ -80,7 +81,7 @@ const mainCitiesGPS = [Toronto, QuebecCity, Montreal, Calgary];
           lastName: mock.lastName,
           birthDate: mock.birthDate,
           phone: mock.phone,
-          email: `${i}@test.com`,
+          email: `user${i}@test.com`,
           password: "123456",
         },
         responseType: "json",

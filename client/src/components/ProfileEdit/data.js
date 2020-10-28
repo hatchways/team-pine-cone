@@ -13,3 +13,7 @@ export const jobTitles = [
   "Dog Care Helper",
   "Loving Dog Groomer",
 ];
+
+//elint is way to strict on this
+//eslint-disable-next-line
+export const emailRegEx = /^(([^<>()\[\]\.,;:\s@\"]+(\.[^<>()\[\]\.,;:\s@\"]+)*)|(\".+\"))@(([^<>()[\]\.,;:\s@\"]+\.)+[^<>()[\]\.,;:\s@\"]{2,})$/i;

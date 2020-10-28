@@ -2,18 +2,10 @@ import "date-fns";
 import React, { useState, useEffect } from "react";
 import { useUserContext } from "../../contexts/user";
 import { useProfileContext } from "../../contexts/profile";
-import {
-  Grid,
-  Typography,
-  TextField,
-  MenuItem,
-  Button,
-  Snackbar, 
-  Switch
-} from "@material-ui/core";
+import { Grid, TextField, Button, Snackbar, Switch } from "@material-ui/core";
 import { makeStyles } from "@material-ui/styles";
 import PhoneInput from "material-ui-phone-number";
-import { genders, jobTitles } from "./data";
+import { genders, jobTitles, emailRegEx } from "./data";
 import { Alert } from "@material-ui/lab/";
 import { DatePicker, MuiPickersUtilsProvider } from "@material-ui/pickers";
 import { addYears } from "date-fns";
@@ -56,12 +48,12 @@ export const useStyles = makeStyles((theme) => ({
     ...theme.buttons.bigRedButton,
     marginTop: "2.5em",
   },
-  title: { 
-    marginBottom: "3em"
+  title: {
+    marginBottom: "3em",
   },
   switch: {
-    margin: "10px 5px"
-  }
+    margin: "10px 5px",
+  },
 }));
 
 const capitaleachword = (str) =>
@@ -86,11 +78,11 @@ const initialForm = {
   description: "",
   hourlyRate: 0,
   jobTitle: "",
-  isSitter: false
+  isSitter: false,
 };
 
 const ProfileEdit = function () {
-  const { user } = useUserContext();
+  const { user, handleSetUser } = useUserContext();
   const { profile, setProfile } = useProfileContext();
   const classes = useStyles();
   const [isSaved, setIsSaved] = useState(false);
@@ -103,7 +95,7 @@ const ProfileEdit = function () {
     setErrors,
     handleInputChange,
     handleDateChange,
-    handleCheckboxChange
+    handleCheckboxChange,
   } = useForm(initialForm);
 
   useEffect(() => {
@@ -114,11 +106,12 @@ const ProfileEdit = function () {
       birthDate: new Date(profile.birthDate),
       email: user.email,
     }));
-  }, [profile, user, setValues]);
+  }, [profile, user.email, setValues]);
 
-  const regExHandler = (regEx, errMsg, prop) => (e) => {
-    const value = e.target.value;
-    if (!regEx.test(value)) {
+  const validateHandler = (validator, errMsg, prop) => (e) => {
+    const value = e.target ? e.target.value : e;
+
+    if (!validator.test(value)) {
       setErrors({ ...errors, [prop]: errMsg });
       setDisableSubmit(true);
     } else {
@@ -129,23 +122,20 @@ const ProfileEdit = function () {
     setValues({ ...values, [prop]: value });
   };
 
-  const handlePhone = (value) => {
-    if (!/\+1 \(\d{3}\) \d{3}-\d{4}/.test(value)) {
-      setErrors({ ...errors, phone: "Phone number is invalid" });
-      setDisableSubmit(true);
-    } else {
-      setErrors({ ...errors, phone: "" });
-      setDisableSubmit(false);
-    }
-
-    setValues({ ...values, phone: value });
-  };
-
-  const handleEmail = regExHandler(/.+@.+..+/, "Email is not valid", "email");
-  const handleHourlyRate = regExHandler(
+  const handleEmail = validateHandler(
+    emailRegEx,
+    "Email is not valid",
+    "email"
+  );
+  const handleHourlyRate = validateHandler(
     /^\d*(\.\d{0,2})?$/,
     "Enter a valid hourly rate eg 14.55",
     "hourlyRate"
+  );
+  const handlePhone = validateHandler(
+    /\+1 \(\d{3}\) \d{3}-\d{4}/,
+    "Phone number is invalid",
+    "phone"
   );
 
   const handleCloseSaved = () => {
@@ -171,7 +161,12 @@ const ProfileEdit = function () {
       body: JSON.stringify(cleanForm),
     })
       .then((res) => res.json())
-      .then(({ profile }) => setProfile(profile))
+      .then(({ profile }) => {
+        fetch("/user/me")
+          .then((res) => res.json())
+          .then(({ user }) => handleSetUser(user))
+          .then(() => setProfile(profile));
+      })
       .then(() => setIsSaved(true));
   };
 
@@ -256,35 +251,41 @@ const ProfileEdit = function () {
 
       {/*HOURLY RATE*/}
       {profile && profile.isSitter && (
-        <Grid container item className={classes.input}>
-          <Grid item xs={4} md={3}>
-            <Label id="hourlyRate">HOURLY RATE</Label>
+        <React.Fragment>
+          <Grid container item className={classes.input}>
+            <Grid item xs={4} md={3}>
+              <Label id="hourlyRate">HOURLY RATE</Label>
+            </Grid>
+            <Grid item xs={8} md={5}>
+              <TextField
+                id="hourlyRate"
+                fullWidth
+                variant="outlined"
+                inputProps={{ min: "0" }}
+                type="number"
+                onBlur={() =>
+                  setValues({
+                    ...values,
+                    hourlyRate: Number(values.hourlyRate).toFixed(2),
+                  })
+                }
+                error={!!errors.hourlyRate}
+                label={errors.hourlyRate || ""}
+                value={values.hourlyRate}
+                onChange={handleHourlyRate}
+              />
+            </Grid>
           </Grid>
-          <Grid item xs={8} md={5}>
-            <TextField
-              id="hourlyRate"
-              fullWidth
-              variant="outlined"
-              inputProps={{ min: "0" }}
-              type="number"
-              error={!!errors.hourlyRate}
-              label={errors.hourlyRate || ""}
-              value={values.hourlyRate}
-              onChange={handleHourlyRate}
-            />
-          </Grid>
-        </Grid>
-      )}
 
-      {/*JOB TITLE*/}
-      {profile && profile.isSitter && (
-        <Select
-          label="JOB TITLE"
-          id="jobTitle"
-          value={values.jobTitle}
-          handle={handleInputChange}
-          items={jobTitles}
-        />
+          {/*JOB TITLE*/}
+          <Select
+            label="JOB TITLE"
+            id="jobTitle"
+            value={values.jobTitle}
+            handle={handleInputChange}
+            items={jobTitles}
+          />
+        </React.Fragment>
       )}
 
       {/*GENDER*/}

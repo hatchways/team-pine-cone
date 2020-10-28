@@ -25,6 +25,8 @@ export const useFetch = function (options) {
   }, [options.url, options.method, options.params]);
 
   const updateValue = (newValue) => setValue(newValue);
+  const updateLoading = (loading) => setLoading(loading);
+  const updateError = (value) => setError(value);
 
-  return [value, loading, error, updateValue];
+  return [value, loading, error, updateValue, updateLoading, updateError];
 };

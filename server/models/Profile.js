@@ -87,6 +87,9 @@ const profileSchema = new Schema({
     ],
     default: "Loving Pet Sitter",
   },
+  stripeId: {
+    type: String,
+  },
 });
 
 profileSchema.pre("save", function (next) {

@@ -6,6 +6,7 @@ import ProfileListingItem from "../components/ProfileListingItem";
 import { useFetch } from "../hooks/useFetch";
 import Snackbar from "../components/DefaultSnackbar";
 import Splash from "../components/Splash";
+import SearchFilter from "../components/SearchFilter";
 
 export const useStyle = makeStyles((theme) => ({
   root: {
@@ -79,6 +80,7 @@ const ProfileListings = function () {
         <Typography className={classes.title} variant="h3" align="center">
           Search Results
         </Typography>
+		<SearchFilter/>
         <Snackbar open={error} />
       </Grid>
 

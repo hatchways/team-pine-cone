@@ -12,7 +12,7 @@ import Typography from "@material-ui/core/Typography";
 import Container from "@material-ui/core/Container";
 import useForm from "../components/useForm";
 import Input from "../components/controls/Input";
-import { Toolbar } from "@material-ui/core";
+import { Card, Toolbar } from "@material-ui/core";
 import { MuiPickersUtilsProvider, DatePicker } from "@material-ui/pickers";
 import PhoneInput from "material-ui-phone-number";
 
@@ -75,7 +75,7 @@ export default function SignUp() {
   return !user ? (
     <Container component="main" maxWidth="xs">
       <Toolbar />
-      <div className={classes.paper}>
+      <Card className={classes.paper}>
         <Typography component="h1" variant="h5">
           Sign up
         </Typography>
@@ -194,10 +194,8 @@ export default function SignUp() {
             </Grid>
           </Grid>
         </form>
-      </div>
-      <Box mt={5}>
         <Copyright />
-      </Box>
+      </Card>
     </Container>
   ) : (
     <Redirect to="/" />

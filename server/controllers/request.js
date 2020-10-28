@@ -1,6 +1,5 @@
 const createError = require("http-errors");
 const { Request, Profile } = require("../models/");
-const socket = require("../utils/socket");
 const notifier = require("../utils/notification");
 
 const getRequestsByUser = (req, res, next) => {

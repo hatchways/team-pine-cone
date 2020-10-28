@@ -103,7 +103,7 @@ describe("POST /logout", () => {
     agent
       .post("/login")
       .send({ email: "test@test.com", password: "123456" })
-      .then((res) => {
+      .then(() => {
         return agent.post("/logout").then((res) => {
           expect(res).to.have.status(200);
           expect(res).to.not.have.cookie("JWT");

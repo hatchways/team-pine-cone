@@ -24,6 +24,13 @@ function ProfileProvider(props) {
       const newProfile = { ...profileUpdate };
       setProfile(newProfile);
     },
+    pullProfile: () => {
+      fetch("/profile/me").then((profile) => {
+        profile.json().then((result) => {
+          setProfile(result);
+        });
+      });
+    }
   };
   const location = useLocation().pathname;
   useEffect(() => {

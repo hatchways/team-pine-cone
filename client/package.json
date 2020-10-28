@@ -12,6 +12,7 @@
     "@stripe/stripe-js": "^1.10.0",
     "date-fns": "^2.16.1",
     "material-ui-phone-number": "^2.2.6",
+    "moment": "^2.29.1",
     "react": "^16.8.6",
     "react-credit-card-display": "^0.5.7",
     "react-dom": "^16.8.6",

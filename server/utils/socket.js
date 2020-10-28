@@ -1,3 +1,5 @@
+const notifier = require("./notification");
+
 let io;
 
 exports.create = server => {
@@ -5,6 +7,10 @@ exports.create = server => {
   io.on("connection", socket => {
     socket.on("profile", id =>{
       socket.join(id.toString());
+    });
+
+    socket.on("notification read", (profileId, notificationId) => {
+      notifier.remove(profileId, notificationId);
     });
   });
 };

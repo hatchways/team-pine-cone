@@ -2,10 +2,10 @@ import "date-fns";
 import React, { useState, useEffect } from "react";
 import { useUserContext } from "../../contexts/user";
 import { useProfileContext } from "../../contexts/profile";
-import { Grid, TextField, MenuItem, Button, Snackbar } from "@material-ui/core";
+import { Grid, TextField, Button, Snackbar } from "@material-ui/core";
 import { makeStyles } from "@material-ui/styles";
 import PhoneInput from "material-ui-phone-number";
-import { genders } from "./data";
+import { genders, jobTitles } from "./data";
 import { Alert } from "@material-ui/lab/";
 import { DatePicker, MuiPickersUtilsProvider } from "@material-ui/pickers";
 import { addYears } from "date-fns";
@@ -13,6 +13,7 @@ import DateFnsUtils from "@date-io/date-fns";
 import useForm from "../useForm";
 import InputText from "./InputText";
 import Label from "./Label";
+import Select from "./Select";
 
 export const useStyles = makeStyles((theme) => ({
   label: {
@@ -72,6 +73,8 @@ const initialForm = {
   address: "",
   phone: "",
   description: "",
+  hourlyRate: 0,
+  jobTitle: "",
 };
 
 const ProfileEdit = function () {
@@ -100,6 +103,19 @@ const ProfileEdit = function () {
     }));
   }, [profile, user, setValues]);
 
+  const regExHandler = (regEx, errMsg, prop) => (e) => {
+    const value = e.target.value;
+    if (!regEx.test(value)) {
+      setErrors({ ...errors, [prop]: errMsg });
+      setDisableSubmit(true);
+    } else {
+      setErrors({ ...errors, [prop]: "" });
+      setDisableSubmit(false);
+    }
+
+    setValues({ ...values, [prop]: value });
+  };
+
   const handlePhone = (value) => {
     if (!/\+1 \(\d{3}\) \d{3}-\d{4}/.test(value)) {
       setErrors({ ...errors, phone: "Phone number is invalid" });
@@ -112,18 +128,12 @@ const ProfileEdit = function () {
     setValues({ ...values, phone: value });
   };
 
-  const handleEmail = (e) => {
-    const text = e.currentTarget.value;
-    if (!/.+@.+..+/.test(text)) {
-      setErrors({ ...errors, email: "Email is not valid" });
-      setDisableSubmit(true);
-    } else {
-      setErrors({ ...errors, email: "" });
-      setDisableSubmit(false);
-    }
-
-    setValues({ ...values, email: text });
-  };
+  const handleEmail = regExHandler(/.+@.+..+/, "Email is not valid", "email");
+  const handleHourlyRate = regExHandler(
+    /^\d*(\.\d{0,2})?$/,
+    "Enter a valid hourly rate eg 14.55",
+    "hourlyRate"
+  );
 
   const handleCloseSaved = () => {
     setIsSaved(false);
@@ -160,6 +170,7 @@ const ProfileEdit = function () {
       direction="column"
       alignItems="center"
       onSubmit={handleSubmit}
+      noValidate
     >
       <Grid item>
         <h2 className={classes.title}>Edit Profile</h2>
@@ -215,29 +226,47 @@ const ProfileEdit = function () {
         WHERE YOU LIVE
       </InputText>
 
+      {/*HOURLY RATE*/}
+      {profile && profile.isSitter && (
+        <Grid container item className={classes.input}>
+          <Grid item xs={4} md={3}>
+            <Label id="hourlyRate">HOURLY RATE</Label>
+          </Grid>
+          <Grid item xs={8} md={5}>
+            <TextField
+              id="hourlyRate"
+              fullWidth
+              variant="outlined"
+              inputProps={{ min: "0" }}
+              type="number"
+              error={!!errors.hourlyRate}
+              label={errors.hourlyRate || ""}
+              value={values.hourlyRate}
+              onChange={handleHourlyRate}
+            />
+          </Grid>
+        </Grid>
+      )}
+
+      {/*JOB TITLE*/}
+      {profile && profile.isSitter && (
+        <Select
+          label="JOB TITLE"
+          id="jobTitle"
+          value={values.jobTitle}
+          handle={handleInputChange}
+          items={jobTitles}
+        />
+      )}
+
       {/*GENDER*/}
-      <Grid container item className={classes.input}>
-        <Grid item xs={4} md={3}>
-          <Label id="gender">GENDER</Label>
-        </Grid>
-        <Grid item xs={8} md={5}>
-          <TextField
-            id="gender"
-            name="gender"
-            value={values.gender}
-            onChange={handleInputChange}
-            select
-            className={classes.select}
-            variant="outlined"
-          >
-            {genders.map((value) => (
-              <MenuItem value={value} key={value}>
-                {value}
-              </MenuItem>
-            ))}
-          </TextField>
-        </Grid>
-      </Grid>
+      <Select
+        label="GENDER"
+        id="gender"
+        value={values.gender}
+        handle={handleInputChange}
+        items={genders}
+      />
 
       {/*BIRTH DATE*/}
       <Grid container item alignItems="center" className={classes.input}>

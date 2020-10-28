@@ -15,10 +15,8 @@ import ProfileDetails from "./pages/ProfileDetails";
 import ProfileListings from "./pages/ProfileListings";
 import BecomeASitter from "./pages/BecomeASitter";
 import PaymentSuccess from "./pages/PaymentSuccess";
-
 import { AuthProvider } from "./contexts/user";
 import ProfileProvider from "./contexts/profile";
-import BecomeASitter from "./pages/BecomeASitter";
 import MySitters from "./pages/MySitters";
 import MyJobs from "./pages/MyJobs";
 import { STRIPE_PUBLIC_KEY } from "./data/stripe";

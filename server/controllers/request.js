@@ -1,10 +1,6 @@
-const createError = require("http-errors");
 const { Request, Profile } = require("../models/");
 
-const getRequestsByUser = (req, res, next) => {
-  if (!req.user) {
-    return next(createError(403));
-  }
+const getRequestsByUser = (req, res) => {
 
   Profile.findById(req.user.profile).populate("requests").then(profile => {
     res.status(200).json(profile.requests);
@@ -14,10 +10,7 @@ const getRequestsByUser = (req, res, next) => {
   });
 };
 
-const createRequest = (req, res, next) => {
-  if (!req.user) {
-    return next(createError(403));
-  }
+const createRequest = (req, res) => {
   const request = new Request({
     user_id: req.user.profile,
     sitter_id: req.body.sitter_id,
@@ -35,10 +28,7 @@ const createRequest = (req, res, next) => {
   });
 };
 
-const updateRequest = (req, res, next) => {
-  if (!req.user) {
-    return next(createError(403));
-  }
+const updateRequest = (req, res) => {
   Request.findById(req.params.id).then(request => {
     if (req.body.accepted) {
       request.accept();

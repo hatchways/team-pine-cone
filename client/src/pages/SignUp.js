@@ -7,7 +7,6 @@ import DateFnsUtils from "@date-io/date-fns";
 
 import Button from "@material-ui/core/Button";
 import Grid from "@material-ui/core/Grid";
-import Box from "@material-ui/core/Box";
 import Typography from "@material-ui/core/Typography";
 import Container from "@material-ui/core/Container";
 import useForm from "../components/useForm";
@@ -186,7 +185,7 @@ export default function SignUp() {
           >
             Sign Up
           </Button>
-          <Grid container justify="flex-end">
+          <Grid container alignItems="center" direction="column">
             <Grid item>
               <NavLink className={classes.link} to="/login">
                 Already have an account? Sign in

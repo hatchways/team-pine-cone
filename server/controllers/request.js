@@ -1,6 +1,7 @@
 const createError = require("http-errors");
 const { Request, Profile } = require("../models/");
 const socket = require("../utils/socket");
+const notifier = require("../utils/notification");
 
 const getRequestsByUser = (req, res, next) => {
   if (!req.user) {
@@ -28,9 +29,9 @@ const createRequest = (req, res, next) => {
 
   request.save().then(result => {
     Profile.findById(result.user_id).then(profile => {
-      socket.io.to(result.sitter_id.toString()).emit("notification", {
+      notifier.notify(result.sitter_id, {
         title: "New Request",
-        message: `${profile.firstName} ${profile.lastName} wants you to watch their dog!`
+        message: `${profile.firstName} ${profile.lastName} wants you to watch their dog!`,
       });
     });
     res.status(200).json(result);
@@ -55,7 +56,7 @@ const updateRequest = (req, res, next) => {
     }
     const notifyId = req.user.profile === request.user_id ? request.sitter_id : request.user_id;
     Profile.findById(req.user.profile).then(profile => {
-      socket.io.to(notifyId.toString()).emit("notification", {
+      notifier.notify(notifyId, {
         title: `Booking ${req.body.accepted ? "Accepted" : "Declined"}`,
         message: `${req.body.accepted ? "Yay!" : "Sorry!"} ${profile.firstName} ${profile.lastName} ${req.body.accepted ? "accepted" : "declined"} your booking.`,
       });

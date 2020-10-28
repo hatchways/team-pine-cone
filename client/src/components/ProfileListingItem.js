@@ -52,7 +52,9 @@ const Item = function (props) {
           <Grid item id="shortDescription">
             {/*shortDescription*/}
             <Typography variant="body1" className={classes.description}>
-              {description}
+              {description.length > 50
+                ? description.slice(0, 50) + "..."
+                : description}
             </Typography>
           </Grid>
           <Grid item className={classes.cardBottom}>

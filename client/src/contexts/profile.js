@@ -35,20 +35,12 @@ function ProfileProvider(props) {
   const location = useLocation().pathname;
   useEffect(() => {
     if (firstUpdate.current) {
-      fetch("/profile/me").then((profile) => {
-        profile.json().then((result) => {
-          setProfile(result);
-        });
-      });
+      context.pullProfile()
       firstUpdate.current = false;
     } else {
       const hasLoggedIn = (prevLocation.current === "/login" || prevLocation.current === "/signup") && (location !== "/login" && location !== "/signup");
       if (hasLoggedIn) {
-        fetch("/profile/me").then((profile) => {
-          profile.json().then((result) => {
-            setProfile(result);
-          });
-        });
+        context.pullProfile();
       }
     }
     prevLocation.current = location;

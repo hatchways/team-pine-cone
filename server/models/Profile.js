@@ -64,6 +64,10 @@ const profileSchema = new Schema({
   requests: [{
     type: Schema.Types.ObjectId,
     ref: "Request"
+  }],
+  notifications: [{
+    title: String,
+    description: String
   }]
 });
 

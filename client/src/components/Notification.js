@@ -12,18 +12,18 @@ const useStyles = makeStyles({
   },
 });
 
-function Notification(props) {
+function Notification({ title, description, link, src }) {
     const classes = useStyles()
     return (
-      <Link className={classes.notificationText} to="/my-jobs">
+      <Link className={classes.notificationText} to={link}>
         <Card className={classes.notification} variant="outlined">
           <Grid container direction="row" alignItems="center">
             <Grid style={{ marginRight: 20 }} item>
-              <Avatar />
+              <Avatar src={src} />
             </Grid>
             <Grid item>
-              <h3>Title</h3>
-              <p>Description</p>
+              <h3>{title}</h3>
+              <p>{description}</p>
             </Grid>
           </Grid>
         </Card>

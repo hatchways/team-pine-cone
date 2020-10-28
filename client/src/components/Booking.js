@@ -1,6 +1,7 @@
 import { Avatar, Button, Card, makeStyles } from "@material-ui/core";
 import React, { Fragment, useEffect, useState } from "react";
 import { useProfileContext } from "../contexts/profile";
+import moment from "moment";
 
 const useStyles = makeStyles((theme) => ({
   booking: {
@@ -56,14 +57,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const formatDate = dateStr => {
-  const date = new Date(dateStr)
-  return `${doubleNumber(date.getMonth() + 1)}/${doubleNumber(date.getDate())} ${doubleNumber(date.getHours())}:${doubleNumber(date.getMinutes())}`
-}
-
-const doubleNumber = number => (
-  number < 10 ? `0${number}` : number
-)
+const formatDate = dateStr => moment(dateStr).format("MMM D h:mma")
 
 function Booking({ _id, isBooking, isMyJobs, sitter_id, user_id, start, end, paid }) {
   const classes = useStyles();

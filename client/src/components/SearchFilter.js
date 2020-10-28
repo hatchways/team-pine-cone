@@ -31,11 +31,6 @@ const useStyle = makeStyles(theme => ({
 			background: "white",
 		},
 	},
-	search: { 
-		padding: "1em",
-		borderRadius: "50px",
-		display: "flex",
-	},
 	icon: { 
 		marginRight: "10px",
 		background: theme.palette.primary.main,

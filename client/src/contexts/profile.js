@@ -13,7 +13,14 @@ class ProfileProvider extends React.Component {
     super(props);
     this.state = {
       profile: null,
-      setProfile: profile => { this.setState({profile}); }
+      setProfile: profile => { this.setState({profile}); },
+      pullProfile: () => {
+        fetch("/profile/me").then(profile => {
+          profile.json().then(result => {
+            this.state.setProfile(result);
+          });
+        });
+      }
     };
   }
   componentDidMount() {

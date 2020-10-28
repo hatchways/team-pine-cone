@@ -79,6 +79,7 @@ const ProfileDetails = function () {
   const [selectDropOff, setSelectDropOff] = useState(addHours(new Date(), 2));
   const classes = useStyles();
   const params = useParams();
+  const { pullProfile } = useProfileContext();
   const [profile, loading, error] = useFetch({
     init: {},
     url: `/profile/${params.id}`,
@@ -111,11 +112,7 @@ const ProfileDetails = function () {
         end: selectDropOff,
       }),
     }).then(() => {
-      fetch("/profile/me").then((profile) => {
-        profile.json().then((result) => {
-          setProfile(result);
-        });
-      });
+      pullProfile();
     });
   };
 

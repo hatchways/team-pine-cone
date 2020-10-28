@@ -1,7 +1,6 @@
 import "date-fns";
 import React, { useState, useEffect } from "react";
 import { useUserContext } from "../../contexts/user";
-import { useProfileContext } from "../../contexts/profile";
 import {
   Grid,
   Typography,
@@ -124,7 +123,6 @@ const initialForm = {
 
 const ProfileEdit = function () {
   const { user } = useUserContext();
-  const { pullProfile } = useProfileContext();
   const classes = useStyles();
   const [isSaved, setIsSaved] = useState(false);
   const [disableSubmit, setDisableSubmit] = useState(false);
@@ -202,10 +200,7 @@ const ProfileEdit = function () {
       },
       body: JSON.stringify(cleanForm),
     })
-      .then(() => {
-        pullProfile()
-        setIsSaved(true)
-      });
+      .then(() => setIsSaved(true));
   };
 
   return (

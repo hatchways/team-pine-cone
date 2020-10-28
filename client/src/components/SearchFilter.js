@@ -6,29 +6,15 @@ import { Grid, FormControl, InputLabel, Input, InputBase, Button, TextField, Fab
 
 const useStyle = makeStyles(theme => ({
 	container: { 
-		width: "500px",
+		width: "100%",
+		maxWidth: "400px",
 		margin: "auto",
 		borderRadius: "50px",
-	},
-	search: { 
-		padding: "1em",
-		borderRadius: "50px",
-		display: "flex",
-	},
-	icon: { 
-		marginRight: "10px",
-		background: theme.palette.primary.main,
-		fill: "white",
-		borderRadius: "50%",
-		padding: "0.2em",
-	},
-	field: { 
-		background: "white",
+		padding: "0.8em",
 		transition: "all 0.2s",
 		color: "white",
 		"&:hover": { 
 			background: theme.palette.primary.main,
-			borderRadius: "50px",
 		},
 		"&:hover svg": { 
 			fill: theme.palette.primary.main,
@@ -45,7 +31,20 @@ const useStyle = makeStyles(theme => ({
 			background: "white",
 		},
 	},
+	search: { 
+		padding: "1em",
+		borderRadius: "50px",
+		display: "flex",
+	},
+	icon: { 
+		marginRight: "10px",
+		background: theme.palette.primary.main,
+		fill: "white",
+		borderRadius: "50%",
+		padding: "0.2em",
+	},
 	fab: {
+		marginLeft: "auto",
 		transition: "none"
 	}
 }));
@@ -55,15 +54,13 @@ const SearchFilter = function() {
 
 	return (
 		<Grid container component="form" className={classes.container}>
-			<Grid item className={classes.field}>
-				<Grid container alignItems="center" className={classes.search}>
-					<SearchIcon className={classes.icon} fontSize="large" />
-					<TextField label="Search" />
-					<Fab color="primary" size="small" className={classes.fab}>
-						<AddIcon />
-					</Fab>
-				</Grid>
+			<Grid item>
+				<SearchIcon className={classes.icon} fontSize="large" />
+				<TextField label="Search" />
 			</Grid>
+			<Fab color="primary" size="small" className={classes.fab}>
+				<AddIcon />
+			</Fab>
 		</Grid>
 	);
 }

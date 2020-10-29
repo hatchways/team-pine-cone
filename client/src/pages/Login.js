@@ -7,7 +7,7 @@ import Link from "@material-ui/core/Link";
 import Grid from "@material-ui/core/Grid";
 import Typography from "@material-ui/core/Typography";
 import Container from "@material-ui/core/Container";
-import { Toolbar } from "@material-ui/core";
+import { Card, Toolbar } from "@material-ui/core";
 import { NavLink } from "react-router-dom";
 import useForm from "../components/useForm";
 import Input from "../components/controls/Input";
@@ -62,7 +62,7 @@ export default function SignIn() {
     <Fragment>
       <Toolbar />
       <Container component="main" maxWidth="xs">
-        <div className={classes.paper}>
+        <Card className={classes.paper}>
           <Typography component="h1" variant="h5">
             Sign in
           </Typography>
@@ -115,7 +115,12 @@ export default function SignIn() {
             >
               Sign In
             </Button>
-            <Grid container alignItems="center" direction="column">
+            <Grid container>
+              <Grid item xs>
+                <Link href="#" variant="body2">
+                  Forgot password?
+                </Link>
+              </Grid>
               <Grid item>
                 <NavLink className={classes.link} to="/signup">
                   {"Don't have an account? Sign Up"}
@@ -123,10 +128,8 @@ export default function SignIn() {
               </Grid>
             </Grid>
           </form>
-        </div>
-        <Box mt={8}>
           <Copyright />
-        </Box>
+        </Card>
       </Container>
     </Fragment>
   ) : (

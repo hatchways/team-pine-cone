@@ -61,7 +61,7 @@ const updateRequest = (req, res, next) => {
         title: `Booking ${req.body.accepted ? "Accepted" : "Declined"}`,
         message: `${req.body.accepted ? "Yay!" : "Sorry!"} ${profile.firstName} ${profile.lastName} ${req.body.accepted ? "accepted" : "declined"} your booking.`,
         src: profile.photo,
-        link: req.user.profile === request.user_id ? "/my-sitters" : "my-jobs"
+        link: req.user.profile === request.user_id ? "/my-jobs" : "my-sitters"
       });
     });
     res.status(200).json(request);

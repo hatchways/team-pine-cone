@@ -6,7 +6,6 @@ import React, {
   useRef,
 } from "react";
 import { useLocation } from "react-router-dom";
-import socketClient from "socket.io-client";
 
 export const ProfileContext = createContext(null);
 
@@ -19,12 +18,6 @@ function ProfileProvider(props) {
   const [profile, setProfile] = useState(null);
   const firstUpdate = useRef(true);
   const prevLocation = useRef(null);
-  const socket = socketClient(window.location.origin + "/")
-  socket.on("notification", notification => {
-    const newProfile = {...profile};
-    newProfile.notifications.push(notification);
-    setProfile(newProfile)
-  })
   const context = {
     profile,
     setProfile: (profileUpdate) => {
@@ -34,8 +27,7 @@ function ProfileProvider(props) {
     pullProfile: () => {
       fetch("/profile/me").then((response) => {
         response.json().then((result) => {
-          if (!profile) socket.emit("profile", result._id)
-          setProfile(result);
+          setProfile(result)
         });
       });
     }
@@ -49,7 +41,6 @@ function ProfileProvider(props) {
       const hasLoggedIn = (prevLocation.current === "/login" || prevLocation.current === "/signup") && (location !== "/login" && location !== "/signup");
       if (hasLoggedIn) {
         context.pullProfile();
-
       }
     }
     prevLocation.current = location;

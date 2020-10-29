@@ -74,6 +74,14 @@ const useStyle = makeStyles((theme) => ({
   },
 	title: { 
 		color: theme.palette.primary.main
+	},
+	dialog: { 
+		"& p": { 
+			margin: "1em 0"
+		},
+	},
+	top: { 
+		marginTop: "2em"
 	}
 }));
 
@@ -118,10 +126,11 @@ const SearchFilter = function () {
         open={isDialogOpen}
         onClose={() => setIsDialogOpen(false)}
         aria-labelledby="filters-dialog-title"
+	  className={classes.dialog}
       >
         <DialogTitle id="filters-dialog-title" className={classes.title}>Filter Options</DialogTitle>
         <DialogContent>
-          <DialogContentText>Ratings</DialogContentText>
+          <DialogContentText className={classes.dialogSection}>Ratings</DialogContentText>
           <Rating
             name="sitter-ratings"
             defaultValue={0}

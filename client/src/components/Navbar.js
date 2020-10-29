@@ -118,7 +118,7 @@ function Navigation({
           </NavLink>
         ))}
         <NavLink className={classes.linkText} to="/me">
-          <Badge badgeContent={4} className={classes.notification} color="primary">
+          <Badge badgeContent={profile ? profile.notifications.length : 0} className={classes.notification} color="primary">
             {profile && profile.photo ? (
               <Avatar src={profile.photo} />
               ) : (

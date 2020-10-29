@@ -31,6 +31,8 @@ const createRequest = (req, res, next) => {
       notifier.notify(result.sitter_id, {
         title: "New Request",
         message: `${profile.firstName} ${profile.lastName} wants you to watch their dog!`,
+        src: profile.photo,
+        link: "/my-jobs"
       });
     });
     res.status(200).json(result);
@@ -58,6 +60,8 @@ const updateRequest = (req, res, next) => {
       notifier.notify(notifyId, {
         title: `Booking ${req.body.accepted ? "Accepted" : "Declined"}`,
         message: `${req.body.accepted ? "Yay!" : "Sorry!"} ${profile.firstName} ${profile.lastName} ${req.body.accepted ? "accepted" : "declined"} your booking.`,
+        src: profile.photo,
+        link: req.user.profile === request.user_id ? "/my-sitters" : "my-jobs"
       });
     });
     res.status(200).json(request);

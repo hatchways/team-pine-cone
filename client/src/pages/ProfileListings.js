@@ -160,7 +160,6 @@ const ProfileListings = function () {
           <CircularProgress size={24} className={classes.moreLoading} />
         )}
       </Grid>
-      <Snackbar open={error} />
     </Grid>
   );
 };

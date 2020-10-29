@@ -5,10 +5,9 @@ import FormControlLabel from "@material-ui/core/FormControlLabel";
 import Checkbox from "@material-ui/core/Checkbox";
 import Link from "@material-ui/core/Link";
 import Grid from "@material-ui/core/Grid";
-import Box from "@material-ui/core/Box";
 import Typography from "@material-ui/core/Typography";
 import Container from "@material-ui/core/Container";
-import { Toolbar } from "@material-ui/core";
+import { Card, Toolbar } from "@material-ui/core";
 import { NavLink } from "react-router-dom";
 import useForm from "../components/useForm";
 import Input from "../components/controls/Input";
@@ -63,7 +62,7 @@ export default function SignIn() {
     <Fragment>
       <Toolbar />
       <Container component="main" maxWidth="xs">
-        <div className={classes.paper}>
+        <Card className={classes.paper}>
           <Typography component="h1" variant="h5">
             Sign in
           </Typography>
@@ -129,10 +128,8 @@ export default function SignIn() {
               </Grid>
             </Grid>
           </form>
-        </div>
-        <Box mt={8}>
           <Copyright />
-        </Box>
+        </Card>
       </Container>
     </Fragment>
   ) : (

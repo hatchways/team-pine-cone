@@ -12,6 +12,9 @@ function SocketHandler({children}) {
             profile.notifications.push(notification)
             setProfile(profile)
         })
+        socket.on("profile update", update => {
+            setProfile(update)
+        })
         oldProfile.current = profile
     }
     return (

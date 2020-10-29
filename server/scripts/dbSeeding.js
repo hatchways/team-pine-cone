@@ -28,6 +28,8 @@ const Calgary = [-114.05803, 51.046362];
 
 const mainCitiesGPS = [Toronto, QuebecCity, Montreal, Calgary];
 
+const ratings = [0, 1, 2, 3, 4, 5];
+
 (async function () {
   try {
     await mongoose.connect(mongodbUri, {
@@ -61,6 +63,7 @@ const mainCitiesGPS = [Toronto, QuebecCity, Montreal, Calgary];
         birthDate: randomBirthDate,
         description: lorem.paragraph(),
         isSitter: i > 1,
+        rating: random.arrayElement(ratings),
         availability: [
           {
             start: availabilityStart,

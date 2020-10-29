@@ -64,7 +64,7 @@ const ratings = [0, 1, 2, 3, 4, 5];
         description: lorem.paragraph(),
         isSitter: i > 1,
         rating: random.arrayElement(ratings),
-        hourlyRate: random.number({
+        hourlyRate: random.float({
           min: 0,
           max: 300,
         }),

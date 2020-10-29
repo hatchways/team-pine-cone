@@ -5,6 +5,7 @@ exports.notify = (id, notification) => {
   Profile.findById(id).then(profile => {
     profile.notifications.push(notification);
     socket.io.to(id.toString()).emit("notification", notification);
+    profile.save();
   });
 };
 
@@ -15,5 +16,6 @@ exports.remove = (profileId, notificationId) => {
       if (notification._id === notificationId) index = i;
     });
     if (index) profile.notifications.splice(index, 1);
+    profile.save();
   });
 };

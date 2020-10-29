@@ -64,6 +64,10 @@ const ratings = [0, 1, 2, 3, 4, 5];
         description: lorem.paragraph(),
         isSitter: i > 1,
         rating: random.arrayElement(ratings),
+        hourlyRate: random.number({
+          min: 0,
+          max: 300,
+        }),
         availability: [
           {
             start: availabilityStart,

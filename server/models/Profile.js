@@ -66,8 +66,10 @@ const profileSchema = new Schema({
     ref: "Request"
   }],
   notifications: [{
-    title: String,
-    description: String
+    title: {type: String},
+    message: {type: String},
+    src: {type: String},
+    link: {type: String}
   }]
 });
 

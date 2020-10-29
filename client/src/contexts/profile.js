@@ -1,11 +1,5 @@
-import React, {
-  useContext,
-  createContext,
-  useState,
-  useEffect,
-  useRef,
-} from "react";
-import { useLocation } from "react-router-dom";
+import React, {useContext, createContext } from "react";
+import { withRouter } from "react-router-dom";
 
 export const ProfileContext = createContext(null);
 
@@ -14,42 +8,36 @@ export const useProfileContext = () => {
   return profileContext;
 };
 
-function ProfileProvider(props) {
-  const [profile, setProfile] = useState(null);
-  const firstUpdate = useRef(true);
-  const prevLocation = useRef(null);
-  const context = {
-    profile,
-    setProfile: (profileUpdate) => {
-      const newProfile = { ...profileUpdate };
-      setProfile(newProfile);
-    },
-    pullProfile: () => {
+class ProfileProvider extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      profile: null,
+      setProfile: profile => { this.setState({profile}); }
+    };
+  }
+  componentDidMount() {
+    fetch("/profile/me").then(profile => {
+      profile.json().then(result => {
+        this.state.setProfile(result);
+      });
+    });
+  }
+  componentDidUpdate(prevProps) {
+    const hasLoggedIn = (prevProps.location.pathname === "/login" || prevProps.location.pathname === "/signup") && (this.props.location.pathname !== "/login" || this.props.location.pathname !== "/signup");
+    if (hasLoggedIn) {
       fetch("/profile/me").then((profile) => {
         profile.json().then((result) => {
-          setProfile(result);
+          this.state.setProfile(result);
         });
       });
     }
-  };
-  const location = useLocation().pathname;
-  useEffect(() => {
-    if (firstUpdate.current) {
-      context.pullProfile()
-      firstUpdate.current = false;
-    } else {
-      const hasLoggedIn = (prevLocation.current === "/login" || prevLocation.current === "/signup") && (location !== "/login" && location !== "/signup");
-      if (hasLoggedIn) {
-        context.pullProfile();
-      }
-    }
-    prevLocation.current = location;
-  });
-  return (
-    <ProfileContext.Provider value={context}>
-      {props.children}
-    </ProfileContext.Provider>
-  );
+  }
+  render() {
+    return (
+      <ProfileContext.Provider value={this.state}>{this.props.children}</ProfileContext.Provider>
+    );
+  }
 }
 
-export default ProfileProvider;
+export default withRouter(ProfileProvider);

@@ -37,7 +37,7 @@ describe("Database Tests", () => {
           type: "Point",
           coordinates: [-122.5, 37.7],
         },
-        phone: "+1 (555) 555-5555"
+        phone: "555-555-5555"
       });
       testProfile.save(done);
     });
@@ -47,7 +47,7 @@ describe("Database Tests", () => {
         firstName: "Joe",
         lastName: "Smith",
         birthDate: new Date("01-01-1990"),
-        phone: "+1 (555) 555-5555",
+        phone: "555-555-5555",
         location: {
           type: "Point",
           coordinates: [-122.5, 37.7],
@@ -61,7 +61,7 @@ describe("Database Tests", () => {
         firstName: "Jane",
         lastName: "Smith",
         birthDate: new Date("01-01-1990"),
-        phone: "+1 (555) 555-5555",
+        phone: "555-555-5555",
         location: {
           type: "Point",
           coordinates: [-122.5, 37.7],
@@ -79,7 +79,7 @@ describe("Database Tests", () => {
         firstName: "Jane",
         lastName: "Smith",
         birthDate: new Date("01-01-1990"),
-        phone: "+1 (555) 555-5555",
+        phone: "555-555-5555",
         location: {
           type: "Point",
           coordinates: [-122.5, 37.7],
@@ -96,7 +96,7 @@ describe("Database Tests", () => {
       const testProfile = new db.Profile({
         lastName: "Smith",
         birthDate: new Date("01-01-1990"),
-        phone: "+1 (555) 555-5555",
+        phone: "555-555-5555",
         location: {
           type: "Point",
           coordinates: [-122.5, 37.7],
@@ -114,7 +114,7 @@ describe("Database Tests", () => {
       const testProfile = new db.Profile({
         firstName: "John",
         birthDate: new Date("01-01-1990"),
-        phone: "+1 (555) 555-5555",
+        phone: "555-555-5555",
         location: {
           type: "Point",
           coordinates: [-122.5, 37.7],
@@ -150,7 +150,7 @@ describe("Database Tests", () => {
       const testProfile = new db.Profile({
         firstName: "John",
         lastName: "Smith",
-        phone: "+1 (555) 555-5555",
+        phone: "555-555-5555",
         location: {
           type: "Point",
           coordinates: [-122.5, 37.7],
@@ -168,7 +168,7 @@ describe("Database Tests", () => {
       const testProfile = new db.Profile({
         firstName: "John",
         lastName: "Smith",
-        phone: "+1 (555) 555-5555",
+        phone: "555-555-5555",
         birthDate: new Date("01-01-1990"),
       });
       testProfile.save((err) => {

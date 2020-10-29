@@ -61,7 +61,10 @@ const getProfilesValidator = [
     .isISO8601(),
   query("sortBy")
     .optional()
-    .custom(value => ["location", "sitters"].includes(value))
+    .custom(value => ["location", "sitters"].includes(value)),
+  query("page")
+    .optional()
+    .isInt()
 ];
 
 module.exports = {

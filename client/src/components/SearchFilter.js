@@ -106,8 +106,6 @@ const SearchFilter = function () {
       const { fromDate, toDate, ...restForm } = form;
       form = restForm;
     }
-
-    console.log(form);
   };
 
   return (

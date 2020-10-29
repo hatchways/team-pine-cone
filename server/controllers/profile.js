@@ -73,6 +73,7 @@ const updateProfile = async (req, res, next) => {
 };
 
 const getProfiles = async (req, res, next) => { 
+	const { rating, price, fromDate, toDate, sortBy, page = 1 } = req.query;
 	const errors = validationResult(req);
 
 	if (!errors.isEmpty()) { 
@@ -82,7 +83,15 @@ const getProfiles = async (req, res, next) => {
 	}
 
   try { 
-    const profiles = await Profile.find();
+	  const profiles = await Profile.find({});
+
+	  const test = await Profile.aggregate([
+		  { "$facet": { 
+			  metadata: [{ "$count": "total" }, { "$addFields": { page } }],
+			  data: [{ $skip: (page - 1) * 6 }, { $linit: 6 }]
+		  } }
+	  ]);
+	  console.log(test)
 
     return res.status(200).json({ profiles });
   } catch (err) { 

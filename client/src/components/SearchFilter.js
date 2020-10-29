@@ -100,7 +100,10 @@ const SearchFilter = function (props) {
     if (!values.fromDate || !values.toDate || values.fromDate > values.toDate) {
       const { fromDate, toDate, ...restForm } = form;
       form = restForm;
-    }
+	} else { 
+		form.fromDate = new Date(form.fromDate).toISOString();
+		form.toDate = new Date(form.toDate).toISOString();
+	}
 
     fetch("/profile?" + new URLSearchParams(form).toString())
       .then((res) => res.json())

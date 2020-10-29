@@ -75,19 +75,27 @@ const getProfiles = async (req, res, next) => {
 
   try {
     const n = 8;
+    console.log(fromDate);
     let [data] = await Profile.aggregate([
-      { $match: { isSitter: true, availability: { start: { $gte: fromDate} } } },
+      { $match: { isSitter: true } },
+      { $unwind: "$availability" },
+      {
+        $match: {
+          "availability.start": { $gte: new Date(fromDate) },
+          "availability.end": { $lte: new Date(toDate) },
+        },
+      },
       {
         $facet: {
           metadata: [
-            { $count: "total",  },
+            { $count: "total" },
             { $addFields: { page, isMore: { $gte: ["$total", n * page] } } },
           ],
           profiles: [{ $skip: (page - 1) * n }, { $limit: n }],
         },
       },
     ]);
-	  console.log(data)
+    console.log(data);
 
     return res.status(200).json({ ...data });
   } catch (err) {

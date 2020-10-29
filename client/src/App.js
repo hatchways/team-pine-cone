@@ -17,6 +17,7 @@ import ProfileProvider from "./contexts/profile";
 import BecomeASitter from "./pages/BecomeASitter";
 import MySitters from "./pages/MySitters";
 import MyJobs from "./pages/MyJobs";
+import SocketHandler from "./contexts/socket";
 
 function App() {
   return (
@@ -26,15 +27,17 @@ function App() {
           <Route exact path="/signup" component={SignUp} />
           <Route path="/login" component={Login} />
           <ProfileProvider>
-            <Navbar />
-            <Route exact path="/"/>
-            <PrivateRoute path="/me" component={ProfileSettings} />
-            <Route exact path="/profiles/" component={ProfileListings} />
-            <Route path="/profiles/:id" component={ProfileDetails} />
-            <PrivateRoute exact path="/become-a-sitter" component={BecomeASitter} />
-            <PrivateRoute exact path="/my-sitters" component={MySitters} />
-            <PrivateRoute exact path="/my-jobs" component={MyJobs} />
-            <PrivateRoute exact path="/messages" />
+            <SocketHandler>
+              <Navbar />
+              <Route exact path="/"/>
+              <PrivateRoute path="/me" component={ProfileSettings} />
+              <Route exact path="/profiles/" component={ProfileListings} />
+              <Route path="/profiles/:id" component={ProfileDetails} />
+              <PrivateRoute exact path="/become-a-sitter" component={BecomeASitter} />
+              <PrivateRoute exact path="/my-sitters" component={MySitters} />
+              <PrivateRoute exact path="/my-jobs" component={MyJobs} />
+              <PrivateRoute exact path="/messages" />
+            </SocketHandler>
           </ProfileProvider>
         </AuthProvider>
       </BrowserRouter>

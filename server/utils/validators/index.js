@@ -5,7 +5,7 @@ const genders = Profile.schema.paths.gender.enumValues;
 
 const checkGender = check("gender")
   .optional()
-  .custom((value) => {
+  .custom(value => { 
     return genders.includes(value);
   })
   .withMessage("Provide valid gender value");
@@ -27,7 +27,8 @@ const checkLastName = check("lastName", "Last name required")
   .isAlpha()
   .withMessage("Last names may only contain letters");
 
-const checkEmail = check("email", "Email is required").isEmail();
+const checkEmail = check("email", "Email is required")
+  .isEmail();
 
 const checkPassword = check("password", "Password is required")
   .isLength({ min: 6 })
@@ -46,14 +47,9 @@ const registerValidators = [checkFirstName, checkLastName];
 
 const loginValidators = [checkEmail, checkPassword];
 
-const requestChargePayValidators = [
-  check("amount", "Amount must be an interger").exists().isInt(),
-];
-
 module.exports = {
   profileCreateValidator,
   profileUpdateValidator,
   registerValidators,
   loginValidators,
-  requestChargePayValidators,
 };

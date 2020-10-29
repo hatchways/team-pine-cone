@@ -6,13 +6,14 @@ const useStyles = makeStyles({
   notification: {
     width: "95%",
     padding: "0px 20px",
+    marginBottom: 20
   },
   notificationText: {
     textDecoration: "none",
   },
 });
 
-function Notification({ title, description, link, src }) {
+function Notification({ title, message, link, src }) {
     const classes = useStyles()
     return (
       <Link className={classes.notificationText} to={link}>
@@ -23,7 +24,7 @@ function Notification({ title, description, link, src }) {
             </Grid>
             <Grid item>
               <h3>{title}</h3>
-              <p>{description}</p>
+              <p>{message}</p>
             </Grid>
           </Grid>
         </Card>

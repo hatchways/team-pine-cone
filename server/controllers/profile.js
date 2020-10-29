@@ -73,6 +73,14 @@ const updateProfile = async (req, res, next) => {
 };
 
 const getProfiles = async (req, res, next) => { 
+	const errors = validationResult(req);
+
+	if (!errors.isEmpty()) { 
+		return res
+			.status(422)
+      		.json(errors);
+	}
+
   try { 
     const profiles = await Profile.find();
 

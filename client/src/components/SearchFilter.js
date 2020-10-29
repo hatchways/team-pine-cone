@@ -10,24 +10,17 @@ import { addDays } from "date-fns";
 import useForm from "./useForm";
 import {
   Dialog,
-  DialogActions,
   DialogContent,
   DialogContentText,
   DialogTitle,
   Grid,
   FormControl,
-  FormLabel,
   FormControlLabel,
   RadioGroup,
   Radio,
-  InputLabel,
-  Input,
-  InputBase,
-  Button,
   TextField,
   Fab,
   Slider,
-  Switch,
 } from "@material-ui/core/";
 
 const useStyle = makeStyles((theme) => ({
@@ -41,7 +34,7 @@ const useStyle = makeStyles((theme) => ({
     color: "white",
     "&:hover": {
       background: theme.palette.primary.main,
-		opacity: 0.8
+      opacity: 0.8,
     },
     "&:hover svg": {
       fill: theme.palette.primary.main,
@@ -64,6 +57,7 @@ const useStyle = makeStyles((theme) => ({
     fill: "white",
     borderRadius: "50%",
     padding: "0.2em",
+    cursor: "pointer",
   },
   fab: {
     marginLeft: "auto",
@@ -72,17 +66,13 @@ const useStyle = makeStyles((theme) => ({
   fromDate: {
     marginRight: "1em",
   },
-	title: { 
-		color: theme.palette.primary.main
-	},
-	dialog: { 
-		"& p": { 
-			margin: "1em 0"
-		},
-	},
-	top: { 
-		marginTop: "2em"
-	}
+  title: {
+    color: theme.palette.primary.main,
+  },
+  dialog: {},
+  top: {
+    marginTop: "2em",
+  },
 }));
 
 const form = {
@@ -97,7 +87,7 @@ const valuePriceText = (value) => `$${value}`;
 
 const SearchFilter = function () {
   const classes = useStyle();
-  const [isDialogOpen, setIsDialogOpen] = useState(true);
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
   const { values, handleInputChange, setValues, handleDateChange } = useForm(
     form
   );
@@ -106,10 +96,33 @@ const SearchFilter = function () {
     setValues({ ...values, [prop]: newValue });
   };
 
+  const handleClickIcon = () => {};
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    let form = values;
+
+    if (!values.fromDate || !values.toDate || values.fromDate > values.toDate) {
+      const { fromDate, toDate, ...restForm } = form;
+      form = restForm;
+    }
+
+    console.log(form);
+  };
+
   return (
-    <Grid container component="form" className={classes.container}>
+    <Grid
+      container
+      onSubmit={handleSubmit}
+      component="form"
+      className={classes.container}
+    >
       <Grid item>
-        <SearchIcon className={classes.icon} fontSize="large" />
+        <SearchIcon
+          className={classes.icon}
+          fontSize="large"
+          onClick={handleClickIcon}
+        />
         <TextField label="Search" />
       </Grid>
       <Fab
@@ -126,11 +139,15 @@ const SearchFilter = function () {
         open={isDialogOpen}
         onClose={() => setIsDialogOpen(false)}
         aria-labelledby="filters-dialog-title"
-	  className={classes.dialog}
+        className={classes.dialog}
       >
-        <DialogTitle id="filters-dialog-title" className={classes.title}>Filter Options</DialogTitle>
+        <DialogTitle id="filters-dialog-title" className={classes.title}>
+          Filter Options
+        </DialogTitle>
         <DialogContent>
-          <DialogContentText className={classes.dialogSection}>Ratings</DialogContentText>
+          <DialogContentText style={{ marginBottom: "1em" }}>
+            Ratings
+          </DialogContentText>
           <Rating
             name="sitter-ratings"
             defaultValue={0}
@@ -138,7 +155,9 @@ const SearchFilter = function () {
             values={values.rating}
             size="large"
           />
-          <DialogContentText>($) Price</DialogContentText>
+          <DialogContentText style={{ marginTop: "2em" }}>
+            ($) Price
+          </DialogContentText>
           <Slider
             min={0}
             max={300}
@@ -149,11 +168,12 @@ const SearchFilter = function () {
             aria-labelledby="price-slider"
             getAriaValueText={valuePriceText}
           />
-          <DialogContentText>Availability</DialogContentText>
+          <DialogContentText style={{ marginTop: "2em" }}>
+            Availability
+          </DialogContentText>
           <MuiPickersUtilsProvider utils={DateFnsUtils}>
             <DateTimePicker
               label="From"
-              value={values.date}
               disablePast
               onChange={handleDateChange("fromDate")}
               showTodayButton
@@ -162,7 +182,6 @@ const SearchFilter = function () {
             />
             <DateTimePicker
               label="To"
-              value={values.date}
               disablePast
               onChange={handleDateChange("toDate")}
               minDate={addDays(values.fromDate, 1)}
@@ -170,7 +189,9 @@ const SearchFilter = function () {
               disabled={values.fromDate === null}
             />
           </MuiPickersUtilsProvider>
-          <DialogContentText>Sort By</DialogContentText>
+          <DialogContentText style={{ marginTop: "3em" }}>
+            Sort By
+          </DialogContentText>
           <FormControl>
             <RadioGroup
               aria-label="sorting category"

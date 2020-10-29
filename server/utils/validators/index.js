@@ -1,4 +1,4 @@
-const { check } = require("express-validator");
+const { check, query } = require("express-validator");
 const { Profile } = require("../../models/");
 
 const genders = Profile.schema.paths.gender.enumValues;
@@ -47,9 +47,27 @@ const registerValidators = [checkFirstName, checkLastName];
 
 const loginValidators = [checkEmail, checkPassword];
 
+const getProfilesValidator = [
+  query("ratings")
+    .optional()
+    .isInt(),
+  query("price")
+    .optional(),
+  query("fromDate")
+    .optional()
+    .isISO8601(),
+  query("toDate")
+    .optional()
+    .isISO8601(),
+  query("sortBy")
+    .optional()
+    .custom(value => ["location", "sitters"].includes(value))
+];
+
 module.exports = {
   profileCreateValidator,
   profileUpdateValidator,
   registerValidators,
   loginValidators,
+  getProfilesValidator
 };

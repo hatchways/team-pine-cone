@@ -16,6 +16,22 @@ export const useProfileContext = () => {
 
 function ProfileProvider(props) {
   const [profile, setProfile] = useState(null);
+  const [profiles, setProfiles] = useState({});
+  const getProfile = id => {
+    return new Promise(resolve => {
+      if (profiles[id]) {
+        resolve(profiles[id]);
+      }
+      fetch(`/profile/${id}`).then((response) => {
+        response.json().then((profile) => {
+          const newProfiles = {...profiles}
+          newProfiles[id] = profile;
+          setProfiles(newProfiles)
+          resolve(profile);
+        });
+      });
+    })
+  }
   const firstUpdate = useRef(true);
   const prevLocation = useRef(null);
   const context = {
@@ -30,7 +46,8 @@ function ProfileProvider(props) {
           setProfile(result)
         });
       });
-    }
+    },
+    getProfile
   };
   const location = useLocation().pathname;
   useEffect(() => {

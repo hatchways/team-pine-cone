@@ -2,9 +2,9 @@ const Profile = require("../models/Profile");
 const socket = require("./socket");
 
 exports.notify = (id, notification) => {
-  Profile.findById(id).then(profile => {
+  Profile.findById(id).populate("requests").then(profile => {
     profile.notifications.push(notification);
-    socket.io.to(id.toString()).emit("notification", notification);
+    socket.io.to(id.toString()).emit("profile update", profile);
     profile.save();
   });
 };

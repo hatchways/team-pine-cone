@@ -54,11 +54,9 @@ const getProfilesValidator = [
   query("price")
     .optional(),
   query("fromDate")
-    .optional()
-    .isISO8601(),
+    .optional(),
   query("toDate")
-    .optional()
-    .isISO8601(),
+    .optional(),
   query("sortBy")
     .optional()
     .custom(value => ["location", "sitters"].includes(value)),

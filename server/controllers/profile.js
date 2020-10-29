@@ -3,29 +3,24 @@ const { Profile } = require("../models/");
 const { User } = require("../models/");
 const { validationResult } = require("express-validator");
 
-const checkDateErrors = err => ["Date ranges", "User must be 18"]
-  .some(str => err.message.includes(str));
+const checkDateErrors = (err) =>
+  ["Date ranges", "User must be 18"].some((str) => err.message.includes(str));
 
-const createProfile = async (req, res, next) => { 
+const createProfile = async (req, res, next) => {
   const profileProps = req.body;
   const errors = validationResult(req);
 
-  if (!errors.isEmpty()) { 
-    return res
-      .status(422)
-      .json(errors);
+  if (!errors.isEmpty()) {
+    return res.status(422).json(errors);
   }
 
-  try { 
+  try {
     const profile = await Profile.create({ ...profileProps });
 
-    return res
-      .status(201)
-      .json({ profile });
-
-  } catch (err) { 
-    if (!err.status) { 
-      if (checkDateErrors(err)) { 
+    return res.status(201).json({ profile });
+  } catch (err) {
+    if (!err.status) {
+      if (checkDateErrors(err)) {
         return next(createError(422, err.message));
       }
     }
@@ -34,36 +29,34 @@ const createProfile = async (req, res, next) => {
   }
 };
 
-const updateProfile = async (req, res, next) => { 
+const updateProfile = async (req, res, next) => {
   const { id } = req.params;
   const { email, ...profileProps } = req.body;
   const errors = validationResult(req);
 
-  if (!errors.isEmpty()) { 
-    return res
-      .status(422)
-      .json(errors);
+  if (!errors.isEmpty()) {
+    return res.status(422).json(errors);
   }
 
-  try { 
+  try {
     const options = { new: true, lean: true };
     const profile = await Profile.findByIdAndUpdate(
-      id, 
-      { ...profileProps }, 
+      id,
+      { ...profileProps },
       options
     );
 
-    if (email) { 
+    if (email) {
       await User.findOneAndUpdate(
-        { profile: id }, 
+        { profile: id },
         { email: email.toLowerCase() }
       );
     }
 
     return res.status(200).json({ profile });
-  } catch (err) { 
-    if (!err.status) { 
-      if (checkDateErrors(err)) { 
+  } catch (err) {
+    if (!err.status) {
+      if (checkDateErrors(err)) {
         return next(createError(422, err.message));
       }
     }
@@ -72,52 +65,55 @@ const updateProfile = async (req, res, next) => {
   }
 };
 
-const getProfiles = async (req, res, next) => { 
-	const { rating, price, fromDate, toDate, sortBy, page = 1 } = req.query;
-	const errors = validationResult(req);
+const getProfiles = async (req, res, next) => {
+  const { rating, price, fromDate, toDate, sortBy, page = 1 } = req.query;
+  const errors = validationResult(req);
 
-	if (!errors.isEmpty()) { 
-		return res
-			.status(422)
-      		.json(errors);
-	}
+  if (!errors.isEmpty()) {
+    return res.status(422).json(errors);
+  }
 
-  try { 
-	  const profiles = await Profile.find({});
+  try {
+    const n = 8;
+    let [data] = await Profile.aggregate([
+      { $match: { isSitter: true, availability: { start: { $gte: fromDate} } } },
+      {
+        $facet: {
+          metadata: [
+            { $count: "total",  },
+            { $addFields: { page, isMore: { $gte: ["$total", n * page] } } },
+          ],
+          profiles: [{ $skip: (page - 1) * n }, { $limit: n }],
+        },
+      },
+    ]);
+	  console.log(data)
 
-	  const test = await Profile.aggregate([
-		  { "$facet": { 
-			  metadata: [{ "$count": "total" }, { "$addFields": { page } }],
-			  data: [{ $skip: (page - 1) * 6 }, { $linit: 6 }]
-		  } }
-	  ]);
-	  console.log(test)
-
-    return res.status(200).json({ profiles });
-  } catch (err) { 
+    return res.status(200).json({ ...data });
+  } catch (err) {
     next(createError(500, err.message));
   }
 };
 
-const getProfile = async (req, res, next) => { 
+const getProfile = async (req, res, next) => {
   const { id } = req.params;
 
   if (id !== "me") {
-    try { 
+    try {
       let profile = null;
-	
-      try { 
+
+      try {
         profile = await Profile.findById(id);
-      } catch (err) { 
+      } catch (err) {
         return next(createError(422, "Id is invalid"));
       }
-	
-      if (!profile) { 
+
+      if (!profile) {
         return next(createError(404, "Profile not found"));
       }
-	
+
       return res.status(200).json(profile);
-    } catch (err) { 
+    } catch (err) {
       next(createError(500, err.message));
     }
   }
@@ -127,12 +123,20 @@ const getMyProfile = (req, res, next) => {
   if (!req.user) {
     next(createError(403));
   }
-  Profile.findById(req.user.profile).then(profile => {
-    res.status(200).json(profile);
-  }).catch(e => {
-    console.log(e);
-    next(createError(503));
-  });
+  Profile.findById(req.user.profile)
+    .then((profile) => {
+      res.status(200).json(profile);
+    })
+    .catch((e) => {
+      console.log(e);
+      next(createError(503));
+    });
 };
 
-module.exports = { createProfile, updateProfile, getProfile, getProfiles, getMyProfile };
+module.exports = {
+  createProfile,
+  updateProfile,
+  getProfile,
+  getProfiles,
+  getMyProfile,
+};

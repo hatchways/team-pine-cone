@@ -7,7 +7,6 @@ import AddIcon from "@material-ui/icons/Add";
 import { Rating } from "@material-ui/lab/";
 import { DateTimePicker, MuiPickersUtilsProvider } from "@material-ui/pickers";
 import { addDays } from "date-fns";
-import useForm from "./useForm";
 import {
   Dialog,
   DialogContent,
@@ -75,22 +74,18 @@ const useStyle = makeStyles((theme) => ({
   },
 }));
 
-const form = {
-  rating: 0,
-  price: [0, 300],
-  fromDate: null,
-  toDate: null,
-  sortBy: "sitters",
-};
-
 const valuePriceText = (value) => `$${value}`;
 
-const SearchFilter = function () {
+const SearchFilter = function (props) {
   const classes = useStyle();
   const [isDialogOpen, setIsDialogOpen] = useState(false);
-  const { values, handleInputChange, setValues, handleDateChange } = useForm(
-    form
-  );
+  const {
+    updateSitters,
+    setValues,
+    values,
+    handleInputChange,
+    handleDateChange,
+  } = props;
 
   const handleSliders = (prop) => (e, newValue) => {
     setValues({ ...values, [prop]: newValue });
@@ -106,6 +101,10 @@ const SearchFilter = function () {
       const { fromDate, toDate, ...restForm } = form;
       form = restForm;
     }
+
+    fetch("/profile?" + new URLSearchParams(form).toString())
+      .then((res) => res.json())
+      .then(console.log);
   };
 
   return (

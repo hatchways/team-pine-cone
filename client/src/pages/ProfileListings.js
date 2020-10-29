@@ -1,12 +1,13 @@
-import React, { useMemo } from "react";
+import React, { useState } from "react";
 import { makeStyles } from "@material-ui/core/styles";
-import { Grid, Typography, Button } from "@material-ui/core/";
+import { Grid, Typography, Button, CircularProgress } from "@material-ui/core/";
 import PetsIcon from "@material-ui/icons/Pets";
 import ProfileListingItem from "../components/ProfileListingItem";
 import { useFetch } from "../hooks/useFetch";
 import Snackbar from "../components/DefaultSnackbar";
 import Splash from "../components/Splash";
 import SearchFilter from "../components/SearchFilter";
+import useForm from "../components/useForm";
 
 export const useStyle = makeStyles((theme) => ({
   root: {
@@ -51,6 +52,13 @@ export const useStyle = makeStyles((theme) => ({
   button: {
     padding: "1.5em 3em",
   },
+  moreLoading: {
+    position: "absolute",
+    top: "50%",
+    left: "50%",
+    marginTop: -12,
+    marginLeft: -12,
+  },
   paw: {
     width: "5em",
     height: "5em",
@@ -58,20 +66,40 @@ export const useStyle = makeStyles((theme) => ({
   },
 }));
 
+const form = {
+  rating: 0,
+  price: [0, 300],
+  fromDate: null,
+  toDate: null,
+  sortBy: "sitters",
+  page: 1,
+};
+
 const ProfileListings = function () {
   const classes = useStyle();
-  const [data, loading, error] = useFetch({
+  const [showMoreLoading, setShowMoreLoading] = useState(false);
+  const { values, handleInputChange, setValues, handleDateChange } = useForm(
+    form
+  );
+  const [data = {}, loading, error, updateSitters] = useFetch({
     url: "/profile",
     init: { profiles: [] },
   });
 
-  const sitters = useMemo(
-    () => data.profiles.filter((profile) => profile.isSitter),
-    [data]
-  );
+  const { profiles: sitters = [], metadata } = data;
 
   const handleClickMore = () => {
-    //need to add pagination
+    setValues({ ...values, page: values.page + 1 });
+    setShowMoreLoading(true);
+    fetch("/profile?page=" + (values.page + 1))
+      .then((res) => res.json())
+      .then((newData) =>
+        updateSitters({
+          ...newData,
+          profiles: [...data.profiles, ...newData.profiles],
+        })
+      )
+      .finally(() => setShowMoreLoading(false));
   };
 
   return (
@@ -80,7 +108,13 @@ const ProfileListings = function () {
         <Typography className={classes.title} variant="h3" align="center">
           Search Results
         </Typography>
-		<SearchFilter/>
+        <SearchFilter
+          updateSitters={updateSitters}
+          values={values}
+          handleInputChange={handleInputChange}
+          setValues={setValues}
+          handleDateChange={handleDateChange}
+        />
         <Snackbar open={error} />
       </Grid>
 
@@ -109,18 +143,22 @@ const ProfileListings = function () {
           </div>
         </Grid>
       </Splash>
-      <Grid item style={{ margin: "2em auto" }}>
-        {!error && !loading && sitters.length > 0 ? (
+      <Grid item style={{ margin: "2em auto", position: "relative" }}>
+        {!error && !loading && sitters.length > 0 && metadata[0].isMore ? (
           <Button
             onClick={handleClickMore}
             className={classes.button}
             color="primary"
             size="large"
             variant="contained"
+            disabled={showMoreLoading}
           >
             Show More
           </Button>
         ) : null}
+        {showMoreLoading && (
+          <CircularProgress size={24} className={classes.moreLoading} />
+        )}
       </Grid>
       <Snackbar open={error} />
     </Grid>

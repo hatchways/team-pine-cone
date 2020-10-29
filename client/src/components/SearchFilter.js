@@ -149,10 +149,10 @@ const SearchFilter = function (props) {
             Ratings
           </DialogContentText>
           <Rating
-            name="sitter-ratings"
+            name="rating"
             defaultValue={0}
-            onChange={handleInputChange}
-            values={values.rating}
+		  onChange={handleInputChange}
+            value={Number(values.rating)}
             size="large"
           />
           <DialogContentText style={{ marginTop: "2em" }}>

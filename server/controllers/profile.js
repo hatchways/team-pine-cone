@@ -66,24 +66,31 @@ const updateProfile = async (req, res, next) => {
 };
 
 const getProfiles = async (req, res, next) => {
-  const { rating, price, fromDate, toDate, sortBy, page = 1 } = req.query;
+  const { rating = 0, price, fromDate, toDate, sortBy, page = 1 } = req.query;
   const errors = validationResult(req);
 
   if (!errors.isEmpty()) {
     return res.status(422).json(errors);
   }
 
-  try {
-    const n = 8;
-    console.log(fromDate);
-    let [data] = await Profile.aggregate([
-      { $match: { isSitter: true } },
-      { $unwind: "$availability" },
-      {
-        $match: {
+	let dateQuery = {  };
+
+	if (fromDate && toDate) { 
+		dateQuery = { 
           "availability.start": { $gte: new Date(fromDate) },
           "availability.end": { $lte: new Date(toDate) },
-        },
+		}
+	}
+
+  try {
+    const n = 8;
+    let [data] = await Profile.aggregate([
+      { $match: { isSitter: true, rating: { $gte: Number(rating) } } },
+      { $unwind: "$availability" },
+      {
+        $match: { 
+			...dateQuery
+		},
       },
       {
         $facet: {

@@ -7,7 +7,7 @@ exports.create = server => {
   io.on("connection", socket => {
     socket.on("profile", id =>{
       console.log(id);
-      socket.join(id.toString());
+      if (id) socket.join(id.toString());
     });
 
     socket.on("notification read", (profileId, notificationId) => {

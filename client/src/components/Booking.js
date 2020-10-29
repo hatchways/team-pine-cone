@@ -67,16 +67,14 @@ const doubleNumber = number => (
 
 function Booking({ _id, isBooking, isMyJobs, sitter_id, user_id, start, end, paid }) {
   const classes = useStyles();
-  const { profile, setProfile } = useProfileContext();
+  const { profile, setProfile, getProfile } = useProfileContext();
   const [src, setSrc] = useState(null);
   const [name, setName] = useState("");
   useEffect(() => {
       const id = isMyJobs ? user_id : sitter_id
-      fetch(`/profile/${id}`).then(response => {
-        response.json().then(profile => {
-          setSrc(profile.photo);
-          setName(`${profile.firstName} ${profile.lastName}`);
-        })
+      getProfile(id).then(profile => {
+        setSrc(profile.photo);
+        setName(`${profile.firstName} ${profile.lastName}`);
       })
   },[setSrc, isMyJobs, sitter_id, user_id])
   const handleAccept = () => {

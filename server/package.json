@@ -22,6 +22,8 @@
     "faker": "^5.1.0",
     "file-type": "^15.0.1",
     "got": "^11.8.0",
+    "file-type": "^15.0.1",
+    "express-validator": "^6.6.1",
     "http-errors": "~1.6.3",
     "jsonwebtoken": "^8.5.1",
     "mongoose": "^5.10.9",
@@ -29,8 +31,7 @@
     "multiparty": "^4.2.2",
     "nodemon": "^1.19.1",
     "passport": "^0.4.1",
-    "passport-jwt": "^4.0.0",
-    "stripe": "^8.117.0"
+    "passport-jwt": "^4.0.0"
   },
   "devDependencies": {
     "chai": "^4.2.0",

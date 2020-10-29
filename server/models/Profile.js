@@ -59,37 +59,25 @@ const profileSchema = new Schema({
     required: [true, "Phone number required"],
   },
   photo: {
-    type: String,
+    type: String
   },
-  requests: [
-    {
-      type: Schema.Types.ObjectId,
-      ref: "Request",
-    },
-  ],
-  stripeId: {
-    type: String,
-  },
+  requests: [{
+    type: Schema.Types.ObjectId,
+    ref: "Request"
+  }]
 });
 
-profileSchema.pre("save", function (next) {
+profileSchema.pre("save", function(next) {
   if (this.availability) {
-    this.availability.forEach((range) => {
+    this.availability.forEach(range => {
       const isNegativeRange = range.end < range.start;
-      if (isNegativeRange) {
-        throw new Error(
-          "Date ranges must have a start date before the end date"
-        );
-      }
+      if (isNegativeRange) { throw new Error("Date ranges must have a start date before the end date"); }
     });
   }
 
   const today = new Date();
-  const isUnderEighteen =
-    today.getFullYear() - this.birthDate.getFullYear() < 18;
-  if (isUnderEighteen) {
-    throw new Error("User must be 18 years old");
-  }
+  const isUnderEighteen = today.getFullYear() - this.birthDate.getFullYear() < 18;
+  if (isUnderEighteen) { throw new Error("User must be 18 years old"); }
   next();
 });
 

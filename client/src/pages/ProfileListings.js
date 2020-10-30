@@ -68,11 +68,12 @@ export const useStyle = makeStyles((theme) => ({
 
 const form = {
   rating: 0,
-  price: [0, 300],
+  hourlyRateRange: [0, 300],
   fromDate: null,
   toDate: null,
-  sortBy: "sitters",
   page: 1,
+  search: "",
+  sortBy: "firstName",
 };
 
 const ProfileListings = function () {
@@ -88,10 +89,25 @@ const ProfileListings = function () {
 
   const { profiles: sitters = [], metadata } = data;
 
+  const setNewData = (newData) => {};
+
   const handleClickMore = () => {
     setValues({ ...values, page: values.page + 1 });
     setShowMoreLoading(true);
-    fetch("/profile?page=" + (values.page + 1))
+
+    let form = values;
+
+    if (!values.fromDate || !values.toDate || values.fromDate > values.toDate) {
+      const { fromDate, toDate, ...restForm } = form;
+      form = restForm;
+    } else {
+      form.fromDate = new Date(form.fromDate).toISOString();
+      form.toDate = new Date(form.toDate).toISOString();
+    }
+
+    form.page = form.page + 1;
+
+    fetch("/profile?" + new URLSearchParams(form).toString())
       .then((res) => res.json())
       .then((newData) =>
         updateSitters({
@@ -110,9 +126,9 @@ const ProfileListings = function () {
         </Typography>
         <SearchFilter
           updateSitters={updateSitters}
+          setValues={setValues}
           values={values}
           handleInputChange={handleInputChange}
-          setValues={setValues}
           handleDateChange={handleDateChange}
         />
         <Snackbar open={error} />

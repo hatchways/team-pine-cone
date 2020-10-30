@@ -68,7 +68,6 @@ const useStyle = makeStyles((theme) => ({
   title: {
     color: theme.palette.primary.main,
   },
-  dialog: {},
   top: {
     marginTop: "2em",
   },
@@ -80,11 +79,11 @@ const SearchFilter = function (props) {
   const classes = useStyle();
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const {
-    updateSitters,
     setValues,
     values,
     handleInputChange,
     handleDateChange,
+    updateSitters,
   } = props;
 
   const handleSliders = (prop) => (e, newValue) => {
@@ -95,19 +94,26 @@ const SearchFilter = function (props) {
 
   const handleSubmit = (e) => {
     e.preventDefault();
+
+    //restart at page one
+    setValues({ ...values, page: 1 });
+
     let form = values;
 
     if (!values.fromDate || !values.toDate || values.fromDate > values.toDate) {
       const { fromDate, toDate, ...restForm } = form;
       form = restForm;
-	} else { 
-		form.fromDate = new Date(form.fromDate).toISOString();
-		form.toDate = new Date(form.toDate).toISOString();
-	}
+    } else {
+      form.fromDate = new Date(form.fromDate).toISOString();
+      form.toDate = new Date(form.toDate).toISOString();
+    }
 
     fetch("/profile?" + new URLSearchParams(form).toString())
       .then((res) => res.json())
-      .then(console.log);
+      .then((data) => {
+        	console.log(data);
+        updateSitters(data);
+      });
   };
 
   return (
@@ -123,7 +129,12 @@ const SearchFilter = function (props) {
           fontSize="large"
           onClick={handleClickIcon}
         />
-        <TextField label="Search" />
+        <TextField
+          label="Search"
+          name="search"
+          value={values.search}
+          onChange={handleInputChange}
+        />
       </Grid>
       <Fab
         color="primary"
@@ -151,19 +162,19 @@ const SearchFilter = function (props) {
           <Rating
             name="rating"
             defaultValue={0}
-		  onChange={handleInputChange}
+            onChange={handleInputChange}
             value={Number(values.rating)}
             size="large"
           />
           <DialogContentText style={{ marginTop: "2em" }}>
-            ($) Price
+            ($) Hourly Rate
           </DialogContentText>
           <Slider
             min={0}
             max={300}
             name="price-range"
-            value={values.price}
-            onChange={handleSliders("price")}
+            value={values.hourlyRateRange}
+            onChange={handleSliders("hourlyRateRange")}
             valueLabelDisplay="auto"
             aria-labelledby="price-slider"
             getAriaValueText={valuePriceText}
@@ -189,7 +200,7 @@ const SearchFilter = function (props) {
               disabled={values.fromDate === null}
             />
           </MuiPickersUtilsProvider>
-          <DialogContentText style={{ marginTop: "3em" }}>
+          <DialogContentText style={{ marginTop: "2.4em" }}>
             Sort By
           </DialogContentText>
           <FormControl>
@@ -200,14 +211,29 @@ const SearchFilter = function (props) {
               onChange={handleInputChange}
             >
               <FormControlLabel
-                value="sitters"
+                value="firstName"
                 control={<Radio color="primary" />}
-                label="Dog Sitters"
+                label="First Name"
               />
               <FormControlLabel
                 value="location"
                 control={<Radio color="primary" />}
                 label="Location"
+              />
+              <FormControlLabel
+                value="rating"
+                control={<Radio color="primary" />}
+                label="Rating"
+              />
+              <FormControlLabel
+                value="availability.start"
+                control={<Radio color="primary" />}
+                label="Availability"
+              />
+              <FormControlLabel
+                value="hourlyRate"
+                control={<Radio color="primary" />}
+                label="Hourly Rate"
               />
             </RadioGroup>
           </FormControl>

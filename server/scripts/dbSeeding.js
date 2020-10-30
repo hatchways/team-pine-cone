@@ -21,12 +21,17 @@ const randomDateBetweenNowAndAMonth = () => {
   return fakerDate.between(today, addMonths(new Date(), 1));
 };
 
-const Toronto = [-79.447256, 43.6824164];
-const QuebecCity = [-71.2074252, 46.8141835];
-const Montreal = [-73.553363, 45.509062];
-const Calgary = [-114.05803, 51.046362];
+const TorontoGPS = [-79.447256, 43.6824164];
+const QuebecCityGPS = [-71.2074252, 46.8141835];
+const MontrealGPS = [-73.553363, 45.509062];
+const CalgaryGPS = [-114.05803, 51.046362];
 
-const mainCitiesGPS = [Toronto, QuebecCity, Montreal, Calgary];
+const adressGroup = [
+  ["Toronto, ON", TorontoGPS],
+  ["Quebec City, QC", QuebecCityGPS],
+  ["Montreal, QC", MontrealGPS],
+  ["Calgary, AB", CalgaryGPS],
+];
 
 const ratings = [0, 1, 2, 3, 4, 5];
 
@@ -43,7 +48,7 @@ const ratings = [0, 1, 2, 3, 4, 5];
     for (let i = 0; i < 15; i++) {
       let availabilityStart = randomDateBetweenNowAndAMonth();
       let availabilityEnd = randomDateBetweenNowAndAMonth();
-      const coordinates = random.arrayElement(mainCitiesGPS);
+      const [address, coordinates] = random.arrayElement(adressGroup);
       const randomBirthDate = fakerDate.between(
         subYears(new Date(), 19),
         subYears(new Date(), 90)
@@ -78,6 +83,7 @@ const ratings = [0, 1, 2, 3, 4, 5];
           type: "Point",
           coordinates: coordinates,
         },
+        address: address,
         phone: phone.phoneNumber("+1 (!##) !##-####"),
         photo: image.avatar(),
       };

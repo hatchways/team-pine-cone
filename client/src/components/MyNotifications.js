@@ -24,12 +24,12 @@ function MyNotifications(props) {
       </Grid>
       <Grid className={classes.notification} item>
         {profile && profile.notifications.map(notification => (
-          <Notification {...notification} />
+          <Notification key={notification._id} {...notification} />
         ))}
       </Grid>
-      <Grid item>
+      {profile && profile.notifications.length === 0 && <Grid item>
         <p className={classes.emptyText}>Looks like you're all caught up!</p>
-      </Grid>
+      </Grid>}
     </Grid>
   );
 }

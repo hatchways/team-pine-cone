@@ -4,7 +4,7 @@ const socket = require("./socket");
 exports.notify = (id, notification) => {
   Profile.findById(id).populate("requests").then(profile => {
     profile.notifications.push(notification);
-    socket.io.to(id.toString()).emit("profile update", profile);
+    socket.io.to(id.toString()).emit("update", profile);
     profile.save();
   });
 };

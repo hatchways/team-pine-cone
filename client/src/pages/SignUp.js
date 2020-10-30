@@ -7,12 +7,11 @@ import DateFnsUtils from "@date-io/date-fns";
 
 import Button from "@material-ui/core/Button";
 import Grid from "@material-ui/core/Grid";
-import Box from "@material-ui/core/Box";
 import Typography from "@material-ui/core/Typography";
 import Container from "@material-ui/core/Container";
 import useForm from "../components/useForm";
 import Input from "../components/controls/Input";
-import { Toolbar } from "@material-ui/core";
+import { Card, Toolbar } from "@material-ui/core";
 import { MuiPickersUtilsProvider, DatePicker } from "@material-ui/pickers";
 import PhoneInput from "material-ui-phone-number";
 
@@ -42,7 +41,7 @@ export default function SignUp() {
     temp.firstName = values.firstName ? "" : "This field is required.";
     temp.lastName = values.lastName ? "" : "This field is required.";
     temp.email = /.+@.+..+/.test(values.email) ? "" : "Email is not valid";
-	  temp.phone = /\+1 \(\d{3}\) \d{3}-\d{4}/.test(values.phone) ? "" : "Phone number is not valid";
+    temp.phone = /\+1 \(\d{3}\) \d{3}-\d{4}/.test(values.phone) ? "" : "Phone number is not valid";
     temp.password =
       values.password.length >= 6 ? "" : "Minimum of 6 charactes required.";
     temp.confirmPassword =
@@ -75,7 +74,7 @@ export default function SignUp() {
   return !user ? (
     <Container component="main" maxWidth="xs">
       <Toolbar />
-      <div className={classes.paper}>
+      <Card className={classes.paper}>
         <Typography component="h1" variant="h5">
           Sign up
         </Typography>
@@ -130,8 +129,8 @@ export default function SignUp() {
                 regions="north-america"
                 onChange={handleDateChange("phone")}
                 value={values.phone}
-			  error={!!errors.phone}
-			  label={errors.phone || 'Phone Number'}
+                error={!!errors.phone}
+                label={errors.phone || "Phone Number"}
               />
             </Grid>
             <Grid item xs={12}>
@@ -194,10 +193,8 @@ export default function SignUp() {
             </Grid>
           </Grid>
         </form>
-      </div>
-      <Box mt={5}>
         <Copyright />
-      </Box>
+      </Card>
     </Container>
   ) : (
     <Redirect to="/" />

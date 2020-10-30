@@ -1,12 +1,11 @@
-const { check, param } = require("express-validator");
+const { check } = require("express-validator");
 const { Profile } = require("../../models/");
-const { Types } = require("mongoose");
 
 const genders = Profile.schema.paths.gender.enumValues;
 
 const checkGender = check("gender")
   .optional()
-  .custom(value => { 
+  .custom((value) => {
     return genders.includes(value);
   })
   .withMessage("Provide valid gender value");
@@ -19,17 +18,16 @@ const checkBirthDate = check("birthDate")
 const checkFirstName = check("firstName", "First name required")
   .exists()
   .trim()
-  .isAlpha()
+  .matches(/^[a-zA-Z']+$/)
   .withMessage("First names may only contain letters");
 
 const checkLastName = check("lastName", "Last name required")
   .exists()
   .trim()
-  .isAlpha()
+  .matches(/^[a-zA-Z']+$/)
   .withMessage("Last names may only contain letters");
 
-const checkEmail = check("email", "Email is required")
-  .isEmail();
+const checkEmail = check("email", "Email is required").isEmail();
 
 const checkPassword = check("password", "Password is required")
   .isLength({ min: 6 })

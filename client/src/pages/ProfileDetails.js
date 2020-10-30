@@ -92,6 +92,7 @@ const ProfileDetails = function () {
     availability,
   } = profile;
   const fullName = firstName ? firstName + " " + lastName : "";
+	console.log(error)
 
   useScrollToTop();
 

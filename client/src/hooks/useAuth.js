@@ -8,26 +8,26 @@ export const initalState = {
 
 export const AuthReducer = (initalState, action) => {
   switch (action.type) {
-    case "REQUEST":
-      return {
-        ...initalState,
-        loading: true,
-        errorMessage: null,
-      };
-    case "SUCCESS":
-      return {
-        ...initalState,
-        user: action.payload.user,
-        loading: false,
-      };
-    case "ERROR":
-      return {
-        ...initalState,
-        loading: false,
-        errorMessage: action.error,
-      };
-    default:
-      throw new Error(`Action type: ${action.type} not found.`);
+  case "REQUEST":
+    return {
+      ...initalState,
+      loading: true,
+      errorMessage: null,
+    };
+  case "SUCCESS":
+    return {
+      ...initalState,
+      user: action.payload.user,
+      loading: false,
+    };
+  case "ERROR":
+    return {
+      ...initalState,
+      loading: false,
+      errorMessage: action.error,
+    };
+  default:
+    throw new Error(`Action type: ${action.type} not found.`);
   }
 };
 
@@ -40,12 +40,12 @@ export default function () {
       const req = !params
         ? fetch(url)
         : fetch(url, {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify({ ...params }),
-          });
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ ...params }),
+        });
 
       const res = await req;
       if (res.status === 401)
@@ -55,7 +55,10 @@ export default function () {
 
       if (!res.ok)
         return dispatch({ type: "ERROR", error: data.error.message });
-      dispatch({ type: "SUCCESS", payload: { user: needUser ? data.user : null } });
+      dispatch({
+        type: "SUCCESS",
+        payload: { user: needUser ? data.user : null },
+      });
     } catch (err) {
       dispatch({ type: "ERROR", error: err.message });
     }
@@ -65,6 +68,10 @@ export default function () {
     dispatch({ type: "REQUEST" });
     getState("/user/me");
   }, []);
+
+  const handleSetUser = (user) => {
+    dispatch({ type: "SUCCESS", payload: { user } });
+  };
 
   const handleRegister = (params) => {
     dispatch({ type: "REQUEST" });
@@ -85,6 +92,7 @@ export default function () {
     loading,
     errorMessage,
     user,
+    handleSetUser,
     handleRegister,
     handleLogIn,
     handleLogOut,

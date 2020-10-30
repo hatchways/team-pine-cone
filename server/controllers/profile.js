@@ -47,8 +47,7 @@ const updateProfile = async (req, res, next) => {
   }
 
   try {
-    const options = { new: true, lean: true };
-    const profile = await Profile.findById(id);
+    let profile = await Profile.findById(id);
 
     if (!profile) {
       return next(createError(404, "Profile not found"));
@@ -66,7 +65,8 @@ const updateProfile = async (req, res, next) => {
       };
     }
 
-    await profile.update({ ...profileProps }, options);
+    profile.$set(profileProps);
+    await profile.update();
 
     if (email) {
       await User.findOneAndUpdate(
@@ -75,7 +75,7 @@ const updateProfile = async (req, res, next) => {
       );
     }
 
-    return res.status(200).json({ profile });
+    return res.status(200).json({ profile: profile.toJSON() });
   } catch (err) {
     if (!err.status) {
       if (checkDateErrors(err)) {

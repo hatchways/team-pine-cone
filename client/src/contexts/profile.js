@@ -19,17 +19,21 @@ function ProfileProvider(props) {
   const [profiles, setProfiles] = useState({});
   const getProfile = id => {
     return new Promise(resolve => {
+      console.log(profiles)
       if (profiles[id]) {
+        console.log(profiles[id])
         resolve(profiles[id]);
       }
-      fetch(`/profile/${id}`).then((response) => {
-        response.json().then((profile) => {
-          const newProfiles = {...profiles}
-          newProfiles[id] = profile;
-          setProfiles(newProfiles)
-          resolve(profile);
+      else {
+        fetch(`/profile/${id}`).then((response) => {
+          response.json().then((profile) => {
+            const newProfiles = {...profiles}
+            newProfiles[id] = profile;
+            setProfiles(newProfiles)
+            resolve(profile);
+          });
         });
-      });
+      }
     })
   }
   const firstUpdate = useRef(true);

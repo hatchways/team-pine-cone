@@ -7,13 +7,13 @@ const DefaultSnackBar = function ({
   message = "Sorry! Something Went Wrong!",
   duration = 6000,
 }) {
-  const [close, setClose] = useState(true);
+  const [close, setClose] = useState(false);
 
   return (
     <Snackbar
-      open={close && !!open}
+      open={!!close && !!open}
       autoHideDuration={duration}
-      onClose={() => setClose(false)}
+      onClose={() => setClose(true)}
       message={message}
     />
   );

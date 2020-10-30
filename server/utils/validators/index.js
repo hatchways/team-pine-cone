@@ -18,13 +18,13 @@ const checkBirthDate = check("birthDate")
 const checkFirstName = check("firstName", "First name required")
   .exists()
   .trim()
-  .isAlpha()
+  .matches(/^[a-zA-Z']+$/)
   .withMessage("First names may only contain letters");
 
 const checkLastName = check("lastName", "Last name required")
   .exists()
   .trim()
-  .isAlpha()
+  .matches(/^[a-zA-Z']+$/)
   .withMessage("Last names may only contain letters");
 
 const checkEmail = check("email", "Email is required").isEmail();
@@ -46,14 +46,9 @@ const registerValidators = [checkFirstName, checkLastName];
 
 const loginValidators = [checkEmail, checkPassword];
 
-const requestChargePayValidators = [
-  check("amount", "Amount must be an interger").exists().isInt(),
-];
-
 module.exports = {
   profileCreateValidator,
   profileUpdateValidator,
   registerValidators,
   loginValidators,
-  requestChargePayValidators,
 };

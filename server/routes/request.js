@@ -1,26 +1,11 @@
 const express = require("express");
 const { authenticate } = require("../middleware/authenticate");
-const {
-  getRequestsByUser,
-  createRequest,
-  updateRequest,
-  chargeAndPayRequest,
-} = require("../controllers/request");
-const { requestChargePayValidators } = require("../utils/validators/");
+const { getRequestsByUser, createRequest, updateRequest } = require("../controllers/request");
 
 const Router = express.Router();
 
-Router.post(
-  "/request/:id/pay",
-  authenticate(),
-  requestChargePayValidators,
-  chargeAndPayRequest
-);
+Router.get("/requests", authenticate, getRequestsByUser);
 
-Router.get("/me", authenticate(), getRequestsByUser);
+Router.post("/request", authenticate, createRequest);
 
-Router.post("/create", authenticate(), createRequest);
-
-Router.put("/update/:id", authenticate(), updateRequest);
-
-module.exports = Router;
+Router.put("/request/:id", authenticate, updateRequest);

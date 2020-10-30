@@ -67,9 +67,38 @@ const profileSchema = new Schema({
       ref: "Request",
     },
   ],
+  hourlyRate: {
+    type: Number,
+    default: 14.25,
+  },
+  rating: {
+    type: Number,
+    enum: [0, 1, 2, 3, 4, 5],
+    default: 0,
+  },
+  jobTitle: {
+    type: String,
+    enum: [
+      "Loving Pet Sitter",
+      "Professional Dog Trainer",
+      "Loving Dog Walker",
+      "Dog Care Helper",
+      "Loving Dog Gromer",
+    ],
+    default: "Loving Pet Sitter",
+  },
+  address: {
+    type: String,
+  },
   stripeId: {
     type: String,
   },
+  requests: [
+    {
+      type: Schema.Types.ObjectId,
+      ref: "Request",
+    },
+  ],
 });
 
 profileSchema.pre("save", function (next) {

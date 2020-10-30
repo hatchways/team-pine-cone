@@ -62,13 +62,13 @@ const DateTimePickerRanges = function ({
       return setLeftError(
         `Minimum date is ${format(
           new Date(minDate.start),
-          "MMM co yyyy h:mm a"
+          "MMM do yyyy h:mm a"
         )}`
       );
     }
 
     setLeftError("");
-    onChangeLeft(day);
+    onChangeLeft(new Date(day));
   };
 
   const rightHandler = (day) => {
@@ -76,7 +76,7 @@ const DateTimePickerRanges = function ({
     setRightError("");
     if (new Date(day) < new Date(leftValue)) {
       return setRightError(
-        `Minimum date is ${format(new Date(leftValue), "MMM co yyyy h:mm a")}`
+        `Minimum date is ${format(new Date(leftValue), "MMM do yyyy h:mm a")}`
       );
     }
 
@@ -84,11 +84,11 @@ const DateTimePickerRanges = function ({
 
     if (new Date(day) > new Date(maxDate.end)) {
       return setRightError(
-        `Maximum date is ${format(new Date(maxDate.end), "MMM co yyyy h:mm a")}`
+        `Maximum date is ${format(new Date(maxDate.end), "MMM do yyyy h:mm a")}`
       );
     }
 
-    onChangeRight(day);
+    onChangeRight(new Date(day));
   };
 
   return (

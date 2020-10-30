@@ -19,9 +19,7 @@ function ProfileProvider(props) {
   const [profiles, setProfiles] = useState({});
   const getProfile = id => {
     return new Promise(resolve => {
-      console.log(profiles)
       if (profiles[id]) {
-        console.log(profiles[id])
         resolve(profiles[id]);
       }
       else {

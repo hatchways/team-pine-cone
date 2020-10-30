@@ -31,9 +31,9 @@ const useStyle = makeStyles((theme) => ({
     maxWidth: "400px",
     margin: "auto",
     borderRadius: "50px",
-	  background: "white",
+    background: "white",
     padding: "0.8em",
-	  marginBottom: "3em",
+    marginBottom: "3em",
     transition: "all 0.3s",
     color: "white",
     "&:hover": {
@@ -112,7 +112,7 @@ const SearchFilter = function (props) {
       form.toDate = new Date(form.toDate).toISOString();
     }
 
-	  form.page = 1;
+    form.page = 1;
 
     history.push("/profiles?" + new URLSearchParams(form).toString());
   };

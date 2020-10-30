@@ -25,7 +25,8 @@ export const useStyles = makeStyles((theme) => ({
     },
   },
   banner: {
-    background: "radial-gradient(circle, rgba(255,255,255,1) 0%, rgba(223,27,27,1) 100%);",
+    background:
+      "radial-gradient(circle, rgba(255,255,255,1) 0%, rgba(223,27,27,1) 100%);",
     width: "100%",
     height: "300px",
     borderRadius: "10px",
@@ -85,8 +86,9 @@ const ProfileDetails = function () {
     description,
     images = [],
     hourlyRate = "$14.25",
-    ratings = 0,
-    location = {},
+    rating = 0,
+    address = "CA",
+    jobTitle = "Loving Dog Sitter",
   } = profile;
   const fullName = firstName ? firstName + " " + lastName : "";
 
@@ -120,8 +122,9 @@ const ProfileDetails = function () {
                   variant="body1"
                   className={classes.subtile}
                   paragraph
+                  style={{ marginTop: "0.5em" }}
                 >
-                  Loving Dog Sitter
+                  {jobTitle}
                 </Typography>
               </Grid>
               <Grid container spacing={2} justify="center" alignItems="center">
@@ -129,10 +132,7 @@ const ProfileDetails = function () {
                   <RoomIcon fontSize="large" color="primary" />
                 </Grid>
                 <Grid item>
-                  <Typography className={classes.subtile}>
-                    {/*TEMP*/}
-                    {location.address || "Toronto, Ontario"}
-                  </Typography>
+                  <Typography className={classes.subtile}>{address}</Typography>
                 </Grid>
               </Grid>
             </Grid>
@@ -178,11 +178,11 @@ const ProfileDetails = function () {
           >
             <Grid item>
               <Typography paragraph variant="h4">
-                {hourlyRate}
+                ${hourlyRate}/hr
               </Typography>
             </Grid>
             <Grid item>
-              <Rating value={ratings} name="read-only" readOnly />
+              <Rating value={rating} name="read-only" readOnly />
             </Grid>
           </Grid>
           <Grid item className={classes.mb3}>

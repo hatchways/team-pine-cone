@@ -55,7 +55,7 @@ const updateRequest = (req, res, next) => {
       request.decline();
       request.save();
     }
-    const notifyId = req.user.profile === request.user_id ? request.sitter_id : request.user_id;
+    const notifyId = req.user.profile.toString() === request.user_id.toString() ? request.sitter_id : request.user_id;
     Profile.findById(req.user.profile).then(profile => {
       notifier.notify(notifyId, {
         title: `Booking ${req.body.accepted ? "Accepted" : "Declined"}`,

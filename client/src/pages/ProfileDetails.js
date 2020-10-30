@@ -109,7 +109,7 @@ const ProfileDetails = function () {
           <Grid item md={7} className={classes.profile}>
             <Grid direction="column" container>
               <Grid item>
-                <div className={classes.banner}></div>
+                <div className={classes.banner} />
               </Grid>
               <Grid item direction="column" container alignItems="center">
                 <Grid item>

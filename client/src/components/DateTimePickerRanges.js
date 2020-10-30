@@ -3,7 +3,7 @@ import React, { useState } from "react";
 import { Grid } from "@material-ui/core/";
 import { DateTimePicker, MuiPickersUtilsProvider } from "@material-ui/pickers";
 import DateFnsUtils from "@date-io/date-fns";
-import { isSameDay } from "date-fns";
+import { isSameDay, format } from "date-fns";
 
 const allowedDropInDates = (ranges) => (day) => {
   const dayDate = new Date(day);
@@ -35,6 +35,13 @@ const allowedDropOffDates = (ranges, leftDate) => (day) => {
   return true;
 };
 
+const sortDBDates = (ranges) =>
+  ranges.sort((a, b) => {
+    if (a.start < b.start) return -1;
+    if (a.start > b.start) return 1;
+    return 0;
+  });
+
 const DateTimePickerRanges = function ({
   onChangeLeft,
   onChangeRight,
@@ -44,6 +51,46 @@ const DateTimePickerRanges = function ({
   rightValue,
   ranges,
 }) {
+  const [leftError, setLeftError] = useState("");
+  const [rightError, setRightError] = useState("");
+
+  const leftHandler = (day) => {
+    setRightError("");
+    const [minDate] = sortDBDates(ranges);
+
+    if (new Date(day) < new Date(minDate.start)) {
+      return setLeftError(
+        `Minimum date is ${format(
+          new Date(minDate.start),
+          "MMM co yyyy h:mm a"
+        )}`
+      );
+    }
+
+    setLeftError("");
+    onChangeLeft(day);
+  };
+
+  const rightHandler = (day) => {
+    if (leftError) return;
+    setRightError("");
+    if (new Date(day) < new Date(leftValue)) {
+      return setRightError(
+        `Minimum date is ${format(new Date(leftValue), "MMM co yyyy h:mm a")}`
+      );
+    }
+
+    const maxDate = sortDBDates(ranges)[ranges.length - 1];
+
+    if (new Date(day) > new Date(maxDate.end)) {
+      return setRightError(
+        `Maximum date is ${format(new Date(maxDate.end), "MMM co yyyy h:mm a")}`
+      );
+    }
+
+    onChangeRight(day);
+  };
+
   return (
     <>
       <MuiPickersUtilsProvider utils={DateFnsUtils}>
@@ -52,13 +99,13 @@ const DateTimePickerRanges = function ({
             <DateTimePicker
               clearable
               strictCompareDates
-              strictCompareDates
+              disablePast
               shouldDisableDate={allowedDropInDates(ranges)}
               value={leftValue}
               onOpen={() => onChangeRight(null)}
               fullWidth
-              onChange={onChangeLeft}
-              label={labelLeft}
+              onChange={leftHandler}
+              label={leftError ? leftError : labelLeft}
               inputVariant="outlined"
             />
           </Grid>
@@ -66,11 +113,12 @@ const DateTimePickerRanges = function ({
             <DateTimePicker
               disabled={leftValue === null}
               strictCompareDates
+              error={!!rightError}
               shouldDisableDate={allowedDropOffDates(ranges, leftValue)}
               fullWidth
               value={rightValue}
-              onChange={onChangeRight}
-              label={labelRight}
+              onChange={rightHandler}
+              label={rightError ? rightError : labelRight}
               inputVariant="outlined"
             />
           </Grid>

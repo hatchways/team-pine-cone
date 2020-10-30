@@ -55,8 +55,8 @@ const mainCitiesGPS = [Toronto, QuebecCity, Montreal, Calgary];
       }
 
       const mock = {
-        firstName: name.firstName(),
-        lastName: name.lastName(),
+        firstName: name.firstName().replace(/[0-9]|'/g, ""),
+        lastName: name.lastName().replace(/[0-9]|'/g, ""),
         gender: random.arrayElement(genders),
         birthDate: randomBirthDate,
         description: lorem.paragraph(),

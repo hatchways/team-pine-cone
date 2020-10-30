@@ -15,6 +15,7 @@ const {
 
 const mongodbUri = process.env.MONGODB_URI;
 const genders = Profile.schema.paths.gender.enumValues;
+const jobTitles = Profile.schema.paths.jobTitle.enumValues;
 
 const randomDateBetweenNowAndAMonth = () => {
   const today = new Date();
@@ -86,6 +87,7 @@ const ratings = [0, 1, 2, 3, 4, 5];
         address: address,
         phone: phone.phoneNumber("+1 (!##) !##-####"),
         photo: image.avatar(),
+        jobTitle: random.arrayElement(jobTitles),
       };
 
       const { body } = await got.post("http://localhost:3001/register", {

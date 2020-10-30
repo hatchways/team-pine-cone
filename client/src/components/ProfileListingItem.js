@@ -13,15 +13,17 @@ const Item = function (props) {
     firstName,
     lastName,
     description,
+    jobTitle,
     rating = 0,
     hourlyRate = "$14.25",
-    location = "Toronto, Ontario",
+    address = "Toronto, Ontario",
   } = props;
   const classes = useStyle();
   const history = useHistory();
 
   // go to individual listing from here
   const handleClick = () => history.push(`/profiles/${_id}`);
+	console.log(address)
 
   return (
     <Grid item xs={12} className={classes.card} onClick={handleClick}>
@@ -41,7 +43,7 @@ const Item = function (props) {
               {/*title*/}
               <Grid item id="title">
                 <Typography variant="body1" className={classes.subtile}>
-                  Loving Dog Sitter
+                  {jobTitle}
                 </Typography>
               </Grid>
             </Grid>
@@ -65,10 +67,9 @@ const Item = function (props) {
                     <RoomIcon color="primary" />
                   </Grid>
                   {/*location*/}
-                  <Grid item id="location">
+                  <Grid item id="address">
                     <Typography className={classes.subtile}>
-                      {/*TEMP*/}
-                      {location.address || "Toronto Ontario"}
+                      {address || "CA"}
                     </Typography>
                   </Grid>
                 </Grid>

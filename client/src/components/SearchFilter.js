@@ -96,8 +96,6 @@ const SearchFilter = function (props) {
     setValues({ ...values, [prop]: newValue });
   };
 
-  const handleClickIcon = () => {};
-
   const handleSubmit = (e) => {
     e.preventDefault();
 

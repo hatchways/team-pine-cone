@@ -9,7 +9,6 @@ import RoomIcon from "@material-ui/icons/Room";
 import { DateTimePicker, MuiPickersUtilsProvider } from "@material-ui/pickers";
 import useScrollToTop from "../hooks/useScrollToTop";
 import { useParams } from "react-router-dom";
-import { useFetch } from "../hooks/useFetch";
 import { useProfileContext } from "../contexts/profile";
 
 export const useStyles = makeStyles((theme) => ({
@@ -78,7 +77,6 @@ const ProfileDetails = function () {
   const classes = useStyles();
   const params = useParams();
   const { setProfile, getProfile } = useProfileContext();
-  // const [profile] = useFetch({ init: {}, url: `/profile/${params.id}` });
   const [profile, setProfileDetails] = useState({})
   useEffect(() => {
     getProfile(params.id).then(result => {

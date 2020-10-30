@@ -1,6 +1,6 @@
 import "date-fns";
 import { addHours } from "date-fns";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import DateFnsUtils from "@date-io/date-fns";
 import { Grid, Avatar, Typography, Button, Grow } from "@material-ui/core";
 import { Rating } from "@material-ui/lab";
@@ -77,8 +77,14 @@ const ProfileDetails = function () {
   const [selectDropOff, setSelectDropOff] = useState(addHours(new Date(), 2));
   const classes = useStyles();
   const params = useParams();
-  const { setProfile } = useProfileContext();
-  const [profile] = useFetch({ init: {}, url: `/profile/${params.id}` });
+  const { setProfile, getProfile } = useProfileContext();
+  // const [profile] = useFetch({ init: {}, url: `/profile/${params.id}` });
+  const [profile, setProfileDetails] = useState({})
+  useEffect(() => {
+    getProfile(params.id).then(result => {
+      setProfileDetails(result)
+    })
+  },[getProfile, params]) 
 
   const {
     photo,

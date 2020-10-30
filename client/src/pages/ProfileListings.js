@@ -1,9 +1,9 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import { useLocation } from "react-router-dom";
 import { makeStyles } from "@material-ui/core/styles";
 import { Grid, Typography, Button, CircularProgress } from "@material-ui/core/";
 import PetsIcon from "@material-ui/icons/Pets";
 import ProfileListingItem from "../components/ProfileListingItem";
-import { useFetch } from "../hooks/useFetch";
 import Snackbar from "../components/DefaultSnackbar";
 import Splash from "../components/Splash";
 import SearchFilter from "../components/SearchFilter";
@@ -78,18 +78,27 @@ const form = {
 
 const ProfileListings = function () {
   const classes = useStyle();
+  const location = useLocation();
   const [showMoreLoading, setShowMoreLoading] = useState(false);
   const { values, handleInputChange, setValues, handleDateChange } = useForm(
     form
   );
-  const [data = {}, loading, error, updateSitters] = useFetch({
-    url: "/profile",
-    init: { profiles: [] },
-  });
+  const [data, setData] = useState({ profiles: [] });
+  const [error, setError] = useState("");
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    setLoading(true);
+    setError("");
+
+    fetch("/profile?" + new URLSearchParams(location.search).toString())
+      .then((res) => res.json())
+      .then((data) => setData(data))
+      .catch((e) => setError(e.message))
+      .finally(() => setLoading(false));
+  }, [location]);
 
   const { profiles: sitters = [], metadata } = data;
-
-  const setNewData = (newData) => {};
 
   const handleClickMore = () => {
     setValues({ ...values, page: values.page + 1 });
@@ -110,7 +119,7 @@ const ProfileListings = function () {
     fetch("/profile?" + new URLSearchParams(form).toString())
       .then((res) => res.json())
       .then((newData) =>
-        updateSitters({
+        setData({
           ...newData,
           profiles: [...data.profiles, ...newData.profiles],
         })
@@ -125,7 +134,8 @@ const ProfileListings = function () {
           Search Results
         </Typography>
         <SearchFilter
-          updateSitters={updateSitters}
+          initForm={form}
+          setData={setData}
           setValues={setValues}
           values={values}
           handleInputChange={handleInputChange}

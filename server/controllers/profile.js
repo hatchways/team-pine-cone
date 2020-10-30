@@ -95,8 +95,7 @@ const getProfiles = async (req, res, next) => {
     const [minPrice, maxPrice] = hourlyRateRange.split(",");
     //if performance is an issue resort to text indexes instead
     const reg = new RegExp(search, "i");
-    const sortValue = sortBy === "rating" ? -1 : 1;
-	  const p = Number(page);
+    const p = Number(page);
 
     let [data] = await Profile.aggregate([
       {
@@ -130,7 +129,7 @@ const getProfiles = async (req, res, next) => {
           photo: { $first: "$photo" },
         },
       },
-      { $sort: { [sortBy]: sortValue, firstName: 1 } },
+      { $sort: { [sortBy]: 1, firstName: 1 } },
       {
         $facet: {
           metadata: [

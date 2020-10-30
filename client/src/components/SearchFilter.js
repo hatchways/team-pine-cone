@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { useHistory } from "react-router-dom";
 import "date-fns";
 import DateFnsUtils from "@date-io/date-fns";
 import { makeStyles } from "@material-ui/styles/";
@@ -20,6 +21,8 @@ import {
   TextField,
   Fab,
   Slider,
+  ButtonGroup,
+  Button,
 } from "@material-ui/core/";
 
 const useStyle = makeStyles((theme) => ({
@@ -28,7 +31,9 @@ const useStyle = makeStyles((theme) => ({
     maxWidth: "400px",
     margin: "auto",
     borderRadius: "50px",
+	  background: "white",
     padding: "0.8em",
+	  marginBottom: "3em",
     transition: "all 0.3s",
     color: "white",
     "&:hover": {
@@ -77,13 +82,14 @@ const valuePriceText = (value) => `$${value}`;
 
 const SearchFilter = function (props) {
   const classes = useStyle();
+  const history = useHistory();
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const {
     setValues,
     values,
     handleInputChange,
     handleDateChange,
-    updateSitters,
+    initForm,
   } = props;
 
   const handleSliders = (prop) => (e, newValue) => {
@@ -108,12 +114,9 @@ const SearchFilter = function (props) {
       form.toDate = new Date(form.toDate).toISOString();
     }
 
-    fetch("/profile?" + new URLSearchParams(form).toString())
-      .then((res) => res.json())
-      .then((data) => {
-        	console.log(data);
-        updateSitters(data);
-      });
+	  form.page = 1;
+
+    history.push("/profiles?" + new URLSearchParams(form).toString());
   };
 
   return (
@@ -127,7 +130,7 @@ const SearchFilter = function (props) {
         <SearchIcon
           className={classes.icon}
           fontSize="large"
-          onClick={handleClickIcon}
+          onClick={handleSubmit}
         />
         <TextField
           label="Search"
@@ -153,7 +156,17 @@ const SearchFilter = function (props) {
         className={classes.dialog}
       >
         <DialogTitle id="filters-dialog-title" className={classes.title}>
-          Filter Options
+          <Grid container justify="space-between">
+            Filter Options
+            <ButtonGroup
+              variant="text"
+              color="primary"
+              aria-label="clear and close button options"
+            >
+              <Button onClick={() => setValues(initForm)}>Clear Options</Button>
+              <Button onClick={() => setIsDialogOpen(false)}>Close</Button>
+            </ButtonGroup>
+          </Grid>
         </DialogTitle>
         <DialogContent>
           <DialogContentText style={{ marginBottom: "1em" }}>

@@ -72,9 +72,9 @@ function Booking({ _id, isBooking, isMyJobs, sitter_id, user_id, start, end, pai
   const [name, setName] = useState("");
   useEffect(() => {
       const id = isMyJobs ? user_id : sitter_id
-      getProfile(id).then(profile => {
-        setSrc(profile.photo);
-        setName(`${profile.firstName} ${profile.lastName}`);
+      getProfile(id).then(result => {
+        setSrc(result.photo);
+        setName(`${result.firstName} ${result.lastName}`);
       })
   },[setSrc, isMyJobs, sitter_id, user_id, setName, getProfile])
   const handleAccept = () => {

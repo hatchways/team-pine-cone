@@ -12,6 +12,9 @@ function SocketHandler({children}) {
             profile.notifications.push(notification)
             setProfile(profile)
         })
+        setInterval(() => {
+            socket.emit("keep-alive")
+        },60000)
         socket.on("update", update => {
             setProfile(update)
         })

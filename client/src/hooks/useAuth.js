@@ -55,7 +55,10 @@ export default function () {
 
       if (!res.ok)
         return dispatch({ type: "ERROR", error: data.error.message });
-      dispatch({ type: "SUCCESS", payload: { user: needUser ? data.user : null } });
+      dispatch({
+        type: "SUCCESS",
+        payload: { user: needUser ? data.user : null },
+      });
     } catch (err) {
       dispatch({ type: "ERROR", error: err.message });
     }
@@ -65,6 +68,10 @@ export default function () {
     dispatch({ type: "REQUEST" });
     getState("/user/me");
   }, []);
+
+  const handleSetUser = (user) => {
+    dispatch({ type: "SUCCESS", payload: { user } });
+  };
 
   const handleRegister = (params) => {
     dispatch({ type: "REQUEST" });
@@ -85,6 +92,7 @@ export default function () {
     loading,
     errorMessage,
     user,
+    handleSetUser,
     handleRegister,
     handleLogIn,
     handleLogOut,

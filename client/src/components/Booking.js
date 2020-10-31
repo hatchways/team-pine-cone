@@ -75,7 +75,7 @@ function Booking({ _id, isBooking, isMyJobs, sitter_id, user_id, start, end, pai
           setName(`${profile.firstName} ${profile.lastName}`);
         })
       })
-  },[setSrc, isMyJobs, sitter_id, user_id])
+  },[setSrc, isMyJobs, id])
   const handleAccept = () => {
     handleAcceptOrDecline(true)
   }

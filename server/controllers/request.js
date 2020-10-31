@@ -41,8 +41,8 @@ const updateRequest = (req, res, next) => {
     if (req.body.approved) {
       request.accept().save();
     }
-    else {
-      request.decline().save();
+    else if (req.body.declined) {
+      request.deleteOne();
     }
     res.status(200).json(request);
   }).catch(e => {
@@ -54,6 +54,5 @@ const updateRequest = (req, res, next) => {
 module.exports = {
   getRequestsByUser,
   createRequest,
-  updateRequest,
-  chargeAndPayRequest,
+  updateRequest
 };

@@ -25,6 +25,7 @@ const loginRouter = require("./routes/login");
 const logoutRouter = require("./routes/logout");
 const userRouter = require("./routes/user");
 const uploadRouter = require("./routes/upload");
+const requestRouter = require("./routes/request");
 
 const { json, urlencoded } = express;
 
@@ -45,6 +46,7 @@ app.use("/register", registerRouter);
 app.use("/login", loginRouter);
 app.use("/logout", logoutRouter);
 app.use("/upload", uploadRouter);
+app.use("/request", requestRouter);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

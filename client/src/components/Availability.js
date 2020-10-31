@@ -4,6 +4,7 @@ import { Add, Delete } from "@material-ui/icons";
 import { DateTimePicker, MuiPickersUtilsProvider } from "@material-ui/pickers";
 import React, { useState } from "react";
 import { useProfileContext } from "../contexts/profile";
+import Calendar from "./Calendar";
 
 const useStyles = makeStyles(theme => ({
   row: {
@@ -77,6 +78,9 @@ function Availability() {
     <Grid container direction="column" alignItems="center">
       <Grid item>
         <h2>Availability</h2>
+      </Grid>
+      <Grid item>
+        <Calendar firstDay={new Date("10-01-20")} />
       </Grid>
       {availability.map((range, i) => (
         <Grid key={`range-${i}`} className={classes.row} item>

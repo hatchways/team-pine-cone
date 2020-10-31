@@ -64,9 +64,10 @@ const updateProfile = async (req, res, next) => {
         coordinates: [latitude, longitude],
       };
     }
+	  console.log(profileProps)
 
     profile.$set(profileProps);
-    await profile.update();
+    await profile.save();
 
     if (email) {
       await User.findOneAndUpdate(

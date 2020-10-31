@@ -6,7 +6,7 @@ const getRequestsByUser = (req, res, next) => {
     return next(createError(403));
   }
 
-  Profile.findById(req.user.profile_id).populate("requests").then(profile => {
+  Profile.findById(req.user.profile).populate("requests").then(profile => {
     res.status(200).json(profile.requests);
   }).catch(e => {
     console.log(e);
@@ -19,7 +19,7 @@ const createRequest = (req, res, next) => {
     return next(createError(403));
   }
   const request = new Request({
-    user_id: req.user.profile_id,
+    user_id: req.user.profile,
     sitter_id: req.body.sitter_id,
     start: req.body.start,
     end: req.body.end
@@ -55,5 +55,4 @@ module.exports = {
   getRequestsByUser,
   createRequest,
   updateRequest,
-  chargeAndPayRequest,
 };

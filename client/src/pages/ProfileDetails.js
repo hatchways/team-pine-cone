@@ -11,8 +11,6 @@ import useScrollToTop from "../hooks/useScrollToTop";
 import { useParams } from "react-router-dom";
 import { useFetch } from "../hooks/useFetch";
 import { useProfileContext } from "../contexts/profile";
-import Snackbar from "../components/DefaultSnackbar";
-import Splash from "../components/Splash";
 
 export const useStyles = makeStyles((theme) => ({
   root: {
@@ -80,7 +78,7 @@ const ProfileDetails = function () {
   const classes = useStyles();
   const params = useParams();
   const { pullProfile } = useProfileContext();
-  const [profile, loading, error] = useFetch({
+  const [profile] = useFetch({
     init: {},
     url: `/profile/${params.id}`,
   });

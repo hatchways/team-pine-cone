@@ -2,6 +2,7 @@ import { Avatar, Button, Card, makeStyles } from "@material-ui/core";
 import React, { Fragment, useEffect, useState } from "react";
 import { useProfileContext } from "../contexts/profile";
 import moment from "moment";
+import { Link } from "react-router-dom";
 
 const useStyles = makeStyles((theme) => ({
   booking: {
@@ -31,6 +32,8 @@ const useStyles = makeStyles((theme) => ({
   name: {
     gridColumn: "2 / span 1",
     marginBottom: 10,
+    textDecoration: "none",
+    color: "#222222",
     [theme.breakpoints.between("xs", "sm")]: {
       gridRow: "2 / span 1",
       gridColumn: "1 / span 1",
@@ -64,8 +67,8 @@ function Booking({ _id, isBooking, isMyJobs, sitter_id, user_id, start, end, pai
   const { profile, setProfile } = useProfileContext();
   const [src, setSrc] = useState(null);
   const [name, setName] = useState("");
+  const id = isMyJobs ? user_id : sitter_id
   useEffect(() => {
-      const id = isMyJobs ? user_id : sitter_id
       fetch(`/profile/${id}`).then(response => {
         response.json().then(profile => {
           setSrc(profile.photo);
@@ -101,8 +104,12 @@ function Booking({ _id, isBooking, isMyJobs, sitter_id, user_id, start, end, pai
   }
   return (
     <Card variant="outlined" className={classes.booking}>
-      <Avatar src={src} className={classes.photo} />
-      <h2 className={classes.name}>{name}</h2>
+      <Link to={`/profiles/${id}`}>
+        <Avatar src={src} className={classes.photo} />
+      </Link>
+      <Link className={classes.name} to={`/profiles/${id}`}>
+        <h2>{name}</h2>
+      </Link>
       <h3 className={classes.date}>
         {formatDate(start)} - {formatDate(end)}
       </h3>

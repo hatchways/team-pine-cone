@@ -11,7 +11,7 @@ const useStyles = makeStyles((theme) => ({
     borderRadius: "10px",
     padding: "1em",
     boxShadow: theme.boxShadows.main,
-    margin: "0 auto",
+    margin: "auto",
     cursor: "pointer",
     background: "rgba(220,220,220, 0.5)",
   },

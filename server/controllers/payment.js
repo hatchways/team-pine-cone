@@ -16,7 +16,7 @@ const checkErrors = (err, next) => {
 const createPaymentMethod = async (req, res, next) => {
   const { card_id, user_id } = req.body;
 
-  if (!card_id && !user_id) {
+  if (!card_id || !user_id) {
     return next(createError(422, "card_id or profile_id not provided"));
   }
 
@@ -73,7 +73,7 @@ const getPaymentMethods = async (req, res, next) => {
     if (!profile.stripe.customerId) return res.status(200).json({ data: [] });
 
     const paymentMethods = await stripe.paymentMethods.list({
-      customer: profile.stripeId,
+      customer: profile.stripe.customerId,
       type: "card",
     });
 
@@ -85,11 +85,12 @@ const getPaymentMethods = async (req, res, next) => {
 
 const createConnect = async (req, res, next) => {
   const { email, profile: profile_id } = req.user;
-  const profile = await req.user.populate("profile");
+
+  const profile = await Profile.findById(profile_id);
 
   let accountId;
   try {
-    if (!profile.stripe?.accountId) {
+    if (!profile.stripe || !profile.stripe.accountId) {
       const account = await stripe.accounts.create({
         type: "custom",
         email: email,
@@ -101,8 +102,6 @@ const createConnect = async (req, res, next) => {
 
       accountId = account.id;
 
-		profile.$set();
-
       await Profile.findByIdAndUpdate(profile_id, {
         $set: { "stripe.accountId": accountId },
       });
@@ -112,12 +111,12 @@ const createConnect = async (req, res, next) => {
 
     const accountLink = await stripe.accountLinks.create({
       account: accountId,
-      refresh_url: "http://localhost:3000/me",
-      return_url: "http://localhost:3000/me",
+      refresh_url: process.env.RETURN_PAYMENT_LINK,
+      return_url: process.env.RETURN_PAYMENT_LINK,
       type: "account_onboarding",
     });
 
-    return res.status(201).json({ accountLink });
+    return res.status(201).json({ accountLink: accountLink.url });
   } catch (err) {
     checkErrors(err, next);
   }

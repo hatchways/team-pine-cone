@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import {
   Button,
   ButtonGroup,
@@ -63,6 +63,7 @@ const useStyles = makeStyles((theme) => ({
   },
   container: {
     minHeight: "300px",
+    display: "grid",
     position: "relative",
   },
   loader: {
@@ -86,7 +87,7 @@ const ProfilePayments = function () {
   const stripe = useStripe();
   const elements = useElements();
   const { user } = useUserContext();
-  const { profile, pullProfile } = useProfileContext();
+  const { profile, setProfile } = useProfileContext();
 
   const [
     { data: cards },
@@ -97,7 +98,7 @@ const ProfilePayments = function () {
     setError,
   ] = useFetch({
     init: { data: [] },
-    url: `/payment/methods/`,
+    url: "/payment/methods/",
   });
 
   const [addingCard, setAddingCard] = useState(false);
@@ -133,6 +134,7 @@ const ProfilePayments = function () {
           .then((res) => res.json())
           .then((profile) => {
             setAddingCard(false);
+            setProfile(profile);
             //when adding more then one card spread the array here
             setCards({ data: [data.paymentMethod] });
           })
@@ -144,6 +146,7 @@ const ProfilePayments = function () {
   const handleCreateStripeAccount = (e) => {
     e.preventDefault();
     if (error) setError(null);
+
     setLoading(true);
 
     fetch("/payment/account", {
@@ -153,12 +156,10 @@ const ProfilePayments = function () {
       },
     })
       .then((res) => res.json())
-      .then(({ accountLink }) => (window.href = accountLink))
-      .catch(() => setError("Could not create Stripe link account"))
+      .then(({ accountLink }) => (window.location.href = accountLink))
+      .catch(() => setError("Could not create Stripe link."))
       .finally(() => setLoading(false));
   };
-
-  console.log(profile);
 
   return (
     <Grid container direction="column">
@@ -166,14 +167,13 @@ const ProfilePayments = function () {
 
       <div className={classes.form}>
         <Typography variant="h6">
-          Make sure the following is complete in order to receive/payout
-          payments:
+          To receive or payout payments complete the following:
         </Typography>
         <List dense={true}>
           <ListItem>
             <ListItemIcon>
               <ListItemIcon>
-                {profile.stripe?.accountId ? (
+                {profile && profile.stripe?.accountId ? (
                   <CheckIcon className={classes.lightGreen} />
                 ) : (
                   <ClearIcon color="primary" />
@@ -185,7 +185,7 @@ const ProfilePayments = function () {
           <ListItem>
             <ListItemIcon>
               <ListItemIcon>
-                {cards.length > 0 ? (
+                {profile && profile.stripe?.customerId ? (
                   <CheckIcon className={classes.lightGreen} />
                 ) : (
                   <ClearIcon color="primary" />
@@ -203,7 +203,7 @@ const ProfilePayments = function () {
         {loading && <CircularProgress className={classes.loader} />}
 
         {/*FORM*/}
-        {cards.length > 0 && !addingCard ? (
+        {cards.length > 0 && !addingCard && !loading ? (
           cards.map((data) => <Card key={data.id} {...data.card} />)
         ) : (
           <Fade in={addingCard && !loading}>
@@ -257,15 +257,15 @@ const ProfilePayments = function () {
           color="primary"
           aria-label="contained primary button group"
         >
-          <Button disabled={loading} onClick={() => setAddingCard(true)}>
-            {cards.length > 0
-              ? "Change payment profile"
-              : "Add new payment profile"}
-          </Button>
           <Button disabled={loading} onClick={handleCreateStripeAccount}>
             {profile?.stripe?.accountId
               ? "Update your account with Stripe"
               : "Link your account with Stripe"}
+          </Button>
+          <Button disabled={loading} onClick={() => setAddingCard(true)}>
+            {cards.length > 0
+              ? "Change payment profile"
+              : "Add new payment profile"}
           </Button>
         </ButtonGroup>
       </Fade>

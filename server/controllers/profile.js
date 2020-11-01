@@ -64,7 +64,6 @@ const updateProfile = async (req, res, next) => {
         coordinates: [latitude, longitude],
       };
     }
-	  console.log(profileProps)
 
     profile.$set(profileProps);
     await profile.save();

@@ -1,5 +1,11 @@
 import React, { useState } from "react";
-import { Button, Fade, Grid, CircularProgress } from "@material-ui/core";
+import {
+  Button,
+  ButtonGroup,
+  Fade,
+  Grid,
+  CircularProgress,
+} from "@material-ui/core";
 import { makeStyles } from "@material-ui/styles";
 import {
   CardNumberElement,
@@ -11,6 +17,7 @@ import {
 import StripeInput from "./StripeInput";
 import Card from "./Card";
 import { useUserContext } from "../../contexts/user";
+import { useProfileContext } from "../../contexts/profile";
 import { useFetch } from "../../hooks/useFetch";
 import Snackbar from "../DefaultSnackbar";
 
@@ -27,7 +34,6 @@ const useStyles = makeStyles((theme) => ({
     fontWeight: "500",
   },
   button: {
-    padding: "1.3em 3em",
     textAlign: "center",
     display: "block",
     margin: "auto",
@@ -71,6 +77,7 @@ const ProfilePayments = function () {
   const stripe = useStripe();
   const elements = useElements();
   const { user } = useUserContext();
+  const { profile } = useProfileContext();
   const [
     { data: cards },
     loading,
@@ -80,7 +87,7 @@ const ProfilePayments = function () {
     setError,
   ] = useFetch({
     init: { data: [] },
-    url: `/payment/methods/${user.profile}`,
+    url: `/payment/methods/`,
   });
 
   const [addingCard, setAddingCard] = useState(false);
@@ -122,6 +129,20 @@ const ProfilePayments = function () {
           .catch(() => setError(cardErrorMessage))
           .finally(() => setLoading(false));
       });
+  };
+
+  const handleCreateStripeAccount = (e) => {
+    e.preventDefault();
+
+    fetch("/payment/account", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    })
+	  .then(res => res.json())
+      .then(console.log)
+      .catch(console.error);
   };
 
   return (
@@ -181,18 +202,29 @@ const ProfilePayments = function () {
 
       {/*BUTTON*/}
       <Fade in={!addingCard}>
-        <Button
+        <ButtonGroup
+		style={{margin: "auto"}}
           variant="outlined"
-          size="large"
           color="primary"
-          disabled={loading}
-          className={classes.button}
-          onClick={() => setAddingCard(true)}
+          aria-label="contained primary button group"
         >
-          {cards.length > 0
-            ? "Change payment profile"
-            : "Add new payment profile"}
-        </Button>
+          <Button
+            disabled={loading}
+            onClick={() => setAddingCard(true)}
+          >
+            {cards.length > 0
+              ? "Change payment profile"
+              : "Add new payment profile"}
+          </Button>
+          <Button
+            disabled={loading}
+			  onClick={handleCreateStripeAccount}
+          >
+            {profile?.stripe?.accountId
+              ? "Update your account with Stripe"
+              : "Link your account with Stripe"}
+          </Button>
+        </ButtonGroup>
       </Fade>
     </Grid>
   );

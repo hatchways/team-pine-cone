@@ -1,7 +1,8 @@
+const STRIPE_SECRET = process.env.STRIPE_SECRET;
 const createError = require("http-errors");
 const { Request, Profile } = require("../models/");
-const stripe = require("stripe");
 const { validationResult } = require("express-validator");
+const stripe = require("stripe")(STRIPE_SECRET);
 
 const getRequestsByUser = (req, res) => {
 
@@ -63,32 +64,34 @@ const chargeAndPayRequest = async (req, res, next) => {
 
     //need to check if both parties are Stripe customers and have a credit card in the application
     if (!request) return next(createError(404, "Request cannot be found"));
-    if (!customer.stripeId)
+    if (!customer.stripe.customerId)
       return next(createError(422, "Customer does not have a payment method."));
-    if (!sitter.stripeId)
-      return next(createError(422, "Sitter does not have a payment method"));
+    if (!sitter.stripe.accountId)
+      return next(createError(422, "Sitter does not have a linked Stripe account"));
 
     //obtains payment method or main credit card
     const {
       data: [card],
     } = await stripe.paymentMethods.list({
-      customer: customer.stripeId,
+      customer: customer.stripe.customerId,
       type: "card",
     });
 
+	  const stripeAmount = Math.ceil(amount / 0.01);
+
     //attempts to create and confirm payment
     const paymentIntent = await stripe.paymentIntents.create({
-      amount,
+      amount: stripeAmount,
       currency: "cad",
-      customer: customer.stripeId,
+      customer: customer.stripe.customerId,
       description: "LovingSitter Dog Sitting Service",
       payment_method: card.id,
       //%3 for LovingSitter
-      application_fee_amount: amount * 0.03,
+		application_fee_amount: Math.ceil((stripeAmount * 0.03) / 0.01),
       confirm: true,
       //transfers money to sitter
       transfer_data: {
-        destinatiom: sitter.stripeId,
+        destination: sitter.stripe.accountId,
       },
     });
 

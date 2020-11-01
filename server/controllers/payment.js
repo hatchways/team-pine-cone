@@ -1,5 +1,5 @@
-const STRIPE_SECRECT = process.env.STRIPE_SECRET;
-const stripe = require("stripe")(STRIPE_SECRECT);
+const STRIPE_SECRET = process.env.STRIPE_SECRET;
+const stripe = require("stripe")(STRIPE_SECRET);
 const createError = require("http-errors");
 const { User, Profile } = require("../models/");
 
@@ -21,16 +21,14 @@ const createPaymentMethod = async (req, res, next) => {
   }
 
   try {
-    const user = await User.findById(user_id).populate("profile");
-    if (!user) return next(createError(404, "User not found"));
+    let { email, profile } = await User.findById(user_id).populate("profile");
 
-    let { profile } = user;
     let customer;
 
     //updates current card to new card
-    if (profile.stripeId) {
+    if (profile.stripe.customerId) {
       const { data: cards } = await stripe.paymentMethods.list({
-        customer: profile.stripeId,
+        customer: profile.stripe.customerId,
         type: "card",
       });
 
@@ -44,7 +42,7 @@ const createPaymentMethod = async (req, res, next) => {
     } else {
       customer = await stripe.customers.create({
         description: "LovingSitter customer",
-        email: user.email,
+        email: email,
         name: profile.firstName + " " + profile.lastName,
         phone: profile.phone,
         payment_method: card_id,
@@ -52,7 +50,7 @@ const createPaymentMethod = async (req, res, next) => {
 
       profile = await Profile.findByIdAndUpdate(
         profile._id,
-        { stripeId: customer.id },
+        { $set: { "stripe.customerId": customer.id } },
         { new: true }
       );
     }
@@ -64,7 +62,7 @@ const createPaymentMethod = async (req, res, next) => {
 };
 
 const getPaymentMethods = async (req, res, next) => {
-  const { profile_id } = req.params;
+  const { profile: profile_id } = req.user;
 
   if (!profile_id) return next(createError(422, "profile_id not provided"));
 
@@ -72,7 +70,7 @@ const getPaymentMethods = async (req, res, next) => {
     const profile = await Profile.findById(profile_id);
     if (!profile) return next(createError(404, "Profile not found"));
 
-    if (!profile.stripeId) return res.status(200).json({ data: [] });
+    if (!profile.stripe.customerId) return res.status(200).json({ data: [] });
 
     const paymentMethods = await stripe.paymentMethods.list({
       customer: profile.stripeId,
@@ -85,7 +83,38 @@ const getPaymentMethods = async (req, res, next) => {
   }
 };
 
+const createConnect = async (req, res, next) => {
+  const { email, profile: profile_id } = req.user;
+
+  try {
+    const account = await stripe.accounts.create({
+      type: "custom",
+      email: email,
+      capabilities: {
+        card_payments: { requested: true },
+        transfers: { requested: true },
+      },
+    });
+
+    const accountLink = await stripe.accountLinks.create({
+      account: account.id,
+      refresh_url: "http://localhost:3000/me",
+      return_url: "http://localhost:3000/me",
+      type: "account_onboarding",
+    });
+
+    await Profile.findByIdAndUpdate(profile_id, {
+      stripe: { accountId: account.id },
+    });
+
+    return res.status(201).json({ accountLink });
+  } catch (err) {
+    checkErrors(err, next);
+  }
+};
+
 module.exports = {
   createPaymentMethod,
   getPaymentMethods,
+  createConnect,
 };

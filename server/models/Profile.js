@@ -67,9 +67,14 @@ const profileSchema = new Schema({
       ref: "Request",
     },
   ],
-  stripeId: {
-    type: String,
-  },
+  stripe: {
+    customerId: {
+      type: String,
+    },
+    accountId: {
+      type: String,
+    },
+  }
 });
 
 profileSchema.pre("save", function (next) {

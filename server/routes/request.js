@@ -11,7 +11,7 @@ const { requestChargePayValidators } = require("../utils/validators/");
 const Router = express.Router();
 
 Router.post(
-  "/request/:id/pay",
+  "/:id/pay",
   authenticate(),
   requestChargePayValidators,
   chargeAndPayRequest

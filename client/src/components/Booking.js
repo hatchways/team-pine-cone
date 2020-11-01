@@ -2,6 +2,7 @@ import { Avatar, Button, Card, makeStyles } from "@material-ui/core";
 import React, { Fragment, useEffect, useState } from "react";
 import { useProfileContext } from "../contexts/profile";
 import moment from "moment";
+import { differenceInHours } from "date-fns";
 
 const useStyles = makeStyles((theme) => ({
   booking: {
@@ -99,6 +100,28 @@ function Booking({ _id, isBooking, isMyJobs, sitter_id, user_id, start, end, pai
     };
     fetch(`/request/update/${updatedRequest._id}`, options);
   }
+	const handlePay = () => {
+		(async function() {
+			try { 
+				const { hourlyRate } = await fetch(`/profile/${sitter_id}`)
+					.then((res) => res.json());
+
+				const diffHours = differenceInHours(new Date(end), new Date(start));
+				const amount = hourlyRate * diffHours;
+
+				console.log(amount);
+				const paymentIntent = await fetch(`/request/${_id}/pay`, {
+					method: "POST",
+					headers: {"Content-Type": "application/json"},
+					body: JSON.stringify({amount: 22.22})
+				})
+				console.log(paymentIntent);
+
+			} catch (e) { 
+				console.log("ERROR", e.message);
+			}
+		})();
+	};
   return (
     <Card variant="outlined" className={classes.booking}>
       <Avatar src={src} className={classes.photo} />
@@ -128,7 +151,7 @@ function Booking({ _id, isBooking, isMyJobs, sitter_id, user_id, start, end, pai
             </Button>
             <Button
               onClick={
-                isBooking ? (paid ? handleDecline : null) : handleDecline
+                isBooking ? (paid ? handleDecline : handlePay) : handleDecline
               }
               color="primary"
               variant="contained"

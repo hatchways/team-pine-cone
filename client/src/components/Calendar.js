@@ -83,18 +83,9 @@ function Calendar() {
     const months = useMonths(year);
     const {firstDay, month, lastDay} = months[monthNumber]
     let dayOfWeek = Number(moment(firstDay).format("d"));
-    console.log(dayOfWeek)
-    const days = [
-      ["", "", "", "", "", "", ""],
-      ["", "", "", "", "", "", ""],
-      ["", "", "", "", "", "", ""],
-      ["", "", "", "", "", "", ""],
-      ["", "", "", "", "", "", ""],
-      ["", "", "", "", "", "", ""],
-    ];
+    const days = getDaysArray();
     let week = 0;
     let dayOfMonth = 1;
-    console.log(days)
     while (week < 6 && dayOfMonth <= lastDay) {
         days[week][dayOfWeek] = dayOfMonth;
         dayOfMonth++;
@@ -137,7 +128,7 @@ function Calendar() {
                     {(week[0] || week[6]) &&
                       week.map((day) => (
                         <Grid item>
-                          <IconButton size="medium">
+                          <IconButton disabled={!day} size="medium">
                             <p className={classes.calendarText}>{day}</p>
                           </IconButton>
                         </Grid>
@@ -158,3 +149,14 @@ function Calendar() {
 }
 
 export default Calendar;
+
+function getDaysArray() {
+    return [
+        ["", "", "", "", "", "", ""],
+        ["", "", "", "", "", "", ""],
+        ["", "", "", "", "", "", ""],
+        ["", "", "", "", "", "", ""],
+        ["", "", "", "", "", "", ""],
+        ["", "", "", "", "", "", ""],
+    ];
+}

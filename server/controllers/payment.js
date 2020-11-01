@@ -88,11 +88,11 @@ const createConnect = async (req, res, next) => {
 
   const profile = await Profile.findById(profile_id);
 
-  let accountId;
+  let accountLink;
   try {
     if (!profile.stripe || !profile.stripe.accountId) {
       const account = await stripe.accounts.create({
-        type: "custom",
+        type: "express",
         email: email,
         capabilities: {
           card_payments: { requested: true },
@@ -100,21 +100,23 @@ const createConnect = async (req, res, next) => {
         },
       });
 
-      accountId = account.id;
+      const accountId = account.id;
 
       await Profile.findByIdAndUpdate(profile_id, {
         $set: { "stripe.accountId": accountId },
       });
-    } else {
-      accountId = profile.stripe.accountId;
-    }
 
-    const accountLink = await stripe.accountLinks.create({
-      account: accountId,
-      refresh_url: process.env.RETURN_PAYMENT_LINK,
-      return_url: process.env.RETURN_PAYMENT_LINK,
-      type: "account_onboarding",
-    });
+      accountLink = await stripe.accountLinks.create({
+        account: accountId,
+        refresh_url: process.env.RETURN_PAYMENT_LINK,
+        return_url: process.env.RETURN_PAYMENT_LINK,
+        type: "account_onboarding",
+      });
+    } else {
+      accountLink = await stripe.accounts.createLoginLink(
+        profile.stripe.accountId
+      );
+    }
 
     return res.status(201).json({ accountLink: accountLink.url });
   } catch (err) {

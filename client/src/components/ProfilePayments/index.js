@@ -1,10 +1,15 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Button,
   ButtonGroup,
   Fade,
   Grid,
   CircularProgress,
+  Typography,
+  List,
+  ListItem,
+  ListItemIcon,
+  ListItemText,
 } from "@material-ui/core";
 import { makeStyles } from "@material-ui/styles";
 import {
@@ -14,6 +19,8 @@ import {
   useStripe,
   useElements,
 } from "@stripe/react-stripe-js";
+import ClearIcon from "@material-ui/icons/Clear";
+import CheckIcon from "@material-ui/icons/Check";
 import StripeInput from "./StripeInput";
 import Card from "./Card";
 import { useUserContext } from "../../contexts/user";
@@ -28,7 +35,6 @@ const useStyles = makeStyles((theme) => ({
   },
   title: {
     textAlign: "center",
-    marginBottom: "3em",
   },
   typing: {
     fontWeight: "500",
@@ -67,6 +73,9 @@ const useStyles = makeStyles((theme) => ({
     right: 0,
     margin: "auto",
   },
+  lightGreen: {
+    fill: theme.palette.success.light,
+  },
 }));
 
 const cardErrorMessage =
@@ -77,7 +86,8 @@ const ProfilePayments = function () {
   const stripe = useStripe();
   const elements = useElements();
   const { user } = useUserContext();
-  const { profile } = useProfileContext();
+  const { profile, pullProfile } = useProfileContext();
+
   const [
     { data: cards },
     loading,
@@ -133,6 +143,8 @@ const ProfilePayments = function () {
 
   const handleCreateStripeAccount = (e) => {
     e.preventDefault();
+    if (error) setError(null);
+    setLoading(true);
 
     fetch("/payment/account", {
       method: "POST",
@@ -140,14 +152,51 @@ const ProfilePayments = function () {
         "Content-Type": "application/json",
       },
     })
-	  .then(res => res.json())
-      .then(console.log)
-      .catch(console.error);
+      .then((res) => res.json())
+      .then(({ accountLink }) => (window.href = accountLink))
+      .catch(() => setError("Could not create Stripe link account"))
+      .finally(() => setLoading(false));
   };
+
+  console.log(profile);
 
   return (
     <Grid container direction="column">
       <h2 className={classes.title}>Payment Methods</h2>
+
+      <div className={classes.form}>
+        <Typography variant="h6">
+          Make sure the following is complete in order to receive/payout
+          payments:
+        </Typography>
+        <List dense={true}>
+          <ListItem>
+            <ListItemIcon>
+              <ListItemIcon>
+                {profile.stripe?.accountId ? (
+                  <CheckIcon className={classes.lightGreen} />
+                ) : (
+                  <ClearIcon color="primary" />
+                )}
+              </ListItemIcon>
+              <ListItemText primary="Link your account with Stripe" />
+            </ListItemIcon>
+          </ListItem>
+          <ListItem>
+            <ListItemIcon>
+              <ListItemIcon>
+                {cards.length > 0 ? (
+                  <CheckIcon className={classes.lightGreen} />
+                ) : (
+                  <ClearIcon color="primary" />
+                )}
+              </ListItemIcon>
+              <ListItemText primary="Add a payment method" />
+            </ListItemIcon>
+          </ListItem>
+        </List>
+      </div>
+
       <div className={classes.container}>
         {error && <Snackbar open={!!error} message={error} />}
 
@@ -203,23 +252,17 @@ const ProfilePayments = function () {
       {/*BUTTON*/}
       <Fade in={!addingCard}>
         <ButtonGroup
-		style={{margin: "auto"}}
+          style={{ margin: "auto" }}
           variant="outlined"
           color="primary"
           aria-label="contained primary button group"
         >
-          <Button
-            disabled={loading}
-            onClick={() => setAddingCard(true)}
-          >
+          <Button disabled={loading} onClick={() => setAddingCard(true)}>
             {cards.length > 0
               ? "Change payment profile"
               : "Add new payment profile"}
           </Button>
-          <Button
-            disabled={loading}
-			  onClick={handleCreateStripeAccount}
-          >
+          <Button disabled={loading} onClick={handleCreateStripeAccount}>
             {profile?.stripe?.accountId
               ? "Update your account with Stripe"
               : "Link your account with Stripe"}

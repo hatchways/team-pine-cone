@@ -85,26 +85,36 @@ const getPaymentMethods = async (req, res, next) => {
 
 const createConnect = async (req, res, next) => {
   const { email, profile: profile_id } = req.user;
+  const profile = await req.user.populate("profile");
 
+  let accountId;
   try {
-    const account = await stripe.accounts.create({
-      type: "custom",
-      email: email,
-      capabilities: {
-        card_payments: { requested: true },
-        transfers: { requested: true },
-      },
-    });
+    if (!profile.stripe?.accountId) {
+      const account = await stripe.accounts.create({
+        type: "custom",
+        email: email,
+        capabilities: {
+          card_payments: { requested: true },
+          transfers: { requested: true },
+        },
+      });
+
+      accountId = account.id;
+
+		profile.$set();
+
+      await Profile.findByIdAndUpdate(profile_id, {
+        $set: { "stripe.accountId": accountId },
+      });
+    } else {
+      accountId = profile.stripe.accountId;
+    }
 
     const accountLink = await stripe.accountLinks.create({
-      account: account.id,
+      account: accountId,
       refresh_url: "http://localhost:3000/me",
       return_url: "http://localhost:3000/me",
       type: "account_onboarding",
-    });
-
-    await Profile.findByIdAndUpdate(profile_id, {
-      stripe: { accountId: account.id },
     });
 
     return res.status(201).json({ accountLink });

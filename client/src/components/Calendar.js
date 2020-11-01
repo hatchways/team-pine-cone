@@ -12,7 +12,7 @@ const useStyles = makeStyles({
         textAlign: "center"
     },
     button: {
-        width: 200,
+        minWidth: 200,
         margin: 10
     }
 })
@@ -142,11 +142,12 @@ function Calendar() {
     const [activeDay, setActiveDay] = useState(null);
     const [year, setYear] = useState(Number(today.format("YYYY")));
     const [monthNumber, setMonthNumber] = useState(Number(today.format("M")));
+    const [settingMultiple, setSettingMultiple] = useState(false)
     const months = useMonths(year);
     const {firstDay, month, lastDay} = months[monthNumber]
     let dayOfWeek = Number(moment(firstDay).format("d"));
     const days = getDaysArray();
-    const [times, setTimes] = useState([...getDefaultTimes()]);
+    const [times, setTimes] = useState(getDefaultTimes());
     let week = 0;
     let dayOfMonth = 1;
     while (week < 6 && dayOfMonth <= lastDay) {
@@ -178,60 +179,47 @@ function Calendar() {
             const newTimes = [...times];
             newTimes[i].available = !newTimes[i].available;
             if (activeDay) {
-                const newAvail = availability;
-                if (newAvail.hasOwnProperty(year)) {
-                    if (newAvail[year].hasOwnProperty(month)) {
-                        newAvail[year][month][activeDay] = newTimes;
-                    }
-                    else {
-                        newAvail[year][month] = {
-                            [activeDay]: newTimes
-                        }
-                    }
-                }
-                else {
-                    newAvail[year] = {
-                        [month]: {
-                            [activeDay]: newTimes
-                        }
-                    }
-                }
-                setAvailability(newAvail);
+                addTimeToDay(newTimes);
             }
             setTimes(newTimes);
         }
     )
     const createDayHandler = day => (
         () => {
-            if (availability[year] && availability[year][month] && availability[year][month][day]) {
-                setTimes(availability[year][month][day]);
+            if (settingMultiple) {
+                addTimesToDay(day);
             }
             else {
-                setTimes([...getDefaultTimes()]);
+                examineAvailabilityForDay(day);
             }
-            setActiveDay(day);
         }
     )
+    const handleSetMultiple = () => {
+        setActiveDay(null)
+        setSettingMultiple(!settingMultiple)
+    }
     const handleSaveAvailability = () => {
         const data = convertAvailabilityForDatabase(availability)
-        const newProfile = {...profile}
-        newProfile.availability = data
-        setProfile(newProfile)
-        const options = {
-          method: "PUT",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(newProfile),
-        };
-        fetch(`/profile/${profile._id}`, options);
+        updateProfileAvailability(data);
+    }
+    const handleJumpToCurrent = () => {
+        setYear(Number(moment().format("YYYY")))
+        setMonthNumber(Number(moment().format("M")));
+        setActiveDay(null);
+        setTimes(getDefaultTimes());
     }
     return (
       <Grid container direction="column" alignItems="center">
         <Grid item>
           <Grid container direction="row" alignItems="center">
             <Grid item>
-              <IconButton onClick={createArrowHandler(-1)}>
+              <IconButton
+                disabled={
+                  year === Number(moment().format("YYYY")) &&
+                  month === moment().format("MMMM")
+                }
+                onClick={createArrowHandler(-1)}
+              >
                 <ArrowLeft />
               </IconButton>
             </Grid>
@@ -244,30 +232,38 @@ function Calendar() {
                   {days.map((week) => (
                     <Grid item>
                       <Grid container direction="row">
-                        {(week[0] || week[6]) &&
-                          week.map((day) => (
-                            <Grid item>
-                              <IconButton
-                                onClick={createDayHandler(day)}
-                                color={
-                                  activeDay === day
-                                    ? "primary"
-                                    : availability[year] &&
-                                      availability[year][month] &&
-                                      availability[year][month][day]
-                                    ? "secondary"
-                                    : "default"
-                                }
-                                disabled={!day}
-                                size="medium"
-                              >
-                                <p className={classes.calendarText}>{day}</p>
-                              </IconButton>
-                            </Grid>
-                          ))}
+                        {week.map((day) => (
+                          <Grid item>
+                            <IconButton
+                              onClick={createDayHandler(day)}
+                              color={
+                                activeDay === day
+                                  ? "primary"
+                                  : availability[year] &&
+                                    availability[year][month] &&
+                                    availability[year][month][day]
+                                  ? "secondary"
+                                  : "default"
+                              }
+                              disabled={!day}
+                              size="medium"
+                            >
+                              <p className={classes.calendarText}>{day}</p>
+                            </IconButton>
+                          </Grid>
+                        ))}
                       </Grid>
                     </Grid>
                   ))}
+                  <Button
+                    disabled={
+                      year === Number(moment().format("YYYY")) &&
+                      month === moment().format("MMMM")
+                    }
+                    onClick={handleJumpToCurrent}
+                  >
+                    Jump to Current Month
+                  </Button>
                 </Grid>
               </Card>
             </Grid>
@@ -322,17 +318,106 @@ function Calendar() {
           </Grid>
         </Grid>
         <Grid item>
-          <Button
-            color="primary"
-            variant="contained"
-            onClick={handleSaveAvailability}
-            className={classes.button}
-          >
-            Save Availability
-          </Button>
+          <Grid container direction="row" alignItems="center">
+            <Grid item>
+              <Button
+                color="primary"
+                variant="contained"
+                onClick={handleSetMultiple}
+                className={classes.button}
+              >
+                {settingMultiple
+                  ? "Done"
+                  : "Add Selected Times to Multiple Days"}
+              </Button>
+            </Grid>
+            <Grid item>
+              <Button
+                color="primary"
+                variant="contained"
+                onClick={handleSaveAvailability}
+                className={classes.button}
+              >
+                Save Availability
+              </Button>
+            </Grid>
+          </Grid>
         </Grid>
       </Grid>
     );
+
+    function updateProfileAvailability(data) {
+        const newProfile = { ...profile };
+        newProfile.availability = data;
+        setProfile(newProfile);
+        const options = {
+            method: "PUT",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify(newProfile),
+        };
+        fetch(`/profile/${profile._id}`, options);
+    }
+
+    function addTimeToDay(newTimes) {
+        const newAvail = availability;
+        if (newAvail.hasOwnProperty(year)) {
+            if (newAvail[year].hasOwnProperty(month)) {
+                newAvail[year][month][activeDay] = newTimes;
+            }
+            else {
+                newAvail[year][month] = {
+                    [activeDay]: newTimes
+                };
+            }
+        }
+        else {
+            newAvail[year] = {
+                [month]: {
+                    [activeDay]: newTimes
+                }
+            };
+        }
+        setAvailability(newAvail);
+    }
+
+    function examineAvailabilityForDay(day) {
+        if (availability[year] && availability[year][month] && availability[year][month][day]) {
+            setTimes(availability[year][month][day]);
+        }
+        else {
+            setTimes(getDefaultTimes());
+        }
+        setActiveDay(day);
+    }
+
+    function addTimesToDay(day) {
+        const newAvail = { ...availability };
+        if (newAvail[year]) {
+            if (newAvail[year][month]) {
+                if (newAvail[year][month][day]) {
+                    newAvail[year][month][day] = combineTimeArrays(
+                        newAvail[year][month][day],
+                        times
+                    );
+                } else {
+                    newAvail[year][month][day] = times;
+                }
+            } else {
+                newAvail[year][month] = {
+                    [day]: times,
+                };
+            }
+        } else {
+            newAvail[year] = {
+                [month]: {
+                    [day]: times,
+                },
+            };
+        }
+        setAvailability(newAvail);
+    }
 }
 
 export default Calendar;
@@ -366,25 +451,7 @@ const convertAvailabilityFromDatabase = availability => {
         let year = Number(start.format("YYYY"))
         let month = start.format("MMMM")
         let day = Number(start.format("D"))
-        if (output.hasOwnProperty(year)) {
-            if (output[year].hasOwnProperty(month)) {
-                if (!output[year][month].hasOwnProperty(day)) {
-                    output[year][month][day] = getDefaultTimes()
-                }
-            }
-            else {
-                output[year][month] = {
-                        [day]: getDefaultTimes()
-                    }
-                }
-            }
-        else {
-            output[year] = {
-              [month]: {
-                [day]: getDefaultTimes(),
-              },
-            };
-        }
+        fillOutputWithDefaultTimes(output, year, month, day);
         let i = 0
         while (output[year][month][day][i].time !== startTime) i++
         while (output[year][month][day][i].time !== endTime) {
@@ -402,23 +469,57 @@ const convertAvailabilityForDatabase = availability => {
         for (let month in availability[year]) {
             for (let day in availability[year][month]) {
                 let activeDay = availability[year][month][day]
-                let activeRangeStart = null;
-                for (let time of activeDay) {
-                    if (time.available && !activeRangeStart) activeRangeStart = time.time
-                    else if (!time.available && activeRangeStart) {
-                        output.push({
-                          start: new Date(
-                            `${month} ${day} ${year} ${activeRangeStart}`
-                          ),
-                          end: new Date(
-                            `${month} ${day} ${year} ${time.time}`
-                          ),
-                        });
-                        activeRangeStart = null;
-                    }
-                }
+                addActiveDayToOutput(activeDay, output, month, day, year);
             }
         }
     }
     return output
 }
+
+const combineTimeArrays = (a, b) => {
+    for (let i = 0; i < a.length; i++) {
+        a[i].available = a[i].available || b[i].available
+    }
+    return a
+}
+function addActiveDayToOutput(activeDay, output, month, day, year) {
+    let activeRangeStart = null;
+    for (let time of activeDay) {
+        if (time.available && !activeRangeStart)
+            activeRangeStart = time.time;
+        else if (!time.available && activeRangeStart) {
+            output.push({
+                start: new Date(
+                    `${month} ${day} ${year} ${activeRangeStart}`
+                ),
+                end: new Date(
+                    `${month} ${day} ${year} ${time.time}`
+                ),
+            });
+            activeRangeStart = null;
+        }
+    }
+}
+
+function fillOutputWithDefaultTimes(output, year, month, day) {
+    if (output.hasOwnProperty(year)) {
+        if (output[year].hasOwnProperty(month)) {
+            if (!output[year][month].hasOwnProperty(day)) {
+                output[year][month][day] = getDefaultTimes();
+            }
+        }
+        else {
+            output[year][month] = {
+                [day]: getDefaultTimes()
+            };
+        }
+    }
+    else {
+        output[year] = {
+            [month]: {
+                [day]: getDefaultTimes(),
+            },
+        };
+    }
+}
+

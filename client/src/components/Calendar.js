@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import moment from 'moment';
-import { IconButton, Grid, makeStyles, Card } from '@material-ui/core';
+import { IconButton, Grid, makeStyles, Card, Button } from '@material-ui/core';
 import { ArrowLeft, ArrowRight } from "@material-ui/icons";
 
 const useStyles = makeStyles({
@@ -9,6 +9,10 @@ const useStyles = makeStyles({
         width: 25,
         height: 25,
         textAlign: "center"
+    },
+    button: {
+        width: 200,
+        margin: 10
     }
 })
 
@@ -75,6 +79,60 @@ const useMonths = (year) => ({
   },
 });
 
+const defaultTimes = [
+    {
+        time: "8:00",
+        available: false,
+    },
+    {
+        time: "9:00",
+        available: false,
+    },
+    {
+        time: "10:00",
+        available: false,
+    },
+    {
+        time: "11:00",
+        available: false,
+    },
+    {
+        time: "12:00",
+        available: false,
+    },
+    {
+        time: "13:00",
+        available: false,
+    },
+    {
+        time: "14:00",
+        available: false,
+    },
+    {
+        time: "15:00",
+        available: false,
+    },
+    {
+        time: "16:00",
+        available: false,
+    },
+    {
+        time: "17:00",
+        available: false,
+    },
+    {
+        time: "18:00",
+        available: false,
+    },
+    {
+        time: "19:00",
+        available: false,
+    },
+    {
+        time: "20:00",
+        available: false,
+    },
+];
 function Calendar() {
     const classes = useStyles();
     const today = moment();
@@ -84,6 +142,7 @@ function Calendar() {
     const {firstDay, month, lastDay} = months[monthNumber]
     let dayOfWeek = Number(moment(firstDay).format("d"));
     const days = getDaysArray();
+    const [times, setTimes] = useState(defaultTimes);
     let week = 0;
     let dayOfMonth = 1;
     while (week < 6 && dayOfMonth <= lastDay) {
@@ -143,6 +202,30 @@ function Calendar() {
           <IconButton onClick={createArrowHandler(1)}>
             <ArrowRight />
           </IconButton>
+        </Grid>
+        <Grid item>
+          <Grid container direction="column" alignItems="center" wrap="wrap">
+            {times.map(
+              (time, i) =>
+                i < times.length - 7 && (
+                  <Button className={classes.button} variant="outlined">
+                    {time.time} - {times[i + 1].time}
+                  </Button>
+                )
+            )}
+          </Grid>
+        </Grid>
+        <Grid item>
+          <Grid container direction="column" alignItems="center" wrap="wrap">
+            {times.map(
+              (time, i) =>
+                i < times.length - 1 && i > 5 && (
+                  <Button className={classes.button} variant="outlined">
+                    {time.time} - {times[i + 1].time}
+                  </Button>
+                )
+            )}
+          </Grid>
         </Grid>
       </Grid>
     );

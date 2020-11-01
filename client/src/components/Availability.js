@@ -1,7 +1,4 @@
-import DateFnsUtils from "@date-io/date-fns";
-import { Grid, IconButton, makeStyles, Typography } from "@material-ui/core";
-import { Add, Delete } from "@material-ui/icons";
-import { DateTimePicker, MuiPickersUtilsProvider } from "@material-ui/pickers";
+import { Grid, makeStyles } from "@material-ui/core";
 import React, { useState } from "react";
 import { useProfileContext } from "../contexts/profile";
 import Calendar from "./Calendar";
@@ -80,39 +77,8 @@ function Availability() {
         <h2>Availability</h2>
       </Grid>
       <Grid item>
-        <Calendar firstDay={new Date("10-01-20")} />
+        <Calendar />
       </Grid>
-      {availability.map((range, i) => (
-        <Grid key={`range-${i}`} className={classes.row} item>
-          <IconButton onClick={createDeleteHandler(i)}>
-            <Delete />
-          </IconButton>
-          <Typography className={classes.label}>
-              Availability Range {i + 1}
-          </Typography>
-          <MuiPickersUtilsProvider utils={DateFnsUtils}>
-            <DateTimePicker
-              inputVariant="outlined"
-              className={classes.date}
-              value={range.start}
-              onChange={createChangeHandler(i, "start")}
-              label="Start"
-            />
-            <Typography className={classes.label}>to</Typography>
-            <DateTimePicker
-              inputVariant="outlined"
-              className={classes.date}
-              minDate={range.start}
-              value={range.end}
-              onChange={createChangeHandler(i, "end")}
-              label="End"
-            />
-          </MuiPickersUtilsProvider>
-        </Grid>
-      ))}
-      <IconButton onClick={addRange}>
-        <Add />
-      </IconButton>
     </Grid>
   );
 }

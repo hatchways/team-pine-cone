@@ -78,7 +78,7 @@ const useMonths = (year) => ({
 function Calendar() {
     const classes = useStyles();
     const today = moment();
-    const year = Number(today.format("YYYY"));
+    const [year, setYear] = useState(Number(today.format("YYYY")));
     const [monthNumber, setMonthNumber] = useState(Number(today.format("M")));
     const months = useMonths(year);
     const {firstDay, month, lastDay} = months[monthNumber]
@@ -107,8 +107,14 @@ function Calendar() {
     const createArrowHandler = delta => (
         () => {
             let newMonth = monthNumber + delta;
-            if (newMonth > 12) newMonth = 1;
-            else if (newMonth < 1) newMonth = 12;
+            if (newMonth > 12) {
+                setYear(year + 1)
+                newMonth = 1;
+            }
+            else if (newMonth < 1) {
+                setYear(year - 1)
+                newMonth = 12;
+            }
             setMonthNumber(newMonth)
         }
     )

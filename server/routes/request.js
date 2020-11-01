@@ -8,6 +8,6 @@ Router.get("/requests", authenticate(), getRequestsByUser);
 
 Router.post("/create", authenticate(), createRequest);
 
-Router.put("/:id", authenticate(), updateRequest);
+Router.put("/update/:id", authenticate(), updateRequest);
 
 module.exports = Router;

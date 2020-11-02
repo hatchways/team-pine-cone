@@ -4,6 +4,7 @@ const { Profile } = require("../models/");
 const mongoose = require("mongoose");
 const got = require("got");
 const { addMonths, subYears } = require("date-fns");
+const { createAvailbility } = require("./availability");
 const {
   name,
   random,
@@ -47,20 +48,11 @@ const ratings = [0, 1, 2, 3, 4, 5];
     await mongoose.connection.db.dropDatabase();
 
     for (let i = 0; i < 15; i++) {
-      let availabilityStart = randomDateBetweenNowAndAMonth();
-      let availabilityEnd = randomDateBetweenNowAndAMonth();
       const [address, coordinates] = random.arrayElement(adressGroup);
       const randomBirthDate = fakerDate.between(
         subYears(new Date(), 19),
         subYears(new Date(), 90)
       );
-
-      if (availabilityStart > availabilityEnd) {
-        [availabilityEnd, availabilityStart] = [
-          availabilityStart,
-          availabilityEnd,
-        ];
-      }
 
       const mock = {
         firstName: name.firstName().replace(/[0-9]/g, ""),
@@ -74,12 +66,7 @@ const ratings = [0, 1, 2, 3, 4, 5];
           min: 0,
           max: 300,
         }),
-        availability: [
-          {
-            start: availabilityStart,
-            end: availabilityEnd,
-          },
-        ],
+        availability: createAvailbility(),
         location: {
           type: "Point",
           coordinates: coordinates,

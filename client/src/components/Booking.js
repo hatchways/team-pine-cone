@@ -3,7 +3,9 @@ import React, { Fragment, useEffect, useState } from "react";
 import { useProfileContext } from "../contexts/profile";
 import moment from "moment";
 import { differenceInHours } from "date-fns";
-import ButtonTooltip from "./ButtonTooltip";
+import MessageDialog from "./MessageDialog";
+import ButtonLoad from "./ButtonLoad";
+import DefaultSnackbar from "./DefaultSnackbar";
 
 const useStyles = makeStyles((theme) => ({
   booking: {
@@ -27,7 +29,7 @@ const useStyles = makeStyles((theme) => ({
     [theme.breakpoints.between("xs", "sm")]: {
       gridRow: "1 / span 1",
       gridColumn: "1 / span 1",
-      margin: "5px auto"
+      margin: "5px auto",
     },
   },
   name: {
@@ -59,41 +61,55 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const formatDate = dateStr => moment(dateStr).format("MMM D h:mma")
+const validateProfilePayment = (profile) =>
+  profile?.stripe?.customerId || profile?.stripe?.accountId ? true : false;
 
-function Booking({ _id, isBooking, isMyJobs, sitter_id, user_id, start, end, paid }) {
+const formatDate = (dateStr) => moment(dateStr).format("MMM D h:mma");
+
+function Booking({
+  _id,
+  isBooking,
+  isMyJobs,
+  sitter_id,
+  user_id,
+  start,
+  end,
+  paid,
+}) {
   const classes = useStyles();
   const { profile, setProfile } = useProfileContext();
   const [src, setSrc] = useState(null);
   const [name, setName] = useState("");
-  const couldPay = profile?.stripe?.customerId || profile?.stripe?.accountId ?
-    true : false;
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
+  const [success, onSuccess] = useState(null);
+  const [noAccount, setNoAccount] = useState(false);
   useEffect(() => {
-      const id = isMyJobs ? user_id : sitter_id
-      fetch(`/profile/${id}`).then(response => {
-        response.json().then(profile => {
-          setSrc(profile.photo);
-          setName(`${profile.firstName} ${profile.lastName}`);
-        })
-      })
-  },[setSrc, isMyJobs, sitter_id, user_id])
+    const id = isMyJobs ? user_id : sitter_id;
+    fetch(`/profile/${id}`).then((response) => {
+      response.json().then((profile) => {
+        setSrc(profile.photo);
+        setName(`${profile.firstName} ${profile.lastName}`);
+      });
+    });
+  }, [setSrc, isMyJobs, sitter_id, user_id]);
   const handleAccept = () => {
-    handleAcceptOrDecline(true)
-  }
+    handleAcceptOrDecline(true);
+  };
   const handleDecline = () => {
-    handleAcceptOrDecline(false)
-  }
-  const handleAcceptOrDecline = accept => {
-    const newProfile = {...profile}
-    let updatedRequest
-    newProfile.requests.forEach(request => {
+    handleAcceptOrDecline(false);
+  };
+  const handleAcceptOrDecline = (accept) => {
+    const newProfile = { ...profile };
+    let updatedRequest;
+    newProfile.requests.forEach((request) => {
       if (request._id === _id) {
-        request.accepted = accept
-        request.declined = !accept
-        updatedRequest = request
+        request.accepted = accept;
+        request.declined = !accept;
+        updatedRequest = request;
       }
-    })
-    setProfile(newProfile)
+    });
+    setProfile(newProfile);
     const options = {
       method: "PUT",
       headers: {
@@ -102,29 +118,46 @@ function Booking({ _id, isBooking, isMyJobs, sitter_id, user_id, start, end, pai
       body: JSON.stringify(updatedRequest),
     };
     fetch(`/request/update/${updatedRequest._id}`, options);
-  }
-	const handlePay = () => {
-		(async function() {
-			try { 
-				const { hourlyRate } = await fetch(`/profile/${sitter_id}`)
-					.then((res) => res.json());
+  };
+  const handlePay = () => {
+    onSuccess("");
+    setError("");
 
-				const diffHours = differenceInHours(new Date(end), new Date(start));
-				const amount = hourlyRate * diffHours;
+    if (!validateProfilePayment(profile)) {
+      return setNoAccount(true);
+    }
 
-				console.log(amount);
-				const paymentIntent = await fetch(`/request/${_id}/pay`, {
-					method: "POST",
-					headers: {"Content-Type": "application/json"},
-					body: JSON.stringify({amount: 22.22})
-				})
-				console.log(paymentIntent);
+    setLoading(true);
+    (async function () {
+      try {
+        const sitter = await fetch(`/profile/${sitter_id}`).then((res) =>
+          res.json()
+        );
 
-			} catch (e) { 
-				console.log("ERROR", e.message);
-			}
-		})();
-	};
+        if (!validateProfilePayment(sitter)) {
+          setLoading(false);
+          return setError(
+            `${sitter.firstName} ${sitter.lastName} does not have a complete payment account yet.`
+          );
+        }
+
+        const diffHours = differenceInHours(new Date(end), new Date(start));
+        const amount = sitter.hourlyRate * diffHours;
+        const res = await fetch(`/request/${_id}/pay`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ amount }),
+        });
+
+        if (!res.ok) throw res;
+        onSuccess("Payment success!");
+      } catch (e) {
+        const err = await e.json();
+        setError(err.message);
+      }
+      setLoading(false);
+    })();
+  };
   return (
     <Card variant="outlined" className={classes.booking}>
       <Avatar src={src} className={classes.photo} />
@@ -152,19 +185,20 @@ function Booking({ _id, isBooking, isMyJobs, sitter_id, user_id, start, end, pai
             >
               {isBooking ? "Message" : "Accept"}
             </Button>
-            <ButtonTooltip
-              onClick={
-                isBooking ? (paid ? handleDecline : handlePay) : handleDecline
-              }
-              color="primary"
-              variant="contained"
-              className={classes.button}
-			  title="Incomplete Payment Set-Up"
-			  disabled={!couldPay}
-			  show={!couldPay}
-            >
-              {isBooking ? (isMyJobs || paid ? "Cancel" : "Pay") : "Decline"}
-            </ButtonTooltip>
+            {!success && (
+              <ButtonLoad
+                onClick={
+                  isBooking ? (paid ? handleDecline : handlePay) : handleDecline
+                }
+                color="primary"
+                variant="contained"
+                className={classes.button}
+                title="Incomplete Payment Set-Up"
+                loading={loading}
+              >
+                {isBooking ? (isMyJobs || paid ? "Cancel" : "Pay") : "Decline"}
+              </ButtonLoad>
+            )}
             {isBooking && !paid && (
               <Button
                 onClick={handleDecline}
@@ -178,6 +212,15 @@ function Booking({ _id, isBooking, isMyJobs, sitter_id, user_id, start, end, pai
           </Fragment>
         )}
       </div>
+      <MessageDialog open={noAccount} openFn={setNoAccount} title="Warning">
+        You must create a payment account with Stripe and install a payment
+        method in order to pay a LovingSitter. Please go to profile payments and
+        complete the required steps there.
+      </MessageDialog>
+      {error && <DefaultSnackbar open={error} message={error} />}
+      {success && (
+        <DefaultSnackbar open={success} message={success} severity="success" />
+      )}
     </Card>
   );
 }

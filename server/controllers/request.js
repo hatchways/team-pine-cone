@@ -5,13 +5,15 @@ const { validationResult } = require("express-validator");
 const stripe = require("stripe")(STRIPE_SECRET);
 
 const getRequestsByUser = (req, res) => {
-
-  Profile.findById(req.user.profile).populate("requests").then(profile => {
-    res.status(200).json(profile.requests);
-  }).catch(e => {
-    console.log(e);
-    res.status(503).end();
-  });
+  Profile.findById(req.user.profile)
+    .populate("requests")
+    .then((profile) => {
+      res.status(200).json(profile.requests);
+    })
+    .catch((e) => {
+      console.log(e);
+      res.status(503).end();
+    });
 };
 
 const createRequest = (req, res) => {
@@ -22,29 +24,33 @@ const createRequest = (req, res) => {
     end: req.body.end,
   });
 
-  request.save().then(result => {
-    res.status(200).json(result);
-  }).catch(e => {
-    console.log(e);
-    res.status(503).end();
-  });
+  request
+    .save()
+    .then((result) => {
+      res.status(200).json(result);
+    })
+    .catch((e) => {
+      console.log(e);
+      res.status(503).end();
+    });
 };
 
 const updateRequest = (req, res) => {
-  Request.findById(req.params.id).then(request => {
-    if (req.body.accepted) {
-      request.accept();
-      request.save();
-    }
-    else if (req.body.declined) {
-      request.decline();
-      request.save();
-    }
-    res.status(200).json(request);
-  }).catch(e => {
-    console.log(e);
-    res.status(503).end();
-  });
+  Request.findById(req.params.id)
+    .then((request) => {
+      if (req.body.accepted) {
+        request.accept();
+        request.save();
+      } else if (req.body.declined) {
+        request.decline();
+        request.save();
+      }
+      res.status(200).json(request);
+    })
+    .catch((e) => {
+      console.log(e);
+      res.status(503).end();
+    });
 };
 
 const chargeAndPayRequest = async (req, res, next) => {
@@ -67,7 +73,9 @@ const chargeAndPayRequest = async (req, res, next) => {
     if (!customer.stripe.customerId)
       return next(createError(422, "Customer does not have a payment method."));
     if (!sitter.stripe.accountId)
-      return next(createError(422, "Sitter does not have a linked Stripe account"));
+      return next(
+        createError(422, "Sitter does not have a linked Stripe account")
+      );
 
     //obtains payment method or main credit card
     const {
@@ -77,7 +85,8 @@ const chargeAndPayRequest = async (req, res, next) => {
       type: "card",
     });
 
-	  const stripeAmount = Math.ceil(amount / 0.01);
+    const stripeAmount = Math.ceil(amount / 0.01);
+    const appFee = Math.ceil((stripeAmount / 0.01) * 0.03);
 
     //attempts to create and confirm payment
     const paymentIntent = await stripe.paymentIntents.create({
@@ -87,7 +96,7 @@ const chargeAndPayRequest = async (req, res, next) => {
       description: "LovingSitter Dog Sitting Service",
       payment_method: card.id,
       //%3 for LovingSitter
-		application_fee_amount: Math.ceil((stripeAmount * 0.03) / 0.01),
+      application_fee_amount: appFee,
       confirm: true,
       //transfers money to sitter
       transfer_data: {

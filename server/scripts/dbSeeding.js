@@ -72,7 +72,7 @@ const ratings = [0, 1, 2, 3, 4, 5];
         rating: random.arrayElement(ratings),
         hourlyRate: random.float({
           min: 0,
-          max: 300,
+          max: 50,
         }),
         availability: [
           {

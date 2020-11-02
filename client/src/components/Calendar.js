@@ -454,13 +454,13 @@ const convertAvailabilityFromDatabase = availability => {
         fillOutputWithDefaultTimes(output, year, month, day);
         let i = 0
         while (
-          output[year][month][day][i].time !== startTime &&
-          i < output[year][month][day].length
+          i < output[year][month][day].length &&
+          output[year][month][day][i].time !== startTime
         )
           i++;
         while (
-          output[year][month][day][i].time !== endTime &&
-          i < output[year][month][day].length
+          i < output[year][month][day].length &&
+          output[year][month][day][i].time !== endTime
         ) {
           output[year][month][day][i].available = true;
           i++;

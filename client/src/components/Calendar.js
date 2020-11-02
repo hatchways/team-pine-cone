@@ -203,8 +203,8 @@ function Calendar() {
         updateProfileAvailability(data);
     }
     const handleJumpToCurrent = () => {
-        setYear(Number(moment().format("YYYY")))
-        setMonthNumber(Number(moment().format("M")));
+        setYear(Number(today.format("YYYY")))
+        setMonthNumber(Number(today.format("M")));
         setActiveDay(null);
         setTimes(getDefaultTimes());
     }
@@ -215,8 +215,8 @@ function Calendar() {
             <Grid item>
               <IconButton
                 disabled={
-                  year === Number(moment().format("YYYY")) &&
-                  month === moment().format("MMMM")
+                  year === Number(today.format("YYYY")) &&
+                  month === today.format("MMMM")
                 }
                 onClick={createArrowHandler(-1)}
               >
@@ -247,9 +247,9 @@ function Calendar() {
                               }
                               disabled={
                                 !day ||
-                                (year === Number(moment().format("YYYY")) &&
-                                  month === moment().format("MMMM") &&
-                                  day < Number(moment().format("D")))
+                                (year === Number(today.format("YYYY")) &&
+                                  month === today.format("MMMM") &&
+                                  day < Number(today.format("D")))
                               }
                               size="medium"
                             >
@@ -262,8 +262,8 @@ function Calendar() {
                   ))}
                   <Button
                     disabled={
-                      year === Number(moment().format("YYYY")) &&
-                      month === moment().format("MMMM")
+                      year === Number(today.format("YYYY")) &&
+                      month === today.format("MMMM")
                     }
                     onClick={handleJumpToCurrent}
                   >

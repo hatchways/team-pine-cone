@@ -66,7 +66,7 @@ const updateProfile = async (req, res, next) => {
     }
 
     profile.$set(profileProps);
-    await profile.update();
+    await profile.save();
 
     if (email) {
       await User.findOneAndUpdate(

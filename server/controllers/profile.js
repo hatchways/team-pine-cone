@@ -66,7 +66,7 @@ const updateProfile = async (req, res, next) => {
     }
 
     profile.$set(profileProps);
-    await profile.update();
+    await profile.save();
 
     if (email) {
       await User.findOneAndUpdate(
@@ -113,7 +113,6 @@ const getProfile = async (req, res, next) => {
       if (!profile) {
         return next(createError(404, "Profile not found"));
       }
-
       return res.status(200).json(profile);
     } catch (err) {
       next(createError(500, err.message));

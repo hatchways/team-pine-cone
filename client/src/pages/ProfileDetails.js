@@ -6,9 +6,10 @@ import RoomIcon from "@material-ui/icons/Room";
 import useScrollToTop from "../hooks/useScrollToTop";
 import { useParams } from "react-router-dom";
 import { useFetch } from "../hooks/useFetch";
+import DateTimePickerRanges from "../components/DateTimePickerRanges";
+import { useProfileContext } from "../contexts/profile";
 import Snackbar from "../components/DefaultSnackbar";
 import Splash from "../components/Splash";
-import DateTimePickerRanges from "../components/DateTimePickerRanges";
 
 export const useStyles = makeStyles((theme) => ({
   root: {
@@ -75,6 +76,7 @@ const ProfileDetails = function () {
   const [selectDropOff, setSelectDropOff] = useState(null);
   const classes = useStyles();
   const params = useParams();
+  const { pullProfile } = useProfileContext();
   const [profile, loading, error] = useFetch({
     init: {},
     url: `/profile/${params.id}`,
@@ -98,8 +100,19 @@ const ProfileDetails = function () {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    console.log(selectDropIn, selectDropOff);
-    //api call
+    fetch("/request/create", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        sitter_id: params.id,
+        start: selectDropIn,
+        end: selectDropOff,
+      }),
+    }).then(() => {
+      pullProfile();
+    });
   };
 
   return (

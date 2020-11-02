@@ -1,8 +1,9 @@
-import { Avatar, Button, Card, makeStyles } from "@material-ui/core";
+import { Avatar, Button, Card, makeStyles, Tooltip } from "@material-ui/core";
 import React, { Fragment, useEffect, useState } from "react";
 import { useProfileContext } from "../contexts/profile";
 import moment from "moment";
 import { differenceInHours } from "date-fns";
+import ButtonTooltip from "./ButtonTooltip";
 
 const useStyles = makeStyles((theme) => ({
   booking: {
@@ -65,6 +66,7 @@ function Booking({ _id, isBooking, isMyJobs, sitter_id, user_id, start, end, pai
   const { profile, setProfile } = useProfileContext();
   const [src, setSrc] = useState(null);
   const [name, setName] = useState("");
+  const couldPay = profile || profile.stripe?.customerId || profile.stripe?.accountId;
   useEffect(() => {
       const id = isMyJobs ? user_id : sitter_id
       fetch(`/profile/${id}`).then(response => {
@@ -149,16 +151,18 @@ function Booking({ _id, isBooking, isMyJobs, sitter_id, user_id, start, end, pai
             >
               {isBooking ? "Message" : "Accept"}
             </Button>
-            <Button
+            <ButtonTooltip
               onClick={
                 isBooking ? (paid ? handleDecline : handlePay) : handleDecline
               }
               color="primary"
               variant="contained"
               className={classes.button}
+			  title="Incomplete Payment Set-Up"
+			  disabled={couldPay}
             >
               {isBooking ? (isMyJobs || paid ? "Cancel" : "Pay") : "Decline"}
-            </Button>
+            </ButtonTooltip>
             {isBooking && !paid && (
               <Button
                 onClick={handleDecline}

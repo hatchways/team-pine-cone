@@ -245,7 +245,12 @@ function Calendar() {
                                   ? "secondary"
                                   : "default"
                               }
-                              disabled={!day}
+                              disabled={
+                                !day ||
+                                (year === Number(moment().format("YYYY")) &&
+                                  month === moment().format("MMMM") &&
+                                  day < Number(moment().format("D")))
+                              }
                               size="medium"
                             >
                               <p className={classes.calendarText}>{day}</p>

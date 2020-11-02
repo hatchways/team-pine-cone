@@ -10,6 +10,7 @@
     "@material-ui/pickers": "^3.2.10",
     "date-fns": "^2.16.1",
     "material-ui-phone-number": "^2.2.6",
+    "moment": "^2.29.1",
     "react": "^16.8.6",
     "react-dom": "^16.8.6",
     "react-router-dom": "^5.0.1",

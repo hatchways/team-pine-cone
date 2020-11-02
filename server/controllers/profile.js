@@ -2,6 +2,14 @@ const createError = require("http-errors");
 const { Profile } = require("../models/");
 const { User } = require("../models/");
 const { validationResult } = require("express-validator");
+const NodeGeocoder = require("node-geocoder");
+
+const MAP_QUEST_KEY = process.env.MAP_QUEST_KEY;
+
+const nodeGeocoderOptions = {
+  provider: "mapquest",
+  apiKey: MAP_QUEST_KEY,
+};
 
 const checkDateErrors = (err) =>
   ["Date ranges", "User must be 18"].some((str) => err.message.includes(str));
@@ -39,12 +47,26 @@ const updateProfile = async (req, res, next) => {
   }
 
   try {
-    const options = { new: true, lean: true };
-    const profile = await Profile.findByIdAndUpdate(
-      id,
-      { ...profileProps },
-      options
-    );
+    let profile = await Profile.findById(id);
+
+    if (!profile) {
+      return next(createError(404, "Profile not found"));
+    }
+
+    if (profileProps.address !== profile.address) {
+      const [area] = await NodeGeocoder(nodeGeocoderOptions).geocode(
+        profileProps.address
+      );
+      const { stateCode, city, latitude, longitude } = area;
+      profileProps.address = `${city}, ${stateCode}`;
+      profileProps.location = {
+        type: "Point",
+        coordinates: [latitude, longitude],
+      };
+    }
+
+    profile.$set(profileProps);
+    await profile.save();
 
     if (email) {
       await User.findOneAndUpdate(
@@ -53,7 +75,7 @@ const updateProfile = async (req, res, next) => {
       );
     }
 
-    return res.status(200).json({ profile });
+    return res.status(200).json({ profile: profile.toJSON() });
   } catch (err) {
     if (!err.status) {
       if (checkDateErrors(err)) {
@@ -163,7 +185,6 @@ const getProfile = async (req, res, next) => {
       if (!profile) {
         return next(createError(404, "Profile not found"));
       }
-
       return res.status(200).json(profile);
     } catch (err) {
       next(createError(500, err.message));

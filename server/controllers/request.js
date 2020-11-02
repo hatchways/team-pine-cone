@@ -54,5 +54,6 @@ const updateRequest = (req, res, next) => {
 module.exports = {
   getRequestsByUser,
   createRequest,
-  updateRequest
+  updateRequest,
+  chargeAndPayRequest,
 };

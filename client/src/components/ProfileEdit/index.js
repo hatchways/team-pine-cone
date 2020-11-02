@@ -2,25 +2,20 @@ import "date-fns";
 import React, { useState, useEffect } from "react";
 import { useUserContext } from "../../contexts/user";
 import { useProfileContext } from "../../contexts/profile";
-import {
-  Grid,
-  Typography,
-  TextField,
-  MenuItem,
-  Button,
-  Snackbar, 
-  Switch
-} from "@material-ui/core";
+import { Grid, TextField, Button, Snackbar, Switch } from "@material-ui/core";
 import { makeStyles } from "@material-ui/styles";
 import PhoneInput from "material-ui-phone-number";
-import { genders } from "./data";
+import { genders, jobTitles, emailRegEx } from "./data";
 import { Alert } from "@material-ui/lab/";
 import { DatePicker, MuiPickersUtilsProvider } from "@material-ui/pickers";
 import { addYears } from "date-fns";
 import DateFnsUtils from "@date-io/date-fns";
 import useForm from "../useForm";
+import InputText from "./InputText";
+import Label from "./Label";
+import Select from "./Select";
 
-const useStyles = makeStyles((theme) => ({
+export const useStyles = makeStyles((theme) => ({
   label: {
     fontWeight: "bold",
     letterSpacing: "0.7px",
@@ -34,7 +29,7 @@ const useStyles = makeStyles((theme) => ({
   },
   mainContainer: {
     margin: "auto",
-    maxWidth: "900px"
+    maxWidth: "900px",
   },
   input: {
     marginBottom: "1em",
@@ -53,54 +48,13 @@ const useStyles = makeStyles((theme) => ({
     ...theme.buttons.bigRedButton,
     marginTop: "2.5em",
   },
-  title: { 
-    marginBottom: "3em"
+  title: {
+    marginBottom: "3em",
   },
   switch: {
-    margin: "10px 5px"
-  }
+    margin: "10px 5px",
+  },
 }));
-
-const InputText = function ({
-  id,
-  placeholder,
-  children,
-  value,
-  handleChange,
-}) {
-  const classes = useStyles();
-
-  return (
-    <Grid container item className={classes.input}>
-      <Grid item xs={4} md={3}>
-        <Typography className={classes.label} component="label" htmlFor={id}>
-          {children}
-        </Typography>
-      </Grid>
-      <Grid item xs={8} md={7}>
-        <TextField
-          onChange={handleChange}
-          id={id}
-          name={id}
-          fullWidth
-          variant="outlined"
-          value={value}
-          placeholder={placeholder}
-        />
-      </Grid>
-    </Grid>
-  );
-};
-
-const Label = function ({ children, id }) {
-  const classes = useStyles();
-
-  return (
-    <Typography className={classes.label} component="label" htmlFor={id}>
-      {children}
-    </Typography>
-  );
-};
 
 const capitaleachword = (str) =>
   str
@@ -109,6 +63,9 @@ const capitaleachword = (str) =>
     .join(" ");
 
 const minDate = addYears(new Date(), -18);
+
+const genderCheck = (gender) =>
+  gender === "non-binary" ? "Non-Binary" : capitaleachword(gender);
 
 const initialForm = {
   firstName: "",
@@ -119,15 +76,18 @@ const initialForm = {
   address: "",
   phone: "",
   description: "",
-  isSitter: false
+  hourlyRate: 0,
+  jobTitle: "",
+  isSitter: false,
 };
 
 const ProfileEdit = function () {
-  const { user } = useUserContext();
-  const { pullProfile } = useProfileContext();
+  const { user, handleSetUser } = useUserContext();
+  const { profile, setProfile } = useProfileContext();
   const classes = useStyles();
   const [isSaved, setIsSaved] = useState(false);
   const [disableSubmit, setDisableSubmit] = useState(false);
+
   const {
     values,
     setValues,
@@ -135,50 +95,48 @@ const ProfileEdit = function () {
     setErrors,
     handleInputChange,
     handleDateChange,
-    handleCheckboxChange
+    handleCheckboxChange,
   } = useForm(initialForm);
 
   useEffect(() => {
-    fetch(`/profile/${user.profile}`)
-      .then((res) => res.json())
-      .then((profile) =>
-        setValues((values) => ({
-          ...values,
-          ...profile,
-          gender:
-            profile.gender === "non-binary"
-              ? "Non-Binary"
-              : capitaleachword(profile.gender),
-          birthDate: new Date(profile.birthDate),
-          email: user.email,
-        }))
-      );
-  }, [user.email, user.profile, setValues]);
+    setValues((values) => ({
+      ...values,
+      ...profile,
+      gender: genderCheck(profile.gender),
+      birthDate: new Date(profile.birthDate),
+      email: user.email,
+    }));
+  }, [profile, user.email, setValues]);
 
-  const handlePhone = (value) => {
-    if (!/\+1 \(\d{3}\) \d{3}-\d{4}/.test(value)) {
-      setErrors({ ...errors, phone: "Phone number is invalid" });
+  const validateHandler = (validator, errMsg, prop) => (e) => {
+    const value = e.target ? e.target.value : e;
+
+    if (!validator.test(value)) {
+      setErrors({ ...errors, [prop]: errMsg });
       setDisableSubmit(true);
     } else {
-      setErrors({ ...errors, phone: "" });
+      setErrors({ ...errors, [prop]: "" });
       setDisableSubmit(false);
     }
 
-    setValues({ ...values, phone: value });
+    setValues({ ...values, [prop]: value });
   };
 
-  const handleEmail = (e) => {
-    const text = e.currentTarget.value;
-    if (!/.+@.+..+/.test(text)) {
-      setErrors({ ...errors, email: "Email is not valid" });
-      setDisableSubmit(true);
-    } else {
-      setErrors({ ...errors, email: "" });
-      setDisableSubmit(false);
-    }
-
-    setValues({ ...values, email: text });
-  };
+  const handleEmail = validateHandler(
+    emailRegEx,
+    "Email is not valid",
+    "email"
+  );
+  const handleHourlyRate = validateHandler(
+    /^\d*(\.\d{0,2})?$/,
+    "Enter a valid hourly rate eg 14.55",
+    "hourlyRate"
+  );
+  const handlePhone = validateHandler(
+    /\+1 \(\d{3}\) \d{3}-\d{4}/,
+    "Phone number is invalid",
+    "phone"
+  );
 
   const handleCloseSaved = () => {
     setIsSaved(false);
@@ -202,10 +160,14 @@ const ProfileEdit = function () {
       },
       body: JSON.stringify(cleanForm),
     })
-      .then(() => {
-        pullProfile()
-        setIsSaved(true)
-      });
+      .then((res) => res.json())
+      .then(({ profile }) => {
+        fetch("/user/me")
+          .then((res) => res.json())
+          .then(({ user }) => handleSetUser(user))
+          .then(() => setProfile(profile));
+      })
+      .then(() => setIsSaved(true));
   };
 
   return (
@@ -216,6 +178,7 @@ const ProfileEdit = function () {
       direction="column"
       alignItems="center"
       onSubmit={handleSubmit}
+      noValidate
     >
       <Grid item>
         <h2 className={classes.title}>Edit Profile</h2>
@@ -286,29 +249,53 @@ const ProfileEdit = function () {
         WHERE YOU LIVE
       </InputText>
 
+      {/*HOURLY RATE*/}
+      {profile && profile.isSitter && (
+        <React.Fragment>
+          <Grid container item className={classes.input}>
+            <Grid item xs={4} md={3}>
+              <Label id="hourlyRate">HOURLY RATE</Label>
+            </Grid>
+            <Grid item xs={8} md={5}>
+              <TextField
+                id="hourlyRate"
+                fullWidth
+                variant="outlined"
+                inputProps={{ min: "0" }}
+                type="number"
+                onBlur={() =>
+                  setValues({
+                    ...values,
+                    hourlyRate: Number(values.hourlyRate).toFixed(2),
+                  })
+                }
+                error={!!errors.hourlyRate}
+                label={errors.hourlyRate || ""}
+                value={values.hourlyRate}
+                onChange={handleHourlyRate}
+              />
+            </Grid>
+          </Grid>
+
+          {/*JOB TITLE*/}
+          <Select
+            label="JOB TITLE"
+            id="jobTitle"
+            value={values.jobTitle}
+            handle={handleInputChange}
+            items={jobTitles}
+          />
+        </React.Fragment>
+      )}
+
       {/*GENDER*/}
-      <Grid container item className={classes.input}>
-        <Grid item xs={4} md={3}>
-          <Label id="gender">GENDER</Label>
-        </Grid>
-        <Grid item xs={8} md={5}>
-          <TextField
-            id="gender"
-            name="gender"
-            value={values.gender}
-            onChange={handleInputChange}
-            select
-            className={classes.select}
-            variant="outlined"
-          >
-            {genders.map((value) => (
-              <MenuItem value={value} key={value}>
-                {value}
-              </MenuItem>
-            ))}
-          </TextField>
-        </Grid>
-      </Grid>
+      <Select
+        label="GENDER"
+        id="gender"
+        value={values.gender}
+        handle={handleInputChange}
+        items={genders}
+      />
 
       {/*BIRTH DATE*/}
       <Grid container item alignItems="center" className={classes.input}>

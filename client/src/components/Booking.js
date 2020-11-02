@@ -1,4 +1,4 @@
-import { Avatar, Button, Card, makeStyles, Tooltip } from "@material-ui/core";
+import { Avatar, Button, Card, makeStyles } from "@material-ui/core";
 import React, { Fragment, useEffect, useState } from "react";
 import { useProfileContext } from "../contexts/profile";
 import moment from "moment";
@@ -66,7 +66,8 @@ function Booking({ _id, isBooking, isMyJobs, sitter_id, user_id, start, end, pai
   const { profile, setProfile } = useProfileContext();
   const [src, setSrc] = useState(null);
   const [name, setName] = useState("");
-  const couldPay = profile || profile.stripe?.customerId || profile.stripe?.accountId;
+  const couldPay = profile?.stripe?.customerId || profile?.stripe?.accountId ?
+    true : false;
   useEffect(() => {
       const id = isMyJobs ? user_id : sitter_id
       fetch(`/profile/${id}`).then(response => {
@@ -159,7 +160,8 @@ function Booking({ _id, isBooking, isMyJobs, sitter_id, user_id, start, end, pai
               variant="contained"
               className={classes.button}
 			  title="Incomplete Payment Set-Up"
-			  disabled={couldPay}
+			  disabled={!couldPay}
+			  show={!couldPay}
             >
               {isBooking ? (isMyJobs || paid ? "Cancel" : "Pay") : "Decline"}
             </ButtonTooltip>

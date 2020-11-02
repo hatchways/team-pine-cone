@@ -30,29 +30,31 @@ const useStyle = makeStyles((theme) => ({
     width: "100%",
     maxWidth: "400px",
     margin: "auto",
-    borderRadius: "50px",
-    background: "white",
+    background: theme.palette.primary.light,
+    borderRadius: "10px",
     padding: "0.8em",
     marginBottom: "3em",
     transition: "all 0.3s",
     color: "white",
-    "&:hover": {
-      background: theme.palette.primary.main,
-      opacity: 0.8,
-    },
-    "&:hover svg": {
+    boxShadow: "13px 11px 15px 5px rgba(0,0,0,0.84)",
+    "& svg": {
       fill: theme.palette.primary.main,
-      opacity: 1,
       background: "white",
     },
+	  "&:hover button": { 
+
+      fill: theme.palette.primary.main,
+      background: "white",
+	  },
     "&:hover input": {
       color: "white",
     },
     "&:hover label": {
       color: "white",
     },
-    "&:hover button": {
+    "& button": {
       background: "white",
+		transition: "none"
     },
   },
   icon: {
@@ -117,6 +119,11 @@ const SearchFilter = function (props) {
     history.push("/profiles?" + new URLSearchParams(form).toString());
   };
 
+  const handleCloseOptions = (e) => {
+    setIsDialogOpen(false);
+    handleSubmit(e);
+  };
+
   return (
     <Grid
       container
@@ -162,7 +169,7 @@ const SearchFilter = function (props) {
               aria-label="clear and close button options"
             >
               <Button onClick={() => setValues(initForm)}>Clear Options</Button>
-              <Button onClick={() => setIsDialogOpen(false)}>Close</Button>
+              <Button onClick={handleCloseOptions}>Close</Button>
             </ButtonGroup>
           </Grid>
         </DialogTitle>
@@ -182,7 +189,7 @@ const SearchFilter = function (props) {
           </DialogContentText>
           <Slider
             min={0}
-            max={300}
+            max={50}
             name="price-range"
             value={values.hourlyRateRange}
             onChange={handleSliders("hourlyRateRange")}
@@ -235,11 +242,6 @@ const SearchFilter = function (props) {
                 value="rating"
                 control={<Radio color="primary" />}
                 label="Rating"
-              />
-              <FormControlLabel
-                value="availability.start"
-                control={<Radio color="primary" />}
-                label="Availability"
               />
               <FormControlLabel
                 value="hourlyRate"

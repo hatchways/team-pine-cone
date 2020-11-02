@@ -8,6 +8,7 @@ import Snackbar from "../components/DefaultSnackbar";
 import Splash from "../components/Splash";
 import SearchFilter from "../components/SearchFilter";
 import useForm from "../components/useForm";
+import { useProfileContext } from "../contexts/profile";
 
 export const useStyle = makeStyles((theme) => ({
   root: {
@@ -68,7 +69,7 @@ export const useStyle = makeStyles((theme) => ({
 
 const form = {
   rating: 0,
-  hourlyRateRange: [0, 300],
+  hourlyRateRange: [0, 50],
   fromDate: null,
   toDate: null,
   page: 1,
@@ -86,6 +87,7 @@ const ProfileListings = function () {
   const [data, setData] = useState({ profiles: [] });
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(true);
+  const { profile } = useProfileContext();
 
   useEffect(() => {
     setLoading(true);
@@ -164,7 +166,7 @@ const ProfileListings = function () {
         <Grid item>
           <div className={classes.cards}>
             {sitters.map((props) => (
-              <ProfileListingItem key={props._id} {...props} />
+              <ProfileListingItem key={props._id} me={profile} {...props} />
             ))}
           </div>
         </Grid>

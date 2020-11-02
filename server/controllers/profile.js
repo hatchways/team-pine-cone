@@ -68,7 +68,7 @@ const updateProfile = async (req, res, next) => {
 const getProfiles = async (req, res, next) => {
   const {
     rating = 0,
-    hourlyRateRange = "0,9999",
+    hourlyRateRange = "0,50",
     fromDate,
     toDate,
     page = 1,

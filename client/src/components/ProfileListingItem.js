@@ -17,6 +17,7 @@ const Item = function (props) {
     rating = 0,
     hourlyRate = "$14.25",
     address = "Toronto, Ontario",
+    me,
   } = props;
   const classes = useStyle();
   const history = useHistory();
@@ -24,7 +25,7 @@ const Item = function (props) {
   // go to individual listing from here
   const handleClick = () => history.push(`/profiles/${_id}`);
 
-  return (
+  return !me._id ? (
     <Grid item xs={12} className={classes.card} onClick={handleClick}>
       <Grow in={true}>
         <Grid container spacing={2} direction="column" alignItems="center">
@@ -84,7 +85,7 @@ const Item = function (props) {
         </Grid>
       </Grow>
     </Grid>
-  );
+  ) : null;
 };
 
 export default Item;

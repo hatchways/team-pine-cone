@@ -264,12 +264,6 @@ describe("Database Tests", () => {
       expect(request.declined).to.eql(false);
     });
 
-    it("Decline method changes decline to true and accepted to false", () => {
-      request.decline();
-      expect(request.accepted).to.eql(false);
-      expect(request.declined).to.eql(true);
-    });
-
     it("Pay method changes paid to true", () => {
       request.pay();
       expect(request.paid).to.eql(true);

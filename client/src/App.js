@@ -11,13 +11,14 @@ import ProfileSettings from "./pages/ProfileSettings";
 import ProfileDetails from "./pages/ProfileDetails";
 import ProfileListings from "./pages/ProfileListings";
 import BecomeASitter from "./pages/BecomeASitter";
-import PaymentSuccess from "./pages/PaymentSuccess";
 import { AuthProvider } from "./contexts/user";
 import PrivateRoute from "./components/PrivateRoute/";
 import ProfileProvider from "./contexts/profile";
 import MySitters from "./pages/MySitters";
 import MyJobs from "./pages/MyJobs";
 import { STRIPE_PUBLIC_KEY } from "./data/stripe";
+import { Elements } from "@stripe/react-stripe-js";
+import { loadStripe } from "@stripe/stripe-js";
 
 const stripe = loadStripe(STRIPE_PUBLIC_KEY);
 
@@ -35,11 +36,6 @@ function App() {
               <PrivateRoute path="/me" component={ProfileSettings} />
               <Route exact path="/profiles/" component={ProfileListings} />
               <Route path="/profiles/:id" component={ProfileDetails} />
-              <PrivateRoute
-                exact
-                path="/payment/success"
-                component={PaymentSuccess}
-              />
               <PrivateRoute
                 exact
                 path="/become-a-sitter"

@@ -2,7 +2,7 @@ import "date-fns";
 import { addHours } from "date-fns";
 import React, { useState } from "react";
 import DateFnsUtils from "@date-io/date-fns";
-import { Grid, Avatar, Typography, Button, Grow } from "@material-ui/core";
+import { Grid, Avatar, Typography, Grow } from "@material-ui/core";
 import { Rating } from "@material-ui/lab";
 import { makeStyles } from "@material-ui/core/styles";
 import RoomIcon from "@material-ui/icons/Room";
@@ -13,6 +13,7 @@ import { useFetch } from "../hooks/useFetch";
 import { useProfileContext } from "../contexts/profile";
 import Snackbar from "../components/DefaultSnackbar";
 import Splash from "../components/Splash";
+import ButtonLoad from "../components/ButtonLoad";
 
 export const useStyles = makeStyles((theme) => ({
   root: {
@@ -28,7 +29,8 @@ export const useStyles = makeStyles((theme) => ({
     },
   },
   banner: {
-    background: "radial-gradient(circle, rgba(255,255,255,1) 0%, rgba(223,27,27,1) 100%);",
+    background:
+      "radial-gradient(circle, rgba(255,255,255,1) 0%, rgba(223,27,27,1) 100%);",
     width: "100%",
     height: "300px",
     borderRadius: "10px",
@@ -80,6 +82,9 @@ const ProfileDetails = function () {
   const classes = useStyles();
   const params = useParams();
   const { pullProfile } = useProfileContext();
+  const [requestLoad, setRequestLoad] = useState(false);
+  const [requestError, setRequestError] = useState(null);
+  const [requestSuccess, setRequestSuccess] = useState(false);
   const [profile, loading, error] = useFetch({
     init: {},
     url: `/profile/${params.id}`,
@@ -101,6 +106,9 @@ const ProfileDetails = function () {
 
   const handleSubmit = (e) => {
     e.preventDefault();
+    setRequestLoad(true);
+    if (requestSuccess) setRequestSuccess(null);
+    if (requestError) setRequestError(null);
     fetch("/request/create", {
       method: "POST",
       headers: {
@@ -111,16 +119,35 @@ const ProfileDetails = function () {
         start: selectDropIn,
         end: selectDropOff,
       }),
-    }).then(() => {
-      pullProfile();
-    });
+    })
+      .then((res) => {
+        if (!res.ok) throw res;
+        pullProfile();
+      })
+      .catch((err) => setRequestError("Request failed."))
+      .finally(() => {
+        setRequestLoad(false);
+        setRequestSuccess(true);
+      });
   };
 
   return (
     <Splash loading={loading}>
+      {setRequestSuccess && (
+        <Snackbar
+          open={requestSuccess}
+          message="Request Success!"
+          severity="success"
+        />
+      )}
       <Grow in={true}>
         <Grid className={classes.root} container>
-          <Snackbar open={error} />
+          {(error || requestError) && (
+            <Snackbar
+              open={error || requestError}
+              message={error || requestError}
+            />
+          )}
           <Grid item md={7} className={classes.profile}>
             <Grid direction="column" container>
               <Grid item>
@@ -252,15 +279,16 @@ const ProfileDetails = function () {
               </MuiPickersUtilsProvider>
             </Grid>
             <Grid item>
-              <Button
+              <ButtonLoad
                 variant="contained"
                 size="large"
                 type="submit"
                 color="primary"
                 fullWidth
+                loading={requestLoad}
               >
                 Send Request
-              </Button>
+              </ButtonLoad>
             </Grid>
           </Grid>
         </Grid>

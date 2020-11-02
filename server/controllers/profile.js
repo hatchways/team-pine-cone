@@ -116,7 +116,8 @@ const getProfiles = async (req, res, next) => {
     const n = 8;
     const [minPrice, maxPrice] = hourlyRateRange.split(",");
     //if performance is an issue resort to text indexes instead
-    const reg = new RegExp(search, "i");
+	  //const reg = new RegExp(search, "i");
+	  const reg = { $regex: search, $options: "i" }
     const p = Number(page);
 
     let [data] = await Profile.aggregate([

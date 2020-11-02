@@ -21,11 +21,12 @@ const Item = function (props) {
   } = props;
   const classes = useStyle();
   const history = useHistory();
+	console.log(me)
 
   // go to individual listing from here
   const handleClick = () => history.push(`/profiles/${_id}`);
 
-  return !me._id ? (
+  return me._id !== _id ? (
     <Grid item xs={12} className={classes.card} onClick={handleClick}>
       <Grow in={true}>
         <Grid container spacing={2} direction="column" alignItems="center">

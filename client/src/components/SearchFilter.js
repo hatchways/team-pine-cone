@@ -41,11 +41,10 @@ const useStyle = makeStyles((theme) => ({
       fill: theme.palette.primary.main,
       background: "white",
     },
-	  "&:hover button": { 
-
+    "&:hover button": {
       fill: theme.palette.primary.main,
       background: "white",
-	  },
+    },
     "&:hover input": {
       color: "white",
     },
@@ -54,7 +53,7 @@ const useStyle = makeStyles((theme) => ({
     },
     "& button": {
       background: "white",
-		transition: "none"
+      transition: "none",
     },
   },
   icon: {
@@ -166,10 +165,10 @@ const SearchFilter = function (props) {
             <ButtonGroup
               variant="text"
               color="primary"
-              aria-label="clear and close button options"
+              aria-label="clear and search button options"
             >
               <Button onClick={() => setValues(initForm)}>Clear Options</Button>
-              <Button onClick={handleCloseOptions}>Close</Button>
+              <Button onClick={handleCloseOptions}>Search</Button>
             </ButtonGroup>
           </Grid>
         </DialogTitle>

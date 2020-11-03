@@ -1,9 +1,8 @@
 import React, { Fragment, useRef } from 'react';
-import socketClient from "socket.io-client";
 import { useProfileContext } from './profile';
+import { socket } from "../services/socket";
 
 function SocketHandler({children}) {
-    const socket = socketClient(window.location.origin + "/")
     const {profile, setProfile} = useProfileContext()
     const oldProfile = useRef(profile)
     if (profile && (!oldProfile.current || oldProfile.current._id !== profile._id)) {

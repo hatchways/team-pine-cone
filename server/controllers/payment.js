@@ -113,6 +113,13 @@ const createConnect = async (req, res, next) => {
         type: "account_onboarding",
       });
     } else {
+		const account = await stripe.accounts.retrieve({
+			account: profile.stripe.accountId
+		});
+
+		if (!account.details_submitted) 
+			return next(createError());
+
       accountLink = await stripe.accounts.createLoginLink(
         profile.stripe.accountId
       );

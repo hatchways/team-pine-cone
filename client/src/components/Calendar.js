@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import moment from 'moment';
-import { IconButton, Grid, makeStyles, Card, Button } from '@material-ui/core';
+import { IconButton, Grid, makeStyles, Card, Button, CircularProgress } from '@material-ui/core';
 import { ArrowLeft, ArrowRight } from "@material-ui/icons";
 import { useProfileContext } from '../contexts/profile';
 
@@ -148,6 +148,7 @@ function Calendar() {
     let dayOfWeek = Number(moment(firstDay).format("d"));
     const days = getDaysArray();
     const [times, setTimes] = useState(getDefaultTimes());
+    const [saving, setSaving] = useState(false)
     let week = 0;
     let dayOfMonth = 1;
     while (week < 6 && dayOfMonth <= lastDay) {
@@ -171,6 +172,7 @@ function Calendar() {
                 newMonth = 12;
             }
             setActiveDay(null)
+            setTimes(getDefaultTimes())
             setMonthNumber(newMonth)
         }
     )
@@ -200,6 +202,7 @@ function Calendar() {
     }
     const handleSaveAvailability = () => {
         const data = convertAvailabilityForDatabase(availability)
+        setSaving(true)
         updateProfileAvailability(data);
     }
     const handleJumpToCurrent = () => {
@@ -337,14 +340,16 @@ function Calendar() {
               </Button>
             </Grid>
             <Grid item>
-              <Button
+              {saving ? 
+              <CircularProgress /> :
+              (<Button
                 color="primary"
                 variant="contained"
                 onClick={handleSaveAvailability}
                 className={classes.button}
               >
                 Save Availability
-              </Button>
+              </Button>)}
             </Grid>
           </Grid>
         </Grid>
@@ -362,7 +367,12 @@ function Calendar() {
             },
             body: JSON.stringify(newProfile),
         };
-        fetch(`/profile/${profile._id}`, options);
+        fetch(`/profile/${profile._id}`, options).then(response => {
+          response.json().then(result => {
+            setProfile(result)
+            setSaving(false)
+          })
+        })
     }
 
     function addTimeToDay(newTimes) {

@@ -72,10 +72,17 @@ const chargeAndPayRequest = async (req, res, next) => {
     if (!request) return next(createError(404, "Request cannot be found"));
     if (!customer.stripe.customerId)
       return next(createError(422, "Customer does not have a payment method."));
+	//credit card
     if (!sitter.stripe.accountId)
       return next(
         createError(422, "Sitter does not have a linked Stripe account")
       );
+
+    const sitterAccount = await stripe.accounts.retrieve(
+      sitter.stripe.accountId
+    );
+    if (!sitterAccount.details_submitted)
+      return next(createError(403, "Sitter account details are incomplete"));
 
     //obtains payment method or main credit card
     const {

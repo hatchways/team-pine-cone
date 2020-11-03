@@ -6,6 +6,7 @@ import { differenceInHours } from "date-fns";
 import MessageDialog from "./MessageDialog";
 import ButtonLoad from "./ButtonLoad";
 import DefaultSnackbar from "./DefaultSnackbar";
+import { useFetch } from "../hooks/useFetch";
 
 const useStyles = makeStyles((theme) => ({
   booking: {
@@ -60,9 +61,6 @@ const useStyles = makeStyles((theme) => ({
     marginLeft: 10,
   },
 }));
-
-const validateProfilePayment = (profile) =>
-  profile?.stripe?.customerId || profile?.stripe?.accountId ? true : false;
 
 const formatDate = (dateStr) => moment(dateStr).format("MMM D h:mma");
 
@@ -123,10 +121,6 @@ function Booking({
     onSuccess("");
     setError("");
 
-    if (!validateProfilePayment(profile)) {
-      return setNoAccount(true);
-    }
-
     setLoading(true);
     (async function () {
       try {
@@ -134,11 +128,13 @@ function Booking({
           res.json()
         );
 
-        if (!validateProfilePayment(sitter)) {
+        const userAccountRes = await fetch(
+          `/payment/account/validate/${profile._id}`
+        );
+
+        if (!userAccountRes.ok || !profile.stripe.customerId) {
           setLoading(false);
-          return setError(
-            `${sitter.firstName} ${sitter.lastName} does not have a complete payment account yet.`
-          );
+          return setNoAccount(true);
         }
 
         const diffHours = differenceInHours(new Date(end), new Date(start));
@@ -153,7 +149,7 @@ function Booking({
         onSuccess("Payment success!");
       } catch (e) {
         const err = await e.json();
-        setError(err.message);
+        setError(err?.error?.message || "Payment could not be completed");
       }
       setLoading(false);
     })();

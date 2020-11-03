@@ -118,7 +118,7 @@ const createConnect = async (req, res, next) => {
 		});
 
 		if (!account.details_submitted) 
-			return next(createError());
+			return next(createError(403, "Stripe account details are incomplete"));
 
       accountLink = await stripe.accounts.createLoginLink(
         profile.stripe.accountId

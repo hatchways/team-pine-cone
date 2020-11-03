@@ -8,6 +8,8 @@ import { useParams } from "react-router-dom";
 import { useFetch } from "../hooks/useFetch";
 import DateTimePickerRanges from "../components/DateTimePickerRanges";
 import { useProfileContext } from "../contexts/profile";
+import Splash from "../components/Splash";
+import Snackbar from "../components/DefaultSnackbar";
 
 export const useStyles = makeStyles((theme) => ({
   root: {
@@ -75,7 +77,7 @@ const ProfileDetails = function () {
   const classes = useStyles();
   const params = useParams();
   const { pullProfile } = useProfileContext();
-  const [profile] = useFetch({
+  const [profile, loading, error] = useFetch({
     init: {},
     url: `/profile/${params.id}`,
   });
@@ -92,7 +94,6 @@ const ProfileDetails = function () {
     availability,
   } = profile;
   const fullName = firstName ? firstName + " " + lastName : "";
-	console.log(error)
 
   useScrollToTop();
 

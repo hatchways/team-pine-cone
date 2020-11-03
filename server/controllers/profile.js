@@ -75,7 +75,7 @@ const updateProfile = async (req, res, next) => {
       );
     }
 
-    return res.status(200).json({ profile: profile.toJSON() });
+    return res.status(200).json(profile);
   } catch (err) {
     if (!err.status) {
       if (checkDateErrors(err)) {

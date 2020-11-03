@@ -64,18 +64,17 @@ const formatDate = dateStr => moment(dateStr).format("MMM D h:mma")
 
 function Booking({ _id, isBooking, isMyJobs, sitter_id, user_id, start, end, paid }) {
   const classes = useStyles();
-  const { profile, setProfile } = useProfileContext();
+  const { profile, setProfile, getProfile } = useProfileContext();
   const [src, setSrc] = useState(null);
   const [name, setName] = useState("");
   const id = isMyJobs ? user_id : sitter_id
   useEffect(() => {
-      fetch(`/profile/${id}`).then(response => {
-        response.json().then(profile => {
-          setSrc(profile.photo);
-          setName(`${profile.firstName} ${profile.lastName}`);
-        })
+      const id = isMyJobs ? user_id : sitter_id
+      getProfile(id).then(result => {
+        setSrc(result.photo);
+        setName(`${result.firstName} ${result.lastName}`);
       })
-  },[setSrc, isMyJobs, id])
+  },[setSrc, isMyJobs, sitter_id, user_id, setName, getProfile])
   const handleAccept = () => {
     handleAcceptOrDecline(true)
   }

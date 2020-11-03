@@ -74,11 +74,13 @@ const ProfileDetails = function () {
   const [selectDropOff, setSelectDropOff] = useState(null);
   const classes = useStyles();
   const params = useParams();
-  const { pullProfile } = useProfileContext();
-  const [profile] = useFetch({
-    init: {},
-    url: `/profile/${params.id}`,
-  });
+  const { setProfile, getProfile } = useProfileContext();
+  const [profile, setProfileDetails] = useState({})
+  useEffect(() => {
+    getProfile(params.id).then(result => {
+      setProfileDetails(result)
+    })
+  },[getProfile, params]) 
 
   const {
     photo,

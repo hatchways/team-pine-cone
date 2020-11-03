@@ -54,10 +54,14 @@ function ProfileProvider(props) {
   const location = useLocation().pathname;
   useEffect(() => {
     if (firstUpdate.current) {
-      context.pullProfile()
+      context.pullProfile();
       firstUpdate.current = false;
     } else {
-      const hasLoggedIn = (prevLocation.current === "/login" || prevLocation.current === "/signup") && (location !== "/login" && location !== "/signup");
+      const hasLoggedIn =
+        (prevLocation.current === "/login" ||
+          prevLocation.current === "/signup") &&
+        location !== "/login" &&
+        location !== "/signup";
       if (hasLoggedIn) {
         context.pullProfile();
       }

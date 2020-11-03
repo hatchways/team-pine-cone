@@ -39,11 +39,6 @@ requestSchema.methods.accept = function () {
   this.accepted = true;
 };
 
-requestSchema.methods.decline = function () {
-  this.accepted = false;
-  this.declined = true;
-};
-
 requestSchema.methods.pay = function () {
   // Add logic for paying
   this.paid = true;

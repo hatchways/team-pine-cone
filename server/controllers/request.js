@@ -52,8 +52,12 @@ const updateRequest = (req, res, next) => {
       request.save();
     }
     else if (req.body.declined) {
-      request.decline();
-      request.save();
+      Request.findByIdAndRemove(req.params.id).then(() => {
+        res.status(204).end();
+      }).catch(e => {
+        console.log(e);
+        res.status(503).end();
+      });
     }
     const notifyId = req.user.profile.toString() === request.user_id.toString() ? request.sitter_id : request.user_id;
     Profile.findById(req.user.profile).then(profile => {
@@ -74,5 +78,5 @@ const updateRequest = (req, res, next) => {
 module.exports = {
   getRequestsByUser,
   createRequest,
-  updateRequest
+  updateRequest,
 };

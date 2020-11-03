@@ -4,10 +4,10 @@ const { getRequestsByUser, createRequest, updateRequest } = require("../controll
 
 const Router = express.Router();
 
-Router.get("/me", authenticate(), getRequestsByUser);
+Router.get("/requests", authenticate(), getRequestsByUser);
 
 Router.post("/create", authenticate(), createRequest);
 
 Router.put("/update/:id", authenticate(), updateRequest);
 
-module.exports= Router;
+module.exports = Router;

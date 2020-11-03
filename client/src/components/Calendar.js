@@ -1,21 +1,27 @@
 import React, { useState } from 'react';
 import moment from 'moment';
-import { IconButton, Grid, makeStyles, Card, Button, CircularProgress } from '@material-ui/core';
+import { IconButton, Grid, makeStyles, Card, Button, CircularProgress, Popover } from '@material-ui/core';
 import { ArrowLeft, ArrowRight } from "@material-ui/icons";
 import { useProfileContext } from '../contexts/profile';
 
-const useStyles = makeStyles({
-    calendarText: {
-        margin: 0,
-        width: 25,
-        height: 25,
-        textAlign: "center"
-    },
-    button: {
-        minWidth: 200,
-        margin: 10
-    }
-})
+const useStyles = makeStyles(theme => ({
+  calendarText: {
+    margin: 0,
+    width: 25,
+    height: 25,
+    textAlign: "center",
+  },
+  button: {
+    minWidth: 200,
+    margin: 10,
+  },
+  popover: {
+    pointerEvents: "none",
+  },
+  paper: {
+    padding: theme.spacing(1),
+  },
+}));
 
 const useMonths = (year) => ({
   1: {
@@ -139,6 +145,7 @@ function Calendar() {
     const today = moment();
     const { profile, setProfile } = useProfileContext();
     const [availability, setAvailability] = useState(convertAvailabilityFromDatabase(profile.availability));
+    const [quickAvailability, setQuickAvailability] = useState(makeQuickAvailability(profile.availability));
     const [activeDay, setActiveDay] = useState(null);
     const [year, setYear] = useState(Number(today.format("YYYY")));
     const [monthNumber, setMonthNumber] = useState(Number(today.format("M")));
@@ -211,6 +218,20 @@ function Calendar() {
         setActiveDay(null);
         setTimes(getDefaultTimes());
     }
+    const [anchorEl, setAnchorEl] = useState(null);
+    const [popoverContent, setPopoverContent] = useState(null)
+    const handleOpenPopover = date => {
+      return e => {
+        if (quickAvailability[date]) {
+          setPopoverContent(quickAvailability[date].map(time => <p>{time}</p>))
+          setAnchorEl(e.target)
+        }
+      }
+    }
+    const handleClosePopover = () => {
+      setAnchorEl(null)
+      setPopoverContent(null)
+    }
     return (
       <Grid container direction="column" alignItems="center">
         <Grid item>
@@ -244,7 +265,8 @@ function Calendar() {
                                   ? "primary"
                                   : availability[year] &&
                                     availability[year][month] &&
-                                    availability[year][month][day]
+                                    availability[year][month][day] &&
+                                    availability[year][month][day].filter(x => x.available).length > 0
                                   ? "secondary"
                                   : "default"
                               }
@@ -255,6 +277,10 @@ function Calendar() {
                                   day < Number(today.format("D")))
                               }
                               size="medium"
+                              onMouseEnter={handleOpenPopover(
+                                `${month} ${day}, ${year}`
+                              )}
+                              onMouseLeave={handleClosePopover}
                             >
                               <p className={classes.calendarText}>{day}</p>
                             </IconButton>
@@ -263,6 +289,15 @@ function Calendar() {
                       </Grid>
                     </Grid>
                   ))}
+                  <Popover
+                    anchorOrigin={{ vertical: "bottom" }}
+                    className={classes.popover}
+                    classes={{ paper: classes.paper }}
+                    anchorEl={anchorEl}
+                    open={!!anchorEl}
+                  >
+                    {popoverContent}
+                  </Popover>
                   <Button
                     disabled={
                       year === Number(today.format("YYYY")) &&
@@ -340,16 +375,18 @@ function Calendar() {
               </Button>
             </Grid>
             <Grid item>
-              {saving ? 
-              <CircularProgress /> :
-              (<Button
-                color="primary"
-                variant="contained"
-                onClick={handleSaveAvailability}
-                className={classes.button}
-              >
-                Save Availability
-              </Button>)}
+              {saving ? (
+                <CircularProgress />
+              ) : (
+                <Button
+                  color="primary"
+                  variant="contained"
+                  onClick={handleSaveAvailability}
+                  className={classes.button}
+                >
+                  Save Availability
+                </Button>
+              )}
             </Grid>
           </Grid>
         </Grid>
@@ -395,6 +432,7 @@ function Calendar() {
             };
         }
         setAvailability(newAvail);
+        setQuickAvailability(makeQuickAvailability(convertAvailabilityForDatabase(newAvail)))
     }
 
     function examineAvailabilityForDay(day) {
@@ -432,6 +470,7 @@ function Calendar() {
             };
         }
         setAvailability(newAvail);
+        setQuickAvailability(makeQuickAvailability(convertAvailabilityForDatabase(newAvail)))
     }
 }
 
@@ -545,3 +584,20 @@ function fillOutputWithDefaultTimes(output, year, month, day) {
     }
 }
 
+function makeQuickAvailability(availability) {
+  const output = {}
+  for (let range of availability) {
+    if (new Date(range.start) > new Date()) {
+      let day = moment(range.start).format("MMMM D, YYYY");
+      let time = `${moment(range.start).format("H:mm")} - ${moment(
+        range.end
+      ).format("H:mm")}`;
+      if (output[day]) {
+        output[day].push(time);
+      } else {
+        output[day] = [time];
+      }
+    }
+  }
+  return output
+}

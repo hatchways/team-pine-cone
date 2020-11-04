@@ -1,5 +1,6 @@
+import "date-fns";
 import React, { useState, useEffect } from "react";
-import { Grid, Avatar, Typography, Button, Grow } from "@material-ui/core";
+import { Grid, Avatar, Typography, Grow } from "@material-ui/core";
 import { Rating } from "@material-ui/lab";
 import { makeStyles } from "@material-ui/core/styles";
 import RoomIcon from "@material-ui/icons/Room";
@@ -8,6 +9,7 @@ import { useParams } from "react-router-dom";
 import DateTimePickerRanges from "../components/DateTimePickerRanges";
 import { useProfileContext } from "../contexts/profile";
 import Splash from "../components/Splash";
+import ButtonLoad from "../components/ButtonLoad";
 import Snackbar from "../components/DefaultSnackbar";
 
 export const useStyles = makeStyles((theme) => ({
@@ -24,7 +26,7 @@ export const useStyles = makeStyles((theme) => ({
     },
   },
   banner: {
-    background: `radial-gradient(circle, rgba(255,255,255,1) 0%, rgba(223,27,27,1) 100%);`,
+    background: "radial-gradient(circle, rgba(255,255,255,1) 0%, rgba(223,27,27,1) 100%);",
     width: "100%",
     height: "300px",
     borderRadius: "10px",
@@ -79,6 +81,9 @@ const ProfileDetails = function () {
   const [profile, setProfileDetails] = useState({});
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [requestLoad, setRequestLoad] = useState(false);
+  const [requestError, setRequestError] = useState(null);
+  const [requestSuccess, setRequestSuccess] = useState(false);
   useEffect(() => {
     getProfile(params.id)
       .then((result) => {
@@ -105,6 +110,9 @@ const ProfileDetails = function () {
 
   const handleSubmit = (e) => {
     e.preventDefault();
+    setRequestLoad(true);
+    if (requestSuccess) setRequestSuccess(false);
+    if (requestError) setRequestError(null);
     fetch("/request/create", {
       method: "POST",
       headers: {
@@ -115,16 +123,33 @@ const ProfileDetails = function () {
         start: selectDropIn,
         end: selectDropOff,
       }),
-    }).then(() => {
-      pullProfile();
-    });
+    })
+      .then((res) => {
+        if (!res.ok) throw res;
+        pullProfile();
+      })
+	  .then(() => setRequestSuccess(true))
+      .catch(() => setRequestError("Request failed."))
+      .finally(() =>setRequestLoad(false));
   };
 
   return (
     <Splash loading={loading}>
+      {requestSuccess && (
+        <Snackbar
+          open={requestSuccess}
+          message="Request Success!"
+          severity="success"
+        />
+      )}
       <Grow in={true}>
         <Grid className={classes.root} container>
-          <Snackbar open={error} />
+          {(error || requestError) && (
+            <Snackbar
+              open={error || requestError}
+              message={error || requestError}
+            />
+          )}
           <Grid item md={7} className={classes.profile}>
             <Grid direction="column" container>
               <Grid item>
@@ -236,15 +261,16 @@ const ProfileDetails = function () {
               )}
             </Grid>
             <Grid item>
-              <Button
+              <ButtonLoad
                 variant="contained"
                 size="large"
                 type="submit"
                 color="primary"
                 fullWidth
+                loading={requestLoad}
               >
                 Send Request
-              </Button>
+              </ButtonLoad>
             </Grid>
           </Grid>
         </Grid>

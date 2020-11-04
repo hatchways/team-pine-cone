@@ -1,13 +1,14 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Grid, Avatar, Typography, Button, Grow } from "@material-ui/core";
 import { Rating } from "@material-ui/lab";
 import { makeStyles } from "@material-ui/core/styles";
 import RoomIcon from "@material-ui/icons/Room";
 import useScrollToTop from "../hooks/useScrollToTop";
 import { useParams } from "react-router-dom";
-import { useFetch } from "../hooks/useFetch";
 import DateTimePickerRanges from "../components/DateTimePickerRanges";
 import { useProfileContext } from "../contexts/profile";
+import Splash from "../components/Splash";
+import Snackbar from "../components/DefaultSnackbar";
 
 export const useStyles = makeStyles((theme) => ({
   root: {
@@ -74,13 +75,18 @@ const ProfileDetails = function () {
   const [selectDropOff, setSelectDropOff] = useState(null);
   const classes = useStyles();
   const params = useParams();
-  const { setProfile, getProfile } = useProfileContext();
-  const [profile, setProfileDetails] = useState({})
+  const { getProfile, pullProfile } = useProfileContext();
+  const [profile, setProfileDetails] = useState({});
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
   useEffect(() => {
-    getProfile(params.id).then(result => {
-      setProfileDetails(result)
-    })
-  },[getProfile, params]) 
+    getProfile(params.id)
+      .then((result) => {
+        setProfileDetails(result);
+      })
+      .then(() => setLoading(false))
+      .catch((e) => setError(e.message));
+  }, [getProfile, params]);
 
   const {
     photo,
@@ -94,7 +100,6 @@ const ProfileDetails = function () {
     availability,
   } = profile;
   const fullName = firstName ? firstName + " " + lastName : "";
-	console.log(error)
 
   useScrollToTop();
 

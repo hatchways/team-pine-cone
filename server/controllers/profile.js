@@ -89,9 +89,13 @@ const updateProfile = async (req, res, next) => {
 
 const getProfiles = async (req, res, next) => {
   const {
+    rating = 0,
+    hourlyRateRange = "0,50",
+    fromDate,
+    toDate,
     page = 1,
     search = "",
-    filter = "name",
+    searchBy = "none",
   } = req.query;
   const errors = validationResult(req);
 
@@ -99,23 +103,44 @@ const getProfiles = async (req, res, next) => {
     return res.status(422).json(errors);
   }
 
+  let dateQuery = {};
+  let searchByQuery = {};
+	let sort = "firstName";
+
+  if (fromDate && toDate) {
+    dateQuery = {
+      "availability.start": { $gte: new Date(fromDate) },
+      "availability.end": { $lte: new Date(toDate) },
+    };
+  }
 
   try {
     const n = 8;
-	const reg = { $regex: search, $options: "i" }
+    const [minPrice, maxPrice] = hourlyRateRange.split(",");
+    const reg = new RegExp(".*" + search + ".*", "i");
     const p = Number(page);
+    const ratingN = Number(rating);
+
+    if (searchBy === "name") {
+      searchByQuery = { $or: [{ firstName: reg }, { lastName: reg }] };
+    } else if (searchBy === "location") {
+      searchByQuery = { address: reg };
+    }
+
+	  if (searchBy === "location") { 
+		sort = "address";
+	  }
 
     let [data] = await Profile.aggregate([
       {
         $match: {
           isSitter: true,
-
-          rating: { $gte: Number(rating) },
+          rating: ratingN > 0 ? { $eq: ratingN } : { $gte: ratingN },
           $and: [
             { hourlyRate: { $gte: Number(minPrice) } },
             { hourlyRate: { $lte: Number(maxPrice) } },
           ],
-          $or: [{ firstName: reg }, { lastName: reg }, { address: reg }],
+          ...searchByQuery,
         },
       },
       { $unwind: "$availability" },
@@ -138,7 +163,7 @@ const getProfiles = async (req, res, next) => {
           photo: { $first: "$photo" },
         },
       },
-      { $sort: { [sortBy]: 1, firstName: 1 } },
+		{ $sort: { [sort]: 1} },
       {
         $facet: {
           metadata: [

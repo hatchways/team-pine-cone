@@ -47,15 +47,17 @@ const registerValidators = [checkFirstName, checkLastName];
 const loginValidators = [checkEmail, checkPassword];
 
 const getProfilesValidator = [
+  query("ratings").optional().isInt(),
+  query("hourlyRateRange")
+    .optional()
+    .custom((value) => value.split(",").length === 2),
+  query("fromDate").optional(),
+  query("toDate").optional(),
   query("page").optional().isInt(),
   query("search").optional(),
-  query("filter")
+  query("sortBy")
     .optional()
-    .custom((value) =>
-      ["name", "rating", "location", "availability", "price", ""].includes(
-        value
-      )
-    ),
+    .custom((value) => ["none", "name", "location"].includes(value)),
 ];
 
 module.exports = {

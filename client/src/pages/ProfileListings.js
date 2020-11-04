@@ -74,7 +74,7 @@ const form = {
   toDate: null,
   page: 1,
   search: "",
-  sortBy: "firstName",
+  searchBy: "none",
 };
 
 const ProfileListings = function () {
@@ -145,7 +145,6 @@ const ProfileListings = function () {
         />
         <Snackbar open={error} />
       </Grid>
-
 
       <Splash loading={loading}>
         {!loading && !error && sitters.length === 0 ? (

@@ -25,8 +25,16 @@ const conversationSchema = new Schema({
       },
       body: {
         type: String,
-        required: true
-      }
+        required: true,
+      },
+      read_by_sitter: {
+        type: Boolean,
+        default: false,
+      },
+      read_by_user: {
+        type: Boolean,
+        default: false,
+      },
     },
   ],
 });

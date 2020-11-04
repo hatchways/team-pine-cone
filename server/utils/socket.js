@@ -1,3 +1,5 @@
+const Conversation = require("../models/Conversation");
+const Profile = require("../models/Profile");
 const notifier = require("./notification");
 
 let io;
@@ -15,6 +17,18 @@ exports.create = server => {
 
     socket.on("notification read", (profileId, notificationId) => {
       notifier.remove(profileId, notificationId);
+    });
+
+    socket.on("message", (conversationId, message) => {
+      Conversation.findById(conversationId).then(conversation => {
+        conversation.messages.push(message);
+        conversation.save().then(() => {
+          const notifyId = message.sender === conversation.user_id ? conversation.sitter_id : conversation.user_id;
+          Profile.findById(notifyId).populate("requests").populate("conversations").then(profile => {
+            io.to(notifyId).emit("update", profile);
+          });
+        });
+      });
     });
   });
   exports.io = io;

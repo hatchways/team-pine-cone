@@ -30,11 +30,11 @@ function App() {
         <Elements stripe={stripe}>
           <AuthProvider>
             <Route exact path="/signup" component={SignUp} />
-            <Route path="/login" component={Login} />
+            <Route exact path="/login" component={Login} />
             <ProfileProvider>
               <SocketHandler>
               <Navbar />
-              <Route exact path="/"/>
+              <Route exact path="/" component={ProfileListings}/>
               <PrivateRoute path="/me" component={ProfileSettings} />
               <Route exact path="/profiles/" component={ProfileListings} />
               <Route path="/profiles/:id" component={ProfileDetails} />

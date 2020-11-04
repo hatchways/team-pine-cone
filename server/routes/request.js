@@ -19,6 +19,8 @@ Router.post(
 
 Router.get("/me", authenticate(), getRequestsByUser);
 
+Router.get("/requests", authenticate(), getRequestsByUser);
+
 Router.post("/create", authenticate(), createRequest);
 
 Router.put("/update/:id", authenticate(), updateRequest);

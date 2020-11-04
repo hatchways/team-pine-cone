@@ -22,13 +22,12 @@ export const useFetch = function (options) {
       .then((res) => res.json())
       .then((data) => setValue(data))
       .catch(async (res) => {
-		  const err = await res.json();
-		  if (err.error.message) {  
-			  setError(err.error.message);
-		 } else { 
-			setError(`ERROR: ${res.statusText}`);
-		 }
-
+        const err = await res.json();
+        if (err.error.message) {
+          setError(err.error.message);
+        } else {
+          setError(`ERROR: ${res.statusText}`);
+        }
       })
       .finally(() => setLoading(false));
   }, [options.url, options.method, options.params]);

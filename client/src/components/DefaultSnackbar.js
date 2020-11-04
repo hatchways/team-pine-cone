@@ -4,12 +4,12 @@ import Alert from "@material-ui/lab/Alert";
 
 const DefaultSnackBar = function ({
   open,
+  onClose,
   message = "Sorry! Something Went Wrong!",
   duration = 6000,
   severity = "error",
 }) {
   const [close, setClose] = useState(false);
-
   const handleClose = () => {
     setClose(true);
   };

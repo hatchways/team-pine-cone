@@ -74,7 +74,36 @@ const profileSchema = new Schema({
     accountId: {
       type: String,
     },
-  }
+  },
+  hourlyRate: {
+    type: Number,
+    default: 14.25,
+  },
+  rating: {
+    type: Number,
+    enum: [0, 1, 2, 3, 4, 5],
+    default: 0,
+  },
+  jobTitle: {
+    type: String,
+    enum: [
+      "Loving Pet Sitter",
+      "Professional Dog Trainer",
+      "Loving Dog Walker",
+      "Dog Care Helper",
+      "Loving Dog Gromer",
+    ],
+    default: "Loving Pet Sitter",
+  },
+  notifications: [{
+    title: {type: String},
+    message: {type: String},
+    src: {type: String},
+    link: {type: String}
+  }],
+  address: {
+    type: String,
+  },
 });
 
 profileSchema.pre("save", function (next) {

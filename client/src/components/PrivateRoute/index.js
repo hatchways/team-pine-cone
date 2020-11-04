@@ -12,7 +12,7 @@ const PrivateRoute = function ({ exact, component, children, path }) {
       {children}
     </Route>
   ) : (
-    <Redirect to="/login"/>
+    <Redirect to="/"/>
   );
 };
 

@@ -107,7 +107,7 @@ const ProfileDetails = function () {
   const handleSubmit = (e) => {
     e.preventDefault();
     setRequestLoad(true);
-    if (requestSuccess) setRequestSuccess(null);
+    if (requestSuccess) setRequestSuccess(false);
     if (requestError) setRequestError(null);
     fetch("/request/create", {
       method: "POST",
@@ -124,16 +124,14 @@ const ProfileDetails = function () {
         if (!res.ok) throw res;
         pullProfile();
       })
+	  .then(() => setRequestSuccess(true))
       .catch((err) => setRequestError("Request failed."))
-      .finally(() => {
-        setRequestLoad(false);
-        setRequestSuccess(true);
-      });
+      .finally(() =>setRequestLoad(false));
   };
 
   return (
     <Splash loading={loading}>
-      {setRequestSuccess && (
+      {requestSuccess && (
         <Snackbar
           open={requestSuccess}
           message="Request Success!"

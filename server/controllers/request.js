@@ -4,6 +4,7 @@ const { Request, Profile } = require("../models/");
 const { validationResult } = require("express-validator");
 const stripe = require("stripe")(STRIPE_SECRET);
 const notifier = require("../utils/notification");
+const Conversation = require("../models/Conversation");
 
 const getRequestsByUser = (req, res, next) => {
   if (!req.user) {
@@ -113,6 +114,13 @@ const createRequest = (req, res, next) => {
           link: "/my-jobs",
         });
       });
+      const conversation = new Conversation({
+        user_id: result.user_id,
+        sitter_id: result.sitter_id,
+        request_id: result._id,
+        messages: []
+      });
+      conversation.save();
       res.status(200).json(result);
     })
     .catch((e) => {

@@ -253,11 +253,11 @@ function Calendar() {
                   <h3>
                     {month} {year}
                   </h3>
-                  {days.map((week) => (
-                    <Grid item>
+                  {days.map((week, i) => (
+                    <Grid key={i} item>
                       <Grid container direction="row">
-                        {week.map((day) => (
-                          <Grid item>
+                        {week.map((day, i) => (
+                          <Grid key={year + month + i} item>
                             <IconButton
                               onClick={createDayHandler(day)}
                               color={
@@ -290,7 +290,7 @@ function Calendar() {
                     </Grid>
                   ))}
                   <Popover
-                    anchorOrigin={{ vertical: "bottom" }}
+                    anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
                     className={classes.popover}
                     classes={{ paper: classes.paper }}
                     anchorEl={anchorEl}
@@ -326,6 +326,7 @@ function Calendar() {
                   (time, i) =>
                     i < times.length - 7 && (
                       <TimeButton
+                        key={time.time}
                         className={classes.button}
                         start={time.time}
                         end={times[i + 1].time}
@@ -348,6 +349,7 @@ function Calendar() {
                     i < times.length - 1 &&
                     i > 5 && (
                       <TimeButton
+                        key={time.time}
                         className={classes.button}
                         start={time.time}
                         end={times[i + 1].time}

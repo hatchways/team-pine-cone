@@ -21,7 +21,6 @@ const Item = function (props) {
   } = props;
   const classes = useStyle();
   const history = useHistory();
-	console.log(me)
 
   // go to individual listing from here
   const handleClick = () => history.push(`/profiles/${_id}`);

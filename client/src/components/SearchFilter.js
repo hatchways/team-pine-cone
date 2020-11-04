@@ -23,7 +23,21 @@ import {
   Slider,
   ButtonGroup,
   Button,
+  Typography,
 } from "@material-ui/core/";
+import FilterListIcon from "@material-ui/icons/FilterList";
+import Accordion from "@material-ui/core/Accordion";
+import AccordionSummary from "@material-ui/core/AccordionSummary";
+import AccordionDetails from "@material-ui/core/AccordionDetails";
+import List from "@material-ui/core/List";
+import ListItem from "@material-ui/core/ListItem";
+import ListItemIcon from "@material-ui/core/ListItemIcon";
+import ListItemText from "@material-ui/core/ListItemText";
+import PersonIcon from "@material-ui/icons/Person";
+import GradeIcon from "@material-ui/icons/Grade";
+import LocationOnIcon from "@material-ui/icons/LocationOn";
+import EventAvailableIcon from "@material-ui/icons/EventAvailable";
+import AttachMoneyIcon from "@material-ui/icons/AttachMoney";
 
 const useStyle = makeStyles((theme) => ({
   container: {
@@ -77,14 +91,33 @@ const useStyle = makeStyles((theme) => ({
   top: {
     marginTop: "2em",
   },
+  filter: {
+    marginTop: "2em",
+    width: "100%",
+  },
+  list: {
+    width: "100%",
+    "& svg": {
+      background: "transparent",
+    },
+  },
 }));
 
 const valuePriceText = (value) => `$${value}`;
+
+const filterOptionsList = [
+  "name",
+  "rating",
+  "location",
+  "availability",
+  "price",
+];
 
 const SearchFilter = function (props) {
   const classes = useStyle();
   const history = useHistory();
   const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [selectedIndex, setSelectedIndex] = React.useState(0);
   const {
     setValues,
     values,
@@ -99,28 +132,19 @@ const SearchFilter = function (props) {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-
     //restart at page one
     setValues({ ...values, page: 1 });
-
-    let form = values;
-
-    if (!values.fromDate || !values.toDate || values.fromDate > values.toDate) {
-      const { fromDate, toDate, ...restForm } = form;
-      form = restForm;
-    } else {
-      form.fromDate = new Date(form.fromDate).toISOString();
-      form.toDate = new Date(form.toDate).toISOString();
-    }
-
-    form.page = 1;
-
+    let form = { filter: filterOptionsList[selectedIndex], page: 1 };
     history.push("/profiles?" + new URLSearchParams(form).toString());
   };
 
   const handleCloseOptions = (e) => {
     setIsDialogOpen(false);
     handleSubmit(e);
+  };
+
+  const handleListItemClick = (event, index) => {
+    setSelectedIndex(index);
   };
 
   return (
@@ -151,6 +175,76 @@ const SearchFilter = function (props) {
       >
         <AddIcon />
       </Fab>
+
+      <div className={classes.filter}>
+        <Accordion>
+          <AccordionSummary
+            expandIcon={<FilterListIcon />}
+            aria-controls="panel1a-content"
+            id="panel1a-header"
+          >
+            <Typography>Filters</Typography>
+          </AccordionSummary>
+          <AccordionDetails>
+            <List
+              component="nav"
+              className={classes.list}
+              aria-label="main list of filters"
+            >
+              <ListItem
+                button
+                selected={selectedIndex === 0}
+                onClick={(event) => handleListItemClick(event, 0)}
+              >
+                <ListItemIcon>
+                  <PersonIcon />
+                </ListItemIcon>
+                <ListItemText primary="Name" />
+              </ListItem>
+              <ListItem
+                button
+                selected={selectedIndex === 1}
+                onClick={(event) => handleListItemClick(event, 1)}
+              >
+                <ListItemIcon>
+                  <GradeIcon />
+                </ListItemIcon>
+                <ListItemText primary="Rating" />
+              </ListItem>
+              <ListItem
+                button
+                selected={selectedIndex === 2}
+                onClick={(event) => handleListItemClick(event, 2)}
+              >
+                <ListItemIcon>
+                  <LocationOnIcon />
+                </ListItemIcon>
+                <ListItemText primary="Location" />
+              </ListItem>
+              <ListItem
+                button
+                selected={selectedIndex === 3}
+                onClick={(event) => handleListItemClick(event, 3)}
+              >
+                <ListItemIcon>
+                  <EventAvailableIcon />
+                </ListItemIcon>
+                <ListItemText primary="Availability" />
+              </ListItem>
+              <ListItem
+                button
+                selected={selectedIndex === 4}
+                onClick={(event) => handleListItemClick(event, 4)}
+              >
+                <ListItemIcon>
+                  <AttachMoneyIcon />
+                </ListItemIcon>
+                <ListItemText primary="Price" />
+              </ListItem>
+            </List>
+          </AccordionDetails>
+        </Accordion>
+      </div>
 
       {/*Filters*/}
       <Dialog

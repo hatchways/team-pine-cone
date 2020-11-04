@@ -89,13 +89,9 @@ const updateProfile = async (req, res, next) => {
 
 const getProfiles = async (req, res, next) => {
   const {
-    rating = 0,
-    hourlyRateRange = "0,50",
-    fromDate,
-    toDate,
     page = 1,
     search = "",
-    sortBy = "firstName",
+    filter = "name",
   } = req.query;
   const errors = validationResult(req);
 
@@ -103,27 +99,17 @@ const getProfiles = async (req, res, next) => {
     return res.status(422).json(errors);
   }
 
-  let dateQuery = {};
-
-  if (fromDate && toDate) {
-    dateQuery = {
-      "availability.start": { $gte: new Date(fromDate) },
-      "availability.end": { $lte: new Date(toDate) },
-    };
-  }
 
   try {
     const n = 8;
-    const [minPrice, maxPrice] = hourlyRateRange.split(",");
-    //if performance is an issue resort to text indexes instead
-	  //const reg = new RegExp(search, "i");
-	  const reg = { $regex: search, $options: "i" }
+	const reg = { $regex: search, $options: "i" }
     const p = Number(page);
 
     let [data] = await Profile.aggregate([
       {
         $match: {
           isSitter: true,
+
           rating: { $gte: Number(rating) },
           $and: [
             { hourlyRate: { $gte: Number(minPrice) } },

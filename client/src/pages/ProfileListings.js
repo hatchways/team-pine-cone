@@ -146,6 +146,7 @@ const ProfileListings = function () {
         <Snackbar open={error} />
       </Grid>
 
+
       <Splash loading={loading}>
         {!loading && !error && sitters.length === 0 ? (
           <Grid container direction="column" alignItems="center">

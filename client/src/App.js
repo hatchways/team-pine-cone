@@ -20,6 +20,7 @@ import SocketHandler from "./contexts/socket";
 import { STRIPE_PUBLIC_KEY } from "./data/stripe";
 import { Elements } from "@stripe/react-stripe-js";
 import { loadStripe } from "@stripe/stripe-js";
+import Messaging from "./pages/Messaging";
 
 const stripe = loadStripe(STRIPE_PUBLIC_KEY);
 
@@ -42,7 +43,7 @@ function App() {
                   <PrivateRoute exact path="/become-a-sitter" component={BecomeASitter} />
                   <PrivateRoute exact path="/my-sitters" component={MySitters} />
                   <PrivateRoute exact path="/my-jobs" component={MyJobs} />
-                  <PrivateRoute exact path="/messages" />
+                  <PrivateRoute exact path="/messages" component={Messaging}/>
                 </SocketHandler>
               </ProfileProvider>
             </Switch>

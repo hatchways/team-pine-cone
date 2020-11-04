@@ -1,6 +1,6 @@
 import React from "react";
 import { MuiThemeProvider } from "@material-ui/core";
-import { BrowserRouter, Route } from "react-router-dom";
+import { BrowserRouter, Route, Switch } from "react-router-dom";
 import { theme } from "./themes/theme";
 import SignUp from "./pages/SignUp";
 import Login from "./pages/Login";
@@ -29,21 +29,23 @@ function App() {
       <BrowserRouter>
         <Elements stripe={stripe}>
           <AuthProvider>
-            <Route exact path="/signup" component={SignUp} />
-            <Route path="/login" component={Login} />
-            <ProfileProvider>
-              <SocketHandler>
-              <Navbar />
-              <Route exact path="/"/>
-              <PrivateRoute path="/me" component={ProfileSettings} />
-              <Route exact path="/profiles/" component={ProfileListings} />
-              <Route path="/profiles/:id" component={ProfileDetails} />
-              <PrivateRoute exact path="/become-a-sitter" component={BecomeASitter} />
-              <PrivateRoute exact path="/my-sitters" component={MySitters} />
-              <PrivateRoute exact path="/my-jobs" component={MyJobs} />
-              <PrivateRoute exact path="/messages" />
-            </SocketHandler>
-            </ProfileProvider>
+            <Switch>
+              <Route exact path="/" />
+              <Route exact path="/signup" component={SignUp} />
+              <Route exact path="/login" component={Login} />
+              <ProfileProvider>
+                <SocketHandler>
+                  <Navbar />
+                  <PrivateRoute exact path="/me" component={ProfileSettings} />
+                  <Route exact path="/profiles/" component={ProfileListings} />
+                  <Route exact path="/profiles/:id" component={ProfileDetails} />
+                  <PrivateRoute exact path="/become-a-sitter" component={BecomeASitter} />
+                  <PrivateRoute exact path="/my-sitters" component={MySitters} />
+                  <PrivateRoute exact path="/my-jobs" component={MyJobs} />
+                  <PrivateRoute exact path="/messages" />
+                </SocketHandler>
+              </ProfileProvider>
+            </Switch>
           </AuthProvider>
         </Elements>
       </BrowserRouter>

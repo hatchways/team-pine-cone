@@ -39,6 +39,6 @@ const conversationSchema = new Schema({
   ],
 });
 
-const Conversation = model(conversationSchema);
+const Conversation = model("Conversation", conversationSchema);
 
 module.exports = Conversation;

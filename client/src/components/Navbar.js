@@ -1,5 +1,5 @@
 import React, { Fragment } from "react";
-import { Link, NavLink } from "react-router-dom";
+import { Link, NavLink, useLocation } from "react-router-dom";
 import {
   AppBar,
   Toolbar,
@@ -134,6 +134,7 @@ function Navigation({
 function Navbar(props) {
   const { user } = useUserContext();
   const classes = useStyles();
+  const pathname = useLocation().pathname
 
   const [anchorEl, setAnchorEl] = React.useState(null);
 
@@ -168,7 +169,42 @@ function Navbar(props) {
         </AppBar>
       )}
     </ProfileContext.Consumer>
-  ) : null;
+  ) : (
+    <AppBar position="fixed" className={classes.navbar}>
+      <Toolbar className={classes.navDisplay}>
+        <NavLink to="/">
+          <img alt="Loving Sitter" src={window.origin + "/assets/logo.png"} />
+        </NavLink>
+        <List
+          className={classes.navDisplay}
+          component="nav"
+          aria-labelledby="main navigation"
+        >
+          {pathname !== "/login" && (
+            <NavLink className={classes.linkText} to="/login">
+              <ListItem button>
+                <ListItemText primary="Log In" />
+              </ListItem>
+            </NavLink>
+          )}
+          {pathname !== "/signup" && (
+            <NavLink className={classes.linkText} to="/signup">
+              <ListItem button>
+                <ListItemText primary="Sign Up" />
+              </ListItem>
+            </NavLink>
+          )}
+          {pathname !== "/" && (
+            <NavLink className={classes.linkText} to="/">
+              <ListItem button>
+                <ListItemText primary="Browse Sitters" />
+              </ListItem>
+            </NavLink>
+          )}
+        </List>
+      </Toolbar>
+    </AppBar>
+  );
 }
 
 export default withWidth()(Navbar);

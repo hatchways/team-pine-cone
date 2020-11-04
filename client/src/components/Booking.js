@@ -142,7 +142,7 @@ function Booking({
         }
 
         const diffHours = differenceInHours(new Date(end), new Date(start));
-        const amount = sitter.hourlyRate * diffHours;
+        const amount = Number(Number(sitter.hourlyRate * diffHours).toFixed(2));
         const res = await fetch(`/request/${_id}/pay`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },

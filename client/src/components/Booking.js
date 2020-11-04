@@ -82,6 +82,10 @@ function Booking({
   const [error, setError] = useState(null);
   const [success, onSuccess] = useState(null);
   const [noAccount, setNoAccount] = useState(false);
+  const [validatedAccount] = useFetch({
+    init: false,
+    url: `/payment/account/validate/${profile._id}`,
+  });
   useEffect(() => {
     const id = isMyJobs ? user_id : sitter_id;
     fetch(`/profile/${id}`).then((response) => {
@@ -117,10 +121,11 @@ function Booking({
     };
     fetch(`/request/update/${updatedRequest._id}`, options);
   };
+	console.log(validatedAccount)
   const handlePay = () => {
+
     onSuccess("");
     setError("");
-
     setLoading(true);
     (async function () {
       try {
@@ -132,7 +137,7 @@ function Booking({
           `/payment/account/validate/${profile._id}`
         );
 
-        if (!userAccountRes.ok || !profile.stripe.customerId) {
+        if (!userAccountRes.ok || !profile.stripe?.customerId) {
           setLoading(false);
           return setNoAccount(true);
         }

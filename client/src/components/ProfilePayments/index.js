@@ -24,10 +24,8 @@ import CheckIcon from "@material-ui/icons/Check";
 import StripeInput from "./StripeInput";
 import Card from "./Card";
 import { useUserContext } from "../../contexts/user";
-import { useProfileContext } from "../../contexts/profile";
 import { useFetch } from "../../hooks/useFetch";
 import Snackbar from "../DefaultSnackbar";
-import Skeleton from "@material-ui/lab/Skeleton";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -91,7 +89,6 @@ const ProfilePayments = function () {
   const stripe = useStripe();
   const elements = useElements();
   const { user } = useUserContext();
-  const { profile, setProfile } = useProfileContext();
 
   const [
     { data: cards },
@@ -104,9 +101,9 @@ const ProfilePayments = function () {
     init: { data: [] },
     url: "/payment/methods/",
   });
-  const [account, loadingAccount, errorAccount] = useFetch({
-    init: {},
-	  url: `/payment/account/validate/${user.profile}`,
+  const [, loadingAccount, errorAccount] = useFetch({
+    init: null,
+    url: `/payment/account/validate/${user.profile}`,
   });
   const [addingCard, setAddingCard] = useState(false);
 
@@ -143,7 +140,6 @@ const ProfilePayments = function () {
           .then((res) => res.json())
           .then((profile) => {
             setAddingCard(false);
-            setProfile(profile);
             //when adding more then one card spread the array here
             setCards({ data: [data.paymentMethod] });
           })

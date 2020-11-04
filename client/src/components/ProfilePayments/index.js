@@ -137,7 +137,10 @@ const ProfilePayments = function () {
             card_id: data.paymentMethod.id,
           }),
         })
-          .then((res) => res.json())
+          .then((res) => {
+            if (!res.ok) throw res;
+            return res.json();
+          })
           .then((profile) => {
             setAddingCard(false);
             //when adding more then one card spread the array here

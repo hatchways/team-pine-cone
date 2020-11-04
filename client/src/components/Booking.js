@@ -6,7 +6,6 @@ import { differenceInHours } from "date-fns";
 import MessageDialog from "./MessageDialog";
 import ButtonLoad from "./ButtonLoad";
 import DefaultSnackbar from "./DefaultSnackbar";
-import { useFetch } from "../hooks/useFetch";
 
 const useStyles = makeStyles((theme) => ({
   booking: {
@@ -75,17 +74,13 @@ function Booking({
   paid,
 }) {
   const classes = useStyles();
-  const { profile, setProfile } = useProfileContext();
+  const { profile, setProfile, pullProfile } = useProfileContext();
   const [src, setSrc] = useState(null);
   const [name, setName] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [success, onSuccess] = useState(null);
   const [noAccount, setNoAccount] = useState(false);
-  const [validatedAccount] = useFetch({
-    init: false,
-    url: `/payment/account/validate/${profile._id}`,
-  });
   useEffect(() => {
     const id = isMyJobs ? user_id : sitter_id;
     fetch(`/profile/${id}`).then((response) => {
@@ -121,22 +116,25 @@ function Booking({
     };
     fetch(`/request/update/${updatedRequest._id}`, options);
   };
-	console.log(validatedAccount)
-  const handlePay = () => {
 
+  const handlePay = () => {
     onSuccess("");
     setError("");
     setLoading(true);
+
     (async function () {
       try {
         const sitter = await fetch(`/profile/${sitter_id}`).then((res) =>
           res.json()
         );
 
+        if (!profile) await pullProfile();
+
         const userAccountRes = await fetch(
           `/payment/account/validate/${profile._id}`
         );
 
+        console.log(userAccountRes, profile);
         if (!userAccountRes.ok || !profile.stripe?.customerId) {
           setLoading(false);
           return setNoAccount(true);
@@ -159,6 +157,7 @@ function Booking({
       setLoading(false);
     })();
   };
+
   return (
     <Card variant="outlined" className={classes.booking}>
       <Avatar src={src} className={classes.photo} />

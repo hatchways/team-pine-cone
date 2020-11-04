@@ -67,6 +67,14 @@ const profileSchema = new Schema({
       ref: "Request",
     },
   ],
+  stripe: {
+    customerId: {
+      type: String,
+    },
+    accountId: {
+      type: String,
+    },
+  },
   hourlyRate: {
     type: Number,
     default: 14.25,
@@ -94,9 +102,6 @@ const profileSchema = new Schema({
     link: {type: String}
   }],
   address: {
-    type: String,
-  },
-  stripeId: {
     type: String,
   },
 });

@@ -5,6 +5,7 @@ const { validationResult } = require("express-validator");
 const stripe = require("stripe")(STRIPE_SECRET);
 const notifier = require("../utils/notification");
 const Conversation = require("../models/Conversation");
+const { io } = require("../utils/socket");
 
 const getRequestsByUser = (req, res, next) => {
   if (!req.user) {
@@ -114,13 +115,6 @@ const createRequest = (req, res, next) => {
           link: "/my-jobs",
         });
       });
-      const conversation = new Conversation({
-        user_id: result.user_id,
-        sitter_id: result.sitter_id,
-        request_id: result._id,
-        messages: []
-      });
-      conversation.save();
       res.status(200).json(result);
     })
     .catch((e) => {
@@ -138,6 +132,20 @@ const updateRequest = (req, res, next) => {
       if (req.body.accepted) {
         request.accept();
         request.save();
+        const conversation = new Conversation({
+          user_id: request.user_id,
+          sitter_id: request.sitter_id,
+          request_id: request._id,
+          messages: [],
+        });
+        conversation.save().then((conversation) => {
+          Profile.findById(conversation.user_id).then((profile) => {
+            io.to(profile._id.toString()).emit("update", profile);
+          });
+          Profile.findById(conversation.sitter_id).then((profile) => {
+            io.to(profile._id.toString()).emit("update", profile);
+          });
+        });
       } else if (req.body.declined) {
         Request.findByIdAndRemove(req.params.id)
           .then(() => {

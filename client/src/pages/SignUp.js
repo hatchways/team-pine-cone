@@ -7,12 +7,11 @@ import DateFnsUtils from "@date-io/date-fns";
 
 import Button from "@material-ui/core/Button";
 import Grid from "@material-ui/core/Grid";
-import Box from "@material-ui/core/Box";
 import Typography from "@material-ui/core/Typography";
 import Container from "@material-ui/core/Container";
 import useForm from "../components/useForm";
 import Input from "../components/controls/Input";
-import { Toolbar } from "@material-ui/core";
+import { Card, Toolbar } from "@material-ui/core";
 import { MuiPickersUtilsProvider, DatePicker } from "@material-ui/pickers";
 import PhoneInput from "material-ui-phone-number";
 
@@ -75,7 +74,7 @@ export default function SignUp() {
   return !user ? (
     <Container component="main" maxWidth="xs">
       <Toolbar />
-      <div className={classes.paper}>
+      <Card className={classes.paper}>
         <Typography component="h1" variant="h5">
           Sign up
         </Typography>
@@ -186,7 +185,7 @@ export default function SignUp() {
           >
             Sign Up
           </Button>
-          <Grid container justify="flex-end">
+          <Grid container justify="center">
             <Grid item>
               <NavLink className={classes.link} to="/login">
                 Already have an account? Sign in
@@ -194,10 +193,8 @@ export default function SignUp() {
             </Grid>
           </Grid>
         </form>
-      </div>
-      <Box mt={5}>
         <Copyright />
-      </Box>
+      </Card>
     </Container>
   ) : (
     <Redirect to="/" />

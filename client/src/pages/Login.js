@@ -3,12 +3,10 @@ import { Redirect } from "react-router-dom";
 import Button from "@material-ui/core/Button";
 import FormControlLabel from "@material-ui/core/FormControlLabel";
 import Checkbox from "@material-ui/core/Checkbox";
-import Link from "@material-ui/core/Link";
 import Grid from "@material-ui/core/Grid";
-import Box from "@material-ui/core/Box";
 import Typography from "@material-ui/core/Typography";
 import Container from "@material-ui/core/Container";
-import { Toolbar } from "@material-ui/core";
+import { Card, Toolbar } from "@material-ui/core";
 import { NavLink } from "react-router-dom";
 import useForm from "../components/useForm";
 import Input from "../components/controls/Input";
@@ -63,7 +61,7 @@ export default function SignIn() {
     <Fragment>
       <Toolbar />
       <Container component="main" maxWidth="xs">
-        <div className={classes.paper}>
+        <Card className={classes.paper}>
           <Typography component="h1" variant="h5">
             Sign in
           </Typography>
@@ -116,23 +114,16 @@ export default function SignIn() {
             >
               Sign In
             </Button>
-            <Grid container>
-              <Grid item xs>
-                <Link href="#" variant="body2">
-                  Forgot password?
-                </Link>
-              </Grid>
-              <Grid item>
-                <NavLink className={classes.link} to="/signup">
-                  {"Don't have an account? Sign Up"}
-                </NavLink>
-              </Grid>
-            </Grid>
           </form>
-        </div>
-        <Box mt={8}>
+          <Grid justify="center" container>
+            <Grid item>
+              <NavLink className={classes.link} to="/signup">
+                {"Don't have an account? Sign Up"}
+              </NavLink>
+            </Grid>
+          </Grid>
           <Copyright />
-        </Box>
+        </Card>
       </Container>
     </Fragment>
   ) : (

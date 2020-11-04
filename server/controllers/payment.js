@@ -83,13 +83,22 @@ const getPaymentMethods = async (req, res, next) => {
   }
 };
 
+const createLink = (accountId) =>
+  stripe.accountLinks.create({
+    account: accountId,
+    refresh_url: process.env.RETURN_PAYMENT_LINK,
+    return_url: process.env.RETURN_PAYMENT_LINK,
+    type: "account_onboarding",
+  });
+
 const createConnect = async (req, res, next) => {
   const { email, profile: profile_id } = req.user;
-
-  const profile = await Profile.findById(profile_id);
-
   let accountLink;
+
   try {
+    const profile = await Profile.findById(profile_id);
+
+    //new account
     if (!profile.stripe || !profile.stripe.accountId) {
       const account = await stripe.accounts.create({
         type: "express",
@@ -100,18 +109,21 @@ const createConnect = async (req, res, next) => {
         },
       });
 
-      const accountId = account.id;
-
       await Profile.findByIdAndUpdate(profile_id, {
-        $set: { "stripe.accountId": accountId },
+        $set: { "stripe.accountId": account.id },
       });
 
-      accountLink = await stripe.accountLinks.create({
-        account: accountId,
-        refresh_url: process.env.RETURN_PAYMENT_LINK,
-        return_url: process.env.RETURN_PAYMENT_LINK,
-        type: "account_onboarding",
-      });
+      accountLink = await createLink(account.id);
+
+      return res.status(201).json({ accountLink: accountLink.url });
+    }
+
+    const account = await stripe.accounts.retrieve(profile.stripe.accountId);
+
+    //unfinished account
+    if (!account.details_submitted) {
+      accountLink = await createLink(account.id);
+      //validated account
     } else {
       accountLink = await stripe.accounts.createLoginLink(
         profile.stripe.accountId
@@ -124,8 +136,22 @@ const createConnect = async (req, res, next) => {
   }
 };
 
+const validateAccount = async (req, res, next) => {
+  const { id: profile_id } = req.params;
+  if (!req.params) return next(createError(422, "No param id provided"));
+
+  const profile = await Profile.findById(profile_id);
+  const account = await stripe.accounts.retrieve(profile.stripe.accountId);
+
+  if (!account.details_submitted)
+    return next(createError(403, "Stripe account details are incomplete"));
+
+  return res.status(200).json(account);
+};
+
 module.exports = {
   createPaymentMethod,
   getPaymentMethods,
   createConnect,
+  validateAccount,
 };

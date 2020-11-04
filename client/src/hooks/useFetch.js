@@ -9,17 +9,25 @@ export const useFetch = function (options) {
     const req = !options.method
       ? fetch(options.url)
       : fetch(options.url, {
-        method: options.method,
-        headers: { "Content-type": "application/json; charset=UTF-8" },
-        body: JSON.stringify(options.params),
-      });
+          method: options.method,
+          headers: { "Content-type": "application/json; charset=UTF-8" },
+          body: JSON.stringify(options.params),
+        });
 
     req
+      .then(async (res) => {
+        if (!res.ok) throw res;
+        return res;
+      })
       .then((res) => res.json())
       .then((data) => setValue(data))
-      .catch((err) => {
-        setError(err.message);
-        console.log(err);
+      .catch(async (res) => {
+        const err = await res.json();
+        if (err.error.message) {
+          setError(err.error.message);
+        } else {
+          setError(`ERROR: ${res.statusText}`);
+        }
       })
       .finally(() => setLoading(false));
   }, [options.url, options.method, options.params]);

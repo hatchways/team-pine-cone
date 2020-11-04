@@ -6,6 +6,7 @@ import { differenceInHours } from "date-fns";
 import MessageDialog from "./MessageDialog";
 import ButtonLoad from "./ButtonLoad";
 import DefaultSnackbar from "./DefaultSnackbar";
+import { Link } from "react-router-dom";
 
 const useStyles = makeStyles((theme) => ({
   booking: {
@@ -35,6 +36,8 @@ const useStyles = makeStyles((theme) => ({
   name: {
     gridColumn: "2 / span 1",
     marginBottom: 10,
+    textDecoration: "none",
+    color: "#222222",
     [theme.breakpoints.between("xs", "sm")]: {
       gridRow: "2 / span 1",
       gridColumn: "1 / span 1",
@@ -61,9 +64,6 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const validateProfilePayment = (profile) =>
-  profile?.stripe?.customerId || profile?.stripe?.accountId ? true : false;
-
 const formatDate = (dateStr) => moment(dateStr).format("MMM D h:mma");
 
 function Booking({
@@ -77,22 +77,21 @@ function Booking({
   paid,
 }) {
   const classes = useStyles();
-  const { profile, setProfile } = useProfileContext();
+  const { profile, setProfile, getProfile, pullProfile } = useProfileContext();
   const [src, setSrc] = useState(null);
   const [name, setName] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [success, onSuccess] = useState(null);
   const [noAccount, setNoAccount] = useState(false);
+  const id = isMyJobs ? user_id : sitter_id
   useEffect(() => {
-    const id = isMyJobs ? user_id : sitter_id;
-    fetch(`/profile/${id}`).then((response) => {
-      response.json().then((profile) => {
-        setSrc(profile.photo);
-        setName(`${profile.firstName} ${profile.lastName}`);
-      });
-    });
-  }, [setSrc, isMyJobs, sitter_id, user_id]);
+      const id = isMyJobs ? user_id : sitter_id
+      getProfile(id).then(result => {
+        setSrc(result.photo);
+        setName(`${result.firstName} ${result.lastName}`);
+      })
+  },[setSrc, isMyJobs, sitter_id, user_id, setName, getProfile])
   const handleAccept = () => {
     handleAcceptOrDecline(true);
   };
@@ -119,26 +118,27 @@ function Booking({
     };
     fetch(`/request/update/${updatedRequest._id}`, options);
   };
+
   const handlePay = () => {
     onSuccess("");
     setError("");
-
-    if (!validateProfilePayment(profile)) {
-      return setNoAccount(true);
-    }
-
     setLoading(true);
+
     (async function () {
       try {
         const sitter = await fetch(`/profile/${sitter_id}`).then((res) =>
           res.json()
         );
 
-        if (!validateProfilePayment(sitter)) {
+        if (!profile) await pullProfile();
+
+        const userAccountRes = await fetch(
+          `/payment/account/validate/${profile._id}`
+        );
+
+        if (!userAccountRes.ok || !profile.stripe?.customerId) {
           setLoading(false);
-          return setError(
-            `${sitter.firstName} ${sitter.lastName} does not have a complete payment account yet.`
-          );
+          return setNoAccount(true);
         }
 
         const diffHours = differenceInHours(new Date(end), new Date(start));
@@ -153,15 +153,20 @@ function Booking({
         onSuccess("Payment success!");
       } catch (e) {
         const err = await e.json();
-        setError(err.message);
+        setError(err?.error?.message || "Payment could not be completed");
       }
       setLoading(false);
     })();
   };
+
   return (
     <Card variant="outlined" className={classes.booking}>
-      <Avatar src={src} className={classes.photo} />
-      <h2 className={classes.name}>{name}</h2>
+      <Link to={`/profiles/${id}`}>
+        <Avatar src={src} className={classes.photo} />
+      </Link>
+      <Link className={classes.name} to={`/profiles/${id}`}>
+        <h2>{name}</h2>
+      </Link>
       <h3 className={classes.date}>
         {formatDate(start)} - {formatDate(end)}
       </h3>

@@ -24,7 +24,6 @@ import CheckIcon from "@material-ui/icons/Check";
 import StripeInput from "./StripeInput";
 import Card from "./Card";
 import { useUserContext } from "../../contexts/user";
-import { useProfileContext } from "../../contexts/profile";
 import { useFetch } from "../../hooks/useFetch";
 import Snackbar from "../DefaultSnackbar";
 
@@ -77,6 +76,9 @@ const useStyles = makeStyles((theme) => ({
   lightGreen: {
     fill: theme.palette.success.light,
   },
+  rel: {
+    position: "relative",
+  },
 }));
 
 const cardErrorMessage =
@@ -87,11 +89,10 @@ const ProfilePayments = function () {
   const stripe = useStripe();
   const elements = useElements();
   const { user } = useUserContext();
-  const { profile, setProfile } = useProfileContext();
 
   const [
     { data: cards },
-    loading,
+    loadingCard,
     error,
     setCards,
     setLoading,
@@ -100,8 +101,13 @@ const ProfilePayments = function () {
     init: { data: [] },
     url: "/payment/methods/",
   });
-
+  const [, loadingAccount, errorAccount] = useFetch({
+    init: null,
+    url: `/payment/account/validate/${user.profile}`,
+  });
   const [addingCard, setAddingCard] = useState(false);
+
+  const loading = loadingCard || loadingAccount;
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -131,10 +137,12 @@ const ProfilePayments = function () {
             card_id: data.paymentMethod.id,
           }),
         })
-          .then((res) => res.json())
+          .then((res) => {
+            if (!res.ok) throw res;
+            return res.json();
+          })
           .then((profile) => {
             setAddingCard(false);
-            setProfile(profile);
             //when adding more then one card spread the array here
             setCards({ data: [data.paymentMethod] });
           })
@@ -157,8 +165,10 @@ const ProfilePayments = function () {
     })
       .then((res) => res.json())
       .then(({ accountLink }) => (window.location.href = accountLink))
-      .catch(() => setError("Could not create Stripe link."))
-      .finally(() => setLoading(false));
+      .catch(() => {
+        setError("Could not create Stripe link.");
+        setLoading(false);
+      });
   };
 
   return (
@@ -171,9 +181,9 @@ const ProfilePayments = function () {
         </Typography>
         <List dense={true}>
           <ListItem>
-            <ListItemIcon>
+            <ListItemIcon className={classes.rel}>
               <ListItemIcon>
-                {profile && profile.stripe?.accountId ? (
+                {!loadingAccount && !errorAccount ? (
                   <CheckIcon className={classes.lightGreen} />
                 ) : (
                   <ClearIcon color="primary" />
@@ -185,7 +195,7 @@ const ProfilePayments = function () {
           <ListItem>
             <ListItemIcon>
               <ListItemIcon>
-                {profile && profile.stripe?.customerId ? (
+                {!loadingCard && cards.length > 0 ? (
                   <CheckIcon className={classes.lightGreen} />
                 ) : (
                   <ClearIcon color="primary" />
@@ -258,9 +268,9 @@ const ProfilePayments = function () {
           aria-label="contained primary button group"
         >
           <Button disabled={loading} onClick={handleCreateStripeAccount}>
-            {profile?.stripe?.accountId
-              ? "Update your account with Stripe"
-              : "Link your account with Stripe"}
+            {errorAccount
+              ? "Link your account with Stripe"
+              : "Update your account with Stripe"}
           </Button>
           <Button disabled={loading} onClick={() => setAddingCard(true)}>
             {cards.length > 0

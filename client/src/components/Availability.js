@@ -48,7 +48,7 @@ function Availability() {
       <Grid item>
         <Grid container>
           {Object.keys(availability).map((key) => (
-              <Card className={classes.card} variant="outlined">
+              <Card key={key} className={classes.card} variant="outlined">
                 <h3 className={classes.date}>{key}</h3>
                 {availability[key].map(time => (
                   <p>{time}</p>

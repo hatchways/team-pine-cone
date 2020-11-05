@@ -21,6 +21,7 @@ import { STRIPE_PUBLIC_KEY } from "./data/stripe";
 import { Elements } from "@stripe/react-stripe-js";
 import { loadStripe } from "@stripe/stripe-js";
 import ProfilePayments from "./components/ProfilePayments/";
+import AlertCenter from "./components/AlertCenter";
 
 const stripe = loadStripe(STRIPE_PUBLIC_KEY);
 
@@ -45,6 +46,7 @@ function App() {
                   <PrivateRoute exact path="/my-jobs" component={MyJobs} />
 				  <PrivateRoute exact path="/me/payment" component={ProfilePayments} />
                   <PrivateRoute exact path="/messages" />
+				  <AlertCenter/>
                 </SocketHandler>
               </ProfileProvider>
             </Switch>

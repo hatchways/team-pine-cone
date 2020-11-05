@@ -14,8 +14,10 @@ const Item = function (props) {
     lastName,
     description,
     rating: { average = 0 },
+    jobTitle,
     hourlyRate = "$14.25",
-    location = "Toronto, Ontario",
+    address = "Toronto, Ontario",
+    me,
   } = props;
   const classes = useStyle();
   const history = useHistory();
@@ -23,7 +25,7 @@ const Item = function (props) {
   // go to individual listing from here
   const handleClick = () => history.push(`/profiles/${_id}`);
 
-  return (
+  return me._id !== _id ? (
     <Grid item xs={12} className={classes.card} onClick={handleClick}>
       <Grow in={true}>
         <Grid container spacing={2} direction="column" alignItems="center">
@@ -41,7 +43,7 @@ const Item = function (props) {
               {/*title*/}
               <Grid item id="title">
                 <Typography variant="body1" className={classes.subtile}>
-                  Loving Dog Sitter
+                  {jobTitle}
                 </Typography>
               </Grid>
             </Grid>
@@ -52,7 +54,9 @@ const Item = function (props) {
           <Grid item id="shortDescription">
             {/*shortDescription*/}
             <Typography variant="body1" className={classes.description}>
-              {description}
+              {description && description.length > 50
+                ? description.slice(0, 50) + "..."
+                : description}
             </Typography>
           </Grid>
           <Grid item className={classes.cardBottom}>
@@ -63,10 +67,9 @@ const Item = function (props) {
                     <RoomIcon color="primary" />
                   </Grid>
                   {/*location*/}
-                  <Grid item id="location">
+                  <Grid item id="address">
                     <Typography className={classes.subtile}>
-                      {/*TEMP*/}
-                      {location.address || "Toronto Ontario"}
+                      {address || "CA"}
                     </Typography>
                   </Grid>
                 </Grid>
@@ -74,7 +77,7 @@ const Item = function (props) {
               {/*hourlyRate*/}
               <Grid item id="hourlyRate">
                 <Typography variant="body1" className={classes.bold}>
-                  {hourlyRate}
+                  ${Number(hourlyRate).toFixed(2)}
                 </Typography>
               </Grid>
             </Grid>
@@ -82,7 +85,7 @@ const Item = function (props) {
         </Grid>
       </Grow>
     </Grid>
-  );
+  ) : null;
 };
 
 export default Item;

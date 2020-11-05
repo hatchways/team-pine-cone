@@ -34,6 +34,11 @@ describe("/POST profile/create", () => {
         firstName: "John",
         lastName: "Doe",
         gender: "male",
+		  phone: "+1 (416) 653-8255",
+		  location: { 
+			type: "Point",
+			  coordinates: [0, 0]
+		  },
         birthDate: "1988-10-11T04:00:00.000Z",
         description: "Good stuff",
       })
@@ -102,8 +107,7 @@ describe("/GET /profile/:id", () => {
       .get(`/profile/${id}`)
       .end((err, res) => { 
         res.should.have.status(200);
-        res.body.should.have.property("profile");
-        expect(res.body.profile).to.have.property("firstName");
+        res.body.should.have.property("birthDate");
         done();
       });
   });

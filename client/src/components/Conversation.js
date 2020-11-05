@@ -1,5 +1,5 @@
 import { Avatar, Button, Card, Grid, makeStyles, TextField } from '@material-ui/core';
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useParams } from 'react-router-dom';
 import { useProfileContext } from '../contexts/profile';
 import { socket } from '../services/socket';
@@ -53,15 +53,24 @@ function Conversation(props) {
     const conversation = profile && profile.conversations.filter(x => x._id === id)[0];
     const [name, setName] = useState("");
     const [src, setSrc] = useState(null);
+    const firstRender = useRef(true);
     useEffect(() => {
-        if (conversation) {
+        if (conversation && firstRender.current) {
             const partnerId = profile._id === conversation.user_id ? conversation.sitter_id : conversation.user_id;
             getProfile(partnerId).then((partner) => {
               setName(`${partner.firstName} ${partner.lastName}`);
               setSrc(partner.photo);
             });
+            firstRender.current = false
         }
-    }, [setName, setSrc, profile, conversation, getProfile]);
+        const read = profile && profile._id === conversation.user_id ? "read_by_user" : "read_by_sitter";
+        if (conversation && conversation.messages.filter(x => !x[read]).length > 0) {
+            socket.emit("read messages", {
+              conversationId: id,
+              profileId: profile._id,
+            });
+        }
+    }, [setName, setSrc, profile, conversation, getProfile, id]);
     const handleSend = () => {
         socket.emit("message", {
           conversationId: id,

@@ -104,6 +104,10 @@ const profileSchema = new Schema({
   address: {
     type: String,
   },
+  conversations: [{
+    type: Schema.Types.ObjectId,
+    ref: "Conversation"
+  }]
 });
 
 profileSchema.pre("save", function (next) {

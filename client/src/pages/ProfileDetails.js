@@ -1,6 +1,6 @@
 import "date-fns";
-import React, { useState, useEffect } from "react";
 import { Grid, Avatar, Typography, Grow } from "@material-ui/core";
+import React, { useState, useEffect } from "react";
 import { Rating } from "@material-ui/lab";
 import { makeStyles } from "@material-ui/core/styles";
 import RoomIcon from "@material-ui/icons/Room";
@@ -26,7 +26,8 @@ export const useStyles = makeStyles((theme) => ({
     },
   },
   banner: {
-    background: "radial-gradient(circle, rgba(255,255,255,1) 0%, rgba(223,27,27,1) 100%);",
+    background:
+      "radial-gradient(circle, rgba(255,255,255,1) 0%, rgba(223,27,27,1) 100%);",
     width: "100%",
     height: "300px",
     borderRadius: "10px",
@@ -100,8 +101,9 @@ const ProfileDetails = function () {
     description,
     images = [],
     hourlyRate = "$14.25",
-    ratings = 0,
-    location = {},
+    rating = 0,
+    address = "CA",
+    jobTitle = "Loving Dog Sitter",
     availability,
   } = profile;
   const fullName = firstName ? firstName + " " + lastName : "";
@@ -128,9 +130,9 @@ const ProfileDetails = function () {
         if (!res.ok) throw res;
         pullProfile();
       })
-	  .then(() => setRequestSuccess(true))
+      .then(() => setRequestSuccess(true))
       .catch(() => setRequestError("Request failed."))
-      .finally(() =>setRequestLoad(false));
+      .finally(() => setRequestLoad(false));
   };
 
   return (
@@ -174,7 +176,7 @@ const ProfileDetails = function () {
                     className={classes.subtile}
                     paragraph
                   >
-                    Loving Dog Sitter
+                    {jobTitle}
                   </Typography>
                 </Grid>
                 <Grid
@@ -189,7 +191,7 @@ const ProfileDetails = function () {
                   <Grid item>
                     <Typography className={classes.subtile}>
                       {/*TEMP*/}
-                      {location.address || "Toronto, Ontario"}
+                      {address}
                     </Typography>
                   </Grid>
                 </Grid>
@@ -240,11 +242,11 @@ const ProfileDetails = function () {
             >
               <Grid item>
                 <Typography paragraph variant="h4">
-                  {hourlyRate}
+                  {Number(hourlyRate).toFixed(2)}/hr
                 </Typography>
               </Grid>
               <Grid item>
-                <Rating value={ratings} name="read-only" readOnly />
+                <Rating value={rating} name="read-only" readOnly />
               </Grid>
             </Grid>
             <Grid item className={classes.mb3}>

@@ -88,10 +88,94 @@ const updateProfile = async (req, res, next) => {
 };
 
 const getProfiles = async (req, res, next) => {
-  try {
-    const profiles = await Profile.find();
+  const {
+    rating = 0,
+    hourlyRateRange = "0,50",
+    fromDate,
+    toDate,
+    page = 1,
+    search = "",
+    searchBy = "name",
+  } = req.query;
+  const errors = validationResult(req);
 
-    return res.status(200).json({ profiles });
+  if (!errors.isEmpty()) {
+    return res.status(422).json(errors);
+  }
+
+  let dateQuery = {};
+  let searchByQuery = {};
+  let sort = "firstName";
+
+  if (fromDate && toDate) {
+    dateQuery = {
+      "availability.start": { $gte: new Date(fromDate) },
+      "availability.end": { $lte: new Date(toDate) },
+    };
+  }
+
+  try {
+    const n = 8;
+    const [minPrice, maxPrice] = hourlyRateRange.split(",");
+    const reg = new RegExp(".*" + search + ".*", "i");
+    const p = Number(page);
+    const ratingN = Number(rating);
+
+    if (searchBy === "name") {
+      searchByQuery = { $or: [{ firstName: reg }, { lastName: reg }] };
+    } else if (searchBy === "location") {
+      searchByQuery = { address: reg };
+    }
+
+    if (searchBy === "location") {
+      sort = "address";
+    }
+
+    let [data] = await Profile.aggregate([
+      {
+        $match: {
+          isSitter: true,
+          rating: { $gte: ratingN },
+          $and: [
+            { hourlyRate: { $gte: Number(minPrice) } },
+            { hourlyRate: { $lte: Number(maxPrice) } },
+          ],
+          ...searchByQuery,
+        },
+      },
+      { $unwind: "$availability" },
+      {
+        $match: {
+          ...dateQuery,
+        },
+      },
+      {
+        $group: {
+          _id: "$_id",
+          availability: { $push: "$availability" },
+          firstName: { $first: "$firstName" },
+          lastName: { $first: "$lastName" },
+          rating: { $first: "$rating" },
+          description: { $first: "$description" },
+          jobTitle: { $first: "$jobTitle" },
+          hourlyRate: { $first: "$hourlyRate" },
+          address: { $first: "$address" },
+          photo: { $first: "$photo" },
+        },
+      },
+      { $sort: { [sort]: 1 } },
+      {
+        $facet: {
+          metadata: [
+            { $count: "total" },
+            { $addFields: { page, isMore: { $gte: ["$total", n * p] } } },
+          ],
+          profiles: [{ $skip: (p - 1) * n }, { $limit: n }],
+        },
+      },
+    ]);
+
+    return res.status(200).json({ ...data });
   } catch (err) {
     next(createError(500, err.message));
   }

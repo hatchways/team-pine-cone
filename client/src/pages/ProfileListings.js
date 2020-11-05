@@ -1,7 +1,7 @@
 import React, { useState, useEffect, Fragment } from "react";
 import { useLocation } from "react-router-dom";
 import { makeStyles } from "@material-ui/core/styles";
-import { Grid, Typography, Button, CircularProgress, Toolbar } from "@material-ui/core/";
+import { Grid, Typography, Button, CircularProgress } from "@material-ui/core/";
 import PetsIcon from "@material-ui/icons/Pets";
 import ProfileListingItem from "../components/ProfileListingItem";
 import Snackbar from "../components/DefaultSnackbar";

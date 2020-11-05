@@ -30,6 +30,16 @@ exports.create = server => {
         });
       });
     });
+
+    socket.on("read messages", ({conversationId, profileId}) => {
+      Conversation.findById(conversationId).then(conversation => {
+        const read = profileId === conversation.user_id ? "read_by_user" : "read_by_sitter";
+        conversation.messages.forEach(message => {
+          message[read] = true;
+        });
+        conversation.save();
+      });
+    });
   });
   exports.io = io;
 };

@@ -43,7 +43,7 @@ function App() {
                   <PrivateRoute exact path="/become-a-sitter" component={BecomeASitter} />
                   <PrivateRoute exact path="/my-sitters" component={MySitters} />
                   <PrivateRoute exact path="/my-jobs" component={MyJobs} />
-                  <PrivateRoute exact path="/messages" component={Messaging}/>
+                  <PrivateRoute path="/messages" component={Messaging}/>
                 </SocketHandler>
               </ProfileProvider>
             </Switch>

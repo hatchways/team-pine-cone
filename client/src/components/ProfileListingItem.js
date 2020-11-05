@@ -13,7 +13,7 @@ const Item = function (props) {
     firstName,
     lastName,
     description,
-    rating = 0,
+    rating: { average = 0 },
     hourlyRate = "$14.25",
     location = "Toronto, Ontario",
   } = props;
@@ -47,7 +47,7 @@ const Item = function (props) {
             </Grid>
           </Grid>
           <Grid item>
-            <Rating value={rating} name="read-only" readOnly />
+            <Rating value={average} name="read-only" readOnly />
           </Grid>
           <Grid item id="shortDescription">
             {/*shortDescription*/}

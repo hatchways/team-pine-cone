@@ -79,19 +79,16 @@ const profileSchema = new Schema({
     type: Number,
     default: 14.25,
   },
-  /*
-  rating: {
-    type: Number,
-    enum: [0, 1, 2, 3, 4, 5],
-    default: 0,
-  },
-  */
   rating: {
     average: {
       type: Number,
       default: 0,
     },
     total: {
+      type: Number,
+      default: 0,
+    },
+    tally: {
       type: Number,
       default: 0,
     },
@@ -123,10 +120,11 @@ const profileSchema = new Schema({
 profileSchema.statics.applyRating = async function (sitter_id, score) {
   const sitter = await Profile.findById(sitter_id);
   const {
-    rating: { total, average },
+    rating: { total, average, tally },
   } = sitter;
-  sitter.rating.total = total + 1;
-  sitter.rating.average = (average + score) / (total + 1);
+  sitter.rating.tally = tally + 1;
+  sitter.rating.total = total + score;
+  sitter.rating.average = sitter.rating.total / sitter.rating.tally;
   await sitter.save();
 };
 

@@ -1,4 +1,11 @@
-import { Avatar, Button, Card, makeStyles, Typography } from "@material-ui/core";
+import {
+  Avatar,
+  Button,
+  Card,
+  makeStyles,
+  Typography,
+  Grid,
+} from "@material-ui/core";
 import React, { Fragment, useEffect, useState } from "react";
 import { useProfileContext } from "../contexts/profile";
 import moment from "moment";
@@ -7,7 +14,8 @@ import MessageDialog from "./MessageDialog";
 import ButtonLoad from "./ButtonLoad";
 import DefaultSnackbar from "./DefaultSnackbar";
 import { Link } from "react-router-dom";
-import Rating from '@material-ui/lab/Rating';
+import Rating from "@material-ui/lab/Rating";
+import Skeleton from "@material-ui/lab/Skeleton";
 
 const useStyles = makeStyles((theme) => ({
   booking: {
@@ -86,6 +94,7 @@ function Booking({
   const [error, setError] = useState(null);
   const [success, onSuccess] = useState(null);
   const [noAccount, setNoAccount] = useState(false);
+  const [hasRated, setHasRated] = useState(false);
   const id = isMyJobs ? user_id : sitter_id;
   useEffect(() => {
     const id = isMyJobs ? user_id : sitter_id;
@@ -107,7 +116,7 @@ function Booking({
       if (request._id === _id) {
         request.accepted = accept;
         request.declined = !accept;
-        updatedRequest = request;
+        return (updatedRequest = request);
       }
     });
     setProfile(newProfile);
@@ -119,6 +128,21 @@ function Booking({
       body: JSON.stringify(updatedRequest),
     };
     fetch(`/request/update/${updatedRequest._id}`, options);
+  };
+
+  const handleRating = (_, value) => {
+    fetch(`/request/update/${_id}`, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ rating: value }),
+    })
+      .then((res) => {
+        if (!res.json) throw res;
+      })
+      .then(() => setHasRated(true))
+      .then(() => setError("Oops something went wrong"));
   };
 
   const handlePay = () => {
@@ -160,9 +184,8 @@ function Booking({
       setLoading(false);
     })();
   };
-	console.log(success,fulfilled);
 
-  return (
+  return !hasRated ? (
     <Card variant="outlined" className={classes.booking}>
       <Link to={`/profiles/${id}`}>
         <Avatar src={src} className={classes.photo} />
@@ -174,14 +197,20 @@ function Booking({
         {formatDate(start)} - {formatDate(end)}
       </h3>
       <div className={classes.buttons}>
-		 { success || fulfilled === "PENDING" ? (
-			 <div>
-				 <Typography variant="h6">
-					Please Rate the sitter
-				 </Typography>
-			<Rating value={5} />
-			</div>
-		 ) : !isBooking && !isMyJobs ? (
+        {success || fulfilled === "PENDING" ? (
+          <React.Fragment>
+            {name ? (
+              <Grid container direction="column" alignItems="center">
+                <Typography variant="h6">
+                  {name && `How was ${name} ?`}
+                </Typography>
+                <Rating name="sitterRating" onChange={handleRating} />
+              </Grid>
+            ) : (
+              <Skeleton width={250} />
+            )}
+          </React.Fragment>
+        ) : !isBooking && !isMyJobs ? (
           <Button
             onClick={handleDecline}
             color="primary"
@@ -214,7 +243,7 @@ function Booking({
                 {isBooking ? (isMyJobs || paid ? "Cancel" : "Pay") : "Decline"}
               </ButtonLoad>
             )}
-            {isBooking && !paid && (
+            {isBooking && !isMyJobs && (
               <Button
                 onClick={handleDecline}
                 color="primary"
@@ -237,7 +266,7 @@ function Booking({
         <DefaultSnackbar open={success} message={success} severity="success" />
       )}
     </Card>
-  );
+  ) : null;
 }
 
 export default Booking;

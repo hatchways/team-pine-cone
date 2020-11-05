@@ -22,22 +22,44 @@ exports.create = server => {
     socket.on("message", ({conversationId, message}) => {
       Conversation.findById(conversationId).then(conversation => {
         conversation.messages.push(message);
+        console.log(conversation)
         conversation.save().then(() => {
-          const notifyId = message.sender === conversation.user_id ? conversation.sitter_id : conversation.user_id;
-          Profile.findById(notifyId).populate("requests").populate("conversations").then(profile => {
-            io.to(notifyId).emit("update", profile);
-          });
+          Profile.findById(conversation.sitter_id)
+            .populate("requests")
+            .populate("conversations")
+            .then((profile) => {
+              io.to(conversation.sitter_id).emit("update", profile);
+            });
+          Profile.findById(conversation.user_id)
+            .populate("requests")
+            .populate("conversations")
+            .then((profile) => {
+              io.to(conversation.user_id).emit("update", profile);
+            });
         });
       });
     });
 
     socket.on("read messages", ({conversationId, profileId}) => {
       Conversation.findById(conversationId).then(conversation => {
-        const read = profileId === conversation.user_id ? "read_by_user" : "read_by_sitter";
+        const read = profileId.toString() === conversation.user_id.toString() ? "read_by_user" : "read_by_sitter";
         conversation.messages.forEach(message => {
           message[read] = true;
         });
-        conversation.save();
+        conversation.save().then(() => {
+          Profile.findById(conversation.sitter_id)
+            .populate("requests")
+            .populate("conversations")
+            .then((profile) => {
+              io.to(conversation.sitter_id).emit("update", profile);
+            });
+          Profile.findById(conversation.user_id)
+            .populate("requests")
+            .populate("conversations")
+            .then((profile) => {
+              io.to(conversation.user_id).emit("update", profile);
+            });
+        })
       });
     });
   });

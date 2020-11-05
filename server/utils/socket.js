@@ -19,7 +19,7 @@ exports.create = server => {
       notifier.remove(profileId, notificationId);
     });
 
-    socket.on("message", (conversationId, message) => {
+    socket.on("message", ({conversationId, message}) => {
       Conversation.findById(conversationId).then(conversation => {
         conversation.messages.push(message);
         conversation.save().then(() => {

@@ -33,10 +33,6 @@ const requestSchema = new Schema({
     type: Boolean,
     default: false,
   },
-  completed: {
-    type: Boolean,
-    default: false,
-  },
   fulfilled: {
     type: String,
     enum: ["IN_PROGRESS", "PENDING", "COMPLETE"],
@@ -48,16 +44,17 @@ const requestSchema = new Schema({
       enum: [-1, 0, 1, 2, 3, 4, 5],
       default: -1,
     },
-    endDate: {
-      type: Date,
+    hasRated: {
+      type: String,
+      enum: ["PENDING", "NO", "YES"],
+      default: "PENDING",
     },
   },
 });
 
 const checkApplyPendingStatus = async function (request) {
-  if (request.paid && request.accept && request.completed) {
+  if (request.paid && request.accept) {
     request.fulfilled = "PENDING";
-    request.rating.endDate = addWeeks(new Date(), 1).toISOString();
   }
 };
 
@@ -96,13 +93,12 @@ requestSchema.pre("save", function (next) {
 
 requestSchema.pre("save", function (next) {
   if (this.fulfilled === "PENDING") {
-    const { endDate, score } = this.rating;
-    if (score === -1 && new Date() > endDate) {
+    if (this.hasRated === "NO") {
       this.fulfilled = "COMPLETE";
-    } else if (score > -1) {
+	} else if (this.rating > -1) { 
       this.fulfilled = "COMPLETE";
       return Profile.applyRating(this.sitter_id, score).then(() => next());
-    }
+	}
   }
   return next();
 });

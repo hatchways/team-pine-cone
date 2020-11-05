@@ -7,6 +7,7 @@ import MessageDialog from "./MessageDialog";
 import ButtonLoad from "./ButtonLoad";
 import DefaultSnackbar from "./DefaultSnackbar";
 import { Link } from "react-router-dom";
+import Rating from '@material-ui/lab/Rating';
 
 const useStyles = makeStyles((theme) => ({
   booking: {
@@ -75,6 +76,7 @@ function Booking({
   start,
   end,
   paid,
+  fulfilled,
 }) {
   const classes = useStyles();
   const { profile, setProfile, getProfile, pullProfile } = useProfileContext();
@@ -84,14 +86,14 @@ function Booking({
   const [error, setError] = useState(null);
   const [success, onSuccess] = useState(null);
   const [noAccount, setNoAccount] = useState(false);
-  const id = isMyJobs ? user_id : sitter_id
+  const id = isMyJobs ? user_id : sitter_id;
   useEffect(() => {
-      const id = isMyJobs ? user_id : sitter_id
-      getProfile(id).then(result => {
-        setSrc(result.photo);
-        setName(`${result.firstName} ${result.lastName}`);
-      })
-  },[setSrc, isMyJobs, sitter_id, user_id, setName, getProfile])
+    const id = isMyJobs ? user_id : sitter_id;
+    getProfile(id).then((result) => {
+      setSrc(result.photo);
+      setName(`${result.firstName} ${result.lastName}`);
+    });
+  }, [setSrc, isMyJobs, sitter_id, user_id, setName, getProfile]);
   const handleAccept = () => {
     handleAcceptOrDecline(true);
   };
@@ -158,6 +160,7 @@ function Booking({
       setLoading(false);
     })();
   };
+	console.log(isMyJobs);
 
   return (
     <Card variant="outlined" className={classes.booking}>
@@ -214,6 +217,9 @@ function Booking({
                 Cancel
               </Button>
             )}
+			  { !isMyJobs && fulfilled === "PENDING" && (
+				  <Rating value={4}/>			
+			  ) }
           </Fragment>
         )}
       </div>

@@ -95,7 +95,7 @@ const getProfiles = async (req, res, next) => {
     toDate,
     page = 1,
     search = "",
-    searchBy = "none",
+    searchBy = "name",
   } = req.query;
   const errors = validationResult(req);
 
@@ -105,7 +105,7 @@ const getProfiles = async (req, res, next) => {
 
   let dateQuery = {};
   let searchByQuery = {};
-	let sort = "firstName";
+  let sort = "firstName";
 
   if (fromDate && toDate) {
     dateQuery = {
@@ -127,15 +127,15 @@ const getProfiles = async (req, res, next) => {
       searchByQuery = { address: reg };
     }
 
-	  if (searchBy === "location") { 
-		sort = "address";
-	  }
+    if (searchBy === "location") {
+      sort = "address";
+    }
 
     let [data] = await Profile.aggregate([
       {
         $match: {
           isSitter: true,
-          rating: ratingN > 0 ? { $eq: ratingN } : { $gte: ratingN },
+          rating: { $gte: ratingN },
           $and: [
             { hourlyRate: { $gte: Number(minPrice) } },
             { hourlyRate: { $lte: Number(maxPrice) } },
@@ -163,7 +163,7 @@ const getProfiles = async (req, res, next) => {
           photo: { $first: "$photo" },
         },
       },
-		{ $sort: { [sort]: 1} },
+      { $sort: { [sort]: 1 } },
       {
         $facet: {
           metadata: [

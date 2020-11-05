@@ -77,7 +77,7 @@ const Item = function (props) {
               {/*hourlyRate*/}
               <Grid item id="hourlyRate">
                 <Typography variant="body1" className={classes.bold}>
-                  ${hourlyRate}
+                  ${Number(hourlyRate).toFixed(2)}
                 </Typography>
               </Grid>
             </Grid>

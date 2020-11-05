@@ -228,11 +228,6 @@ const SearchFilter = function (props) {
               onChange={handleInputChange}
             >
               <FormControlLabel
-                value="none"
-                control={<Radio color="primary" />}
-                label="None"
-              />
-              <FormControlLabel
                 value="name"
                 control={<Radio color="primary" />}
                 label="Name"

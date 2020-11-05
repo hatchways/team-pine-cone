@@ -74,7 +74,7 @@ const form = {
   toDate: null,
   page: 1,
   search: "",
-  searchBy: "none",
+  searchBy: "name",
 };
 
 const ProfileListings = function () {

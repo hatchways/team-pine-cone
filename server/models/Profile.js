@@ -67,6 +67,14 @@ const profileSchema = new Schema({
       ref: "Request",
     },
   ],
+  stripe: {
+    customerId: {
+      type: String,
+    },
+    accountId: {
+      type: String,
+    },
+  },
   hourlyRate: {
     type: Number,
     default: 14.25,
@@ -87,18 +95,15 @@ const profileSchema = new Schema({
     ],
     default: "Loving Pet Sitter",
   },
+  notifications: [{
+    title: {type: String},
+    message: {type: String},
+    src: {type: String},
+    link: {type: String}
+  }],
   address: {
     type: String,
   },
-  stripeId: {
-    type: String,
-  },
-  requests: [
-    {
-      type: Schema.Types.ObjectId,
-      ref: "Request",
-    },
-  ],
 });
 
 profileSchema.pre("save", function (next) {

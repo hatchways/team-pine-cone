@@ -59,6 +59,9 @@ const getProfilesValidator = [
     .optional()
     .custom((value) => ["none", "name", "location"].includes(value)),
 ];
+const requestChargePayValidators = [
+  check("amount", "Amount must be an interger").exists().isCurrency(),
+];
 
 module.exports = {
   profileCreateValidator,
@@ -66,4 +69,5 @@ module.exports = {
   registerValidators,
   loginValidators,
   getProfilesValidator,
+  requestChargePayValidators,
 };

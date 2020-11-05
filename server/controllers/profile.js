@@ -75,7 +75,7 @@ const updateProfile = async (req, res, next) => {
       );
     }
 
-    return res.status(200).json({ profile: profile.toJSON() });
+    return res.status(200).json(profile);
   } catch (err) {
     if (!err.status) {
       if (checkDateErrors(err)) {
@@ -208,7 +208,7 @@ const getMyProfile = (req, res, next) => {
   if (!req.user) {
     next(createError(403));
   }
-  Profile.findById(req.user.profile)
+  Profile.findById(req.user.profile).populate("requests")
     .then((profile) => {
       res.status(200).json(profile);
     })

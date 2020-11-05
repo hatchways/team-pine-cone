@@ -1,15 +1,16 @@
 import "date-fns";
-import { addHours } from "date-fns";
-import React, { useState } from "react";
-import DateFnsUtils from "@date-io/date-fns";
-import { Grid, Avatar, Typography, Button, Grow } from "@material-ui/core";
+import { Grid, Avatar, Typography, Grow } from "@material-ui/core";
+import React, { useState, useEffect } from "react";
 import { Rating } from "@material-ui/lab";
 import { makeStyles } from "@material-ui/core/styles";
 import RoomIcon from "@material-ui/icons/Room";
-import { DateTimePicker, MuiPickersUtilsProvider } from "@material-ui/pickers";
 import useScrollToTop from "../hooks/useScrollToTop";
 import { useParams } from "react-router-dom";
-import { useFetch } from "../hooks/useFetch";
+import DateTimePickerRanges from "../components/DateTimePickerRanges";
+import { useProfileContext } from "../contexts/profile";
+import Splash from "../components/Splash";
+import ButtonLoad from "../components/ButtonLoad";
+import Snackbar from "../components/DefaultSnackbar";
 
 export const useStyles = makeStyles((theme) => ({
   root: {
@@ -73,11 +74,25 @@ export const useStyles = makeStyles((theme) => ({
 }));
 
 const ProfileDetails = function () {
-  const [selectDropIn, setSelectDropIn] = useState(addHours(new Date(), 1));
-  const [selectDropOff, setSelectDropOff] = useState(addHours(new Date(), 2));
+  const [selectDropIn, setSelectDropIn] = useState(null);
+  const [selectDropOff, setSelectDropOff] = useState(null);
   const classes = useStyles();
   const params = useParams();
-  const [profile] = useFetch({ init: {}, url: `/profile/${params.id}` });
+  const { getProfile, pullProfile } = useProfileContext();
+  const [profile, setProfileDetails] = useState({});
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [requestLoad, setRequestLoad] = useState(false);
+  const [requestError, setRequestError] = useState(null);
+  const [requestSuccess, setRequestSuccess] = useState(false);
+  useEffect(() => {
+    getProfile(params.id)
+      .then((result) => {
+        setProfileDetails(result);
+      })
+      .then(() => setLoading(false))
+      .catch((e) => setError(e.message));
+  }, [getProfile, params]);
 
   const {
     photo,
@@ -89,6 +104,7 @@ const ProfileDetails = function () {
     rating = 0,
     address = "CA",
     jobTitle = "Loving Dog Sitter",
+    availability,
   } = profile;
   const fullName = firstName ? firstName + " " + lastName : "";
 
@@ -96,142 +112,172 @@ const ProfileDetails = function () {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    console.log(selectDropIn, selectDropOff);
-    //api call
+    setRequestLoad(true);
+    if (requestSuccess) setRequestSuccess(false);
+    if (requestError) setRequestError(null);
+    fetch("/request/create", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        sitter_id: params.id,
+        start: selectDropIn,
+        end: selectDropOff,
+      }),
+    })
+      .then((res) => {
+        if (!res.ok) throw res;
+        pullProfile();
+      })
+      .then(() => setRequestSuccess(true))
+      .catch(() => setRequestError("Request failed."))
+      .finally(() => setRequestLoad(false));
   };
 
   return (
-    <Grow in={true}>
-      <Grid className={classes.root} container>
-        <Grid item md={7} className={classes.profile}>
-          <Grid direction="column" container>
-            <Grid item>
-              <div className={classes.banner}></div>
-            </Grid>
-            <Grid item direction="column" container alignItems="center">
+    <Splash loading={loading}>
+      {requestSuccess && (
+        <Snackbar
+          open={requestSuccess}
+          message="Request Success!"
+          severity="success"
+        />
+      )}
+      <Grow in={true}>
+        <Grid className={classes.root} container>
+          {(error || requestError) && (
+            <Snackbar
+              open={error || requestError}
+              message={error || requestError}
+            />
+          )}
+          <Grid item md={7} className={classes.profile}>
+            <Grid direction="column" container>
               <Grid item>
-                <Avatar className={classes.avatar} src={photo} alt={fullName} />
+                <div className={classes.banner} />
               </Grid>
-              <Grid item>
-                <Typography className={classes.name} variant="h4">
-                  {fullName}
-                </Typography>
-              </Grid>
-              <Grid item>
-                <Typography
-                  variant="body1"
-                  className={classes.subtile}
-                  paragraph
-                  style={{ marginTop: "0.5em" }}
+              <Grid item direction="column" container alignItems="center">
+                <Grid item>
+                  <Avatar
+                    className={classes.avatar}
+                    src={photo}
+                    alt={fullName}
+                  />
+                </Grid>
+                <Grid item>
+                  <Typography className={classes.name} variant="h4">
+                    {fullName}
+                  </Typography>
+                </Grid>
+                <Grid item>
+                  <Typography
+                    variant="body1"
+                    className={classes.subtile}
+                    paragraph
+                  >
+                    {jobTitle}
+                  </Typography>
+                </Grid>
+                <Grid
+                  container
+                  spacing={2}
+                  justify="center"
+                  alignItems="center"
                 >
-                  {jobTitle}
-                </Typography>
-              </Grid>
-              <Grid container spacing={2} justify="center" alignItems="center">
-                <Grid item>
-                  <RoomIcon fontSize="large" color="primary" />
-                </Grid>
-                <Grid item>
-                  <Typography className={classes.subtile}>{address}</Typography>
-                </Grid>
-              </Grid>
-            </Grid>
-            <Grid container direction="column" className={classes.about}>
-              <Grid item>
-                <Typography className={classes.name} gutterBottom variant="h5">
-                  About me
-                </Typography>
-              </Grid>
-              <Grid item className={classes.mb2}>
-                <Typography paragraph gutterBottom>
-                  {description}
-                </Typography>
-              </Grid>
-              <Grid container>
-                {images.map((url, i) => (
-                  <Grid item key={url + i} xs={6} sm={3}>
-                    <img
-                      className={classes.pet}
-                      src={url}
-                      alt={"Pet " + (i + 1)}
-                    />
+                  <Grid item>
+                    <RoomIcon fontSize="large" color="primary" />
                   </Grid>
-                ))}
+                  <Grid item>
+                    <Typography className={classes.subtile}>
+                      {/*TEMP*/}
+                      {address}
+                    </Typography>
+                  </Grid>
+                </Grid>
+              </Grid>
+              <Grid container direction="column" className={classes.about}>
+                <Grid item>
+                  <Typography
+                    className={classes.name}
+                    gutterBottom
+                    variant="h5"
+                  >
+                    About me
+                  </Typography>
+                </Grid>
+                <Grid item className={classes.mb2}>
+                  <Typography paragraph gutterBottom>
+                    {description}
+                  </Typography>
+                </Grid>
+                <Grid container>
+                  {images.map((url, i) => (
+                    <Grid item key={url + i} xs={6} sm={3}>
+                      <img
+                        className={classes.pet}
+                        src={url}
+                        alt={"Pet " + (i + 1)}
+                      />
+                    </Grid>
+                  ))}
+                </Grid>
               </Grid>
             </Grid>
           </Grid>
-        </Grid>
 
-        {/*Drop Form*/}
-        <Grid
-          onSubmit={handleSubmit}
-          component="form"
-          className={classes.dropInfo}
-          item
-          md={5}
-        >
+          {/*Drop Form*/}
           <Grid
-            container
-            className={classes.mb2}
-            alignItems="center"
-            direction="column"
+            onSubmit={handleSubmit}
+            component="form"
+            className={classes.dropInfo}
+            item
+            md={5}
           >
-            <Grid item>
-              <Typography paragraph variant="h4">
-                ${Number(hourlyRate).toFixed(2)}/hr
-              </Typography>
-            </Grid>
-            <Grid item>
-              <Rating value={rating} name="read-only" readOnly />
-            </Grid>
-          </Grid>
-          <Grid item className={classes.mb3}>
-            <MuiPickersUtilsProvider utils={DateFnsUtils}>
-              <Grid
-                container
-                alignItems="center"
-                direction="column"
-                spacing={2}
-              >
-                <Grid item xs={6}>
-                  <DateTimePicker
-                    strictCompareDates
-                    disablePast
-                    fullWidth
-                    value={selectDropIn}
-                    onChange={setSelectDropIn}
-                    label="Drop In"
-                    inputVariant="outlined"
-                  />
-                </Grid>
-                <Grid item xs={6}>
-                  <DateTimePicker
-                    disablePast
-                    strictCompareDates
-                    fullWidth
-                    value={selectDropOff}
-                    onChange={setSelectDropOff}
-                    label="Drop Off"
-                    inputVariant="outlined"
-                  />
-                </Grid>
-              </Grid>
-            </MuiPickersUtilsProvider>
-          </Grid>
-          <Grid item>
-            <Button
-              variant="contained"
-              size="large"
-              type="submit"
-              color="primary"
-              fullWidth
+            <Grid
+              container
+              className={classes.mb2}
+              alignItems="center"
+              direction="column"
             >
-              Send Request
-            </Button>
+              <Grid item>
+                <Typography paragraph variant="h4">
+                  {Number(hourlyRate).toFixed(2)}/hr
+                </Typography>
+              </Grid>
+              <Grid item>
+                <Rating value={rating} name="read-only" readOnly />
+              </Grid>
+            </Grid>
+            <Grid item className={classes.mb3}>
+              {!loading && (
+                <DateTimePickerRanges
+                  onChangeLeft={setSelectDropIn}
+                  onChangeRight={setSelectDropOff}
+                  leftValue={selectDropIn}
+                  rightValue={selectDropOff}
+                  labelLeft="Drop In"
+                  labelRight="Drop Off"
+                  ranges={availability}
+                />
+              )}
+            </Grid>
+            <Grid item>
+              <ButtonLoad
+                variant="contained"
+                size="large"
+                type="submit"
+                color="primary"
+                fullWidth
+                loading={requestLoad}
+              >
+                Send Request
+              </ButtonLoad>
+            </Grid>
           </Grid>
         </Grid>
-      </Grid>
-    </Grow>
+      </Grow>
+    </Splash>
   );
 };
 

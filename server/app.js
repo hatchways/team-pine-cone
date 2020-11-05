@@ -25,6 +25,7 @@ const loginRouter = require("./routes/login");
 const logoutRouter = require("./routes/logout");
 const userRouter = require("./routes/user");
 const uploadRouter = require("./routes/upload");
+const requestRouter = require("./routes/request");
 
 const { json, urlencoded } = express;
 
@@ -45,6 +46,7 @@ app.use("/register", registerRouter);
 app.use("/login", loginRouter);
 app.use("/logout", logoutRouter);
 app.use("/upload", uploadRouter);
+app.use("/request", requestRouter);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
@@ -52,7 +54,7 @@ app.use(function(req, res, next) {
 });
 
 // error handler
-app.use(function(err, req, res) {
+app.use(function(err, req, res, next) {
   // set locals, only providing error in development
   res.locals.message = err.message;
   res.locals.error = req.app.get("env") === "development" ? err : {};

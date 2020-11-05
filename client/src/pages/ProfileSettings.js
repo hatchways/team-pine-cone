@@ -24,6 +24,7 @@ import ProfileEdit from "../components/ProfileEdit";
 import { useUserContext } from "../contexts/user";
 import Availability from "../components/Availability";
 import { useProfileContext } from "../contexts/profile";
+import MyNotifications from "../components/MyNotifications";
 
 const drawerWidth = 240;
 const useStyles = makeStyles((theme) => ({
@@ -150,6 +151,7 @@ function ProfileSettings() {
       <div className={classes.content}>
         <Toolbar />
         <Card className={classes.card}>
+          <Route exact path={origin} component={MyNotifications} />
           <Route path={`${origin}/edit-profile`} component={ProfileEdit}/>
           <Route path={`${origin}/profile-photo`} component={EditProfilePhoto} />
           {profile && profile.isSitter && <Route path={`${origin}/availability`} component={Availability} />}

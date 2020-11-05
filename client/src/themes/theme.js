@@ -27,4 +27,7 @@ export const theme = createMuiTheme({
       padding: "1.5em 7em",
     },
   },
+	boxShadows: { 
+		main: "0px 0px 26px -5px rgba(0,0,0,0.75)"
+	}
 });

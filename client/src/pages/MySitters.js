@@ -10,7 +10,6 @@ function MySitters(props) {
             profile.notifications = profile.notifications.filter(
               (notification) => notification.link !== "my-sitters"
             );
-            console.log(profile.notifications)
             setProfile(profile);
             fetch(`/profile/${profile._id}`, {
               method: "PUT",

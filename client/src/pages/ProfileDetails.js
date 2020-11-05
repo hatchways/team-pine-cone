@@ -1,6 +1,6 @@
 import "date-fns";
 import { Grid, Avatar, Typography, Grow } from "@material-ui/core";
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { Rating } from "@material-ui/lab";
 import { makeStyles } from "@material-ui/core/styles";
 import RoomIcon from "@material-ui/icons/Room";
@@ -11,6 +11,7 @@ import { useProfileContext } from "../contexts/profile";
 import Splash from "../components/Splash";
 import ButtonLoad from "../components/ButtonLoad";
 import Snackbar from "../components/DefaultSnackbar";
+import { useFetch } from "../hooks/useFetch";
 
 export const useStyles = makeStyles((theme) => ({
   root: {
@@ -78,21 +79,14 @@ const ProfileDetails = function () {
   const [selectDropOff, setSelectDropOff] = useState(null);
   const classes = useStyles();
   const params = useParams();
-  const { getProfile, pullProfile } = useProfileContext();
-  const [profile, setProfileDetails] = useState({});
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+  const { pullProfile } = useProfileContext();
   const [requestLoad, setRequestLoad] = useState(false);
   const [requestError, setRequestError] = useState(null);
   const [requestSuccess, setRequestSuccess] = useState(false);
-  useEffect(() => {
-    getProfile(params.id)
-      .then((result) => {
-        setProfileDetails(result);
-      })
-      .then(() => setLoading(false))
-      .catch((e) => setError(e.message));
-  }, [getProfile, params]);
+  const [profile, loading, error] = useFetch({
+    init: {},
+    url: `/profile/${params.id}`,
+  });
 
   const {
     photo,
@@ -101,7 +95,7 @@ const ProfileDetails = function () {
     description,
     images = [],
     hourlyRate = "$14.25",
-    rating = 0,
+    rating: { average = 0 } = {},
     address = "CA",
     jobTitle = "Loving Dog Sitter",
     availability,
@@ -246,7 +240,7 @@ const ProfileDetails = function () {
                 </Typography>
               </Grid>
               <Grid item>
-                <Rating value={rating} name="read-only" readOnly />
+                <Rating value={average} name="read-only" readOnly />
               </Grid>
             </Grid>
             <Grid item className={classes.mb3}>

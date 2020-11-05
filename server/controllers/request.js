@@ -173,6 +173,20 @@ const updateRequest = (req, res, next) => {
             console.log(e);
             res.status(503).end();
           });
+      } else if (req.body.rating) {
+        request.fulfillComplete(Number(req.body.rating));
+        Profile.findById(req.user.profile).then((profile) => {
+          notifier.notify(request.sitter_id, {
+            title: `Booking Fulfilled`,
+            message: `Your job for ${profile.firstName} ${profile.lastName} is done. Thank you for being a LovingSitter!`,
+            src: profile.photo,
+            link:
+              req.user.profile === request.user_id ? "/my-jobs" : "my-sitters",
+          });
+        });
+        return Request.findByIdAndRemove(request._id).then(() =>
+          res.json(204).end()
+        );
       }
       const notifyId =
         req.user.profile.toString() === request.user_id.toString()

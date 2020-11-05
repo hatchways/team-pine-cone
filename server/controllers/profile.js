@@ -74,7 +74,7 @@ const updateProfile = async (req, res, next) => {
         { email: email.toLowerCase() }
       );
     }
-    
+
     return res.status(200).json(profile);
   } catch (err) {
     if (!err.status) {
@@ -135,7 +135,7 @@ const getProfiles = async (req, res, next) => {
       {
         $match: {
           isSitter: true,
-          rating: { $gte: ratingN },
+          "rating.average": { $gte: ratingN },
           $and: [
             { hourlyRate: { $gte: Number(minPrice) } },
             { hourlyRate: { $lte: Number(maxPrice) } },
@@ -174,6 +174,7 @@ const getProfiles = async (req, res, next) => {
         },
       },
     ]);
+    console.log(data);
 
     return res.status(200).json({ ...data });
   } catch (err) {

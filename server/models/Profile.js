@@ -80,9 +80,18 @@ const profileSchema = new Schema({
     default: 14.25,
   },
   rating: {
-    type: Number,
-    enum: [0, 1, 2, 3, 4, 5],
-    default: 0,
+    average: {
+      type: Number,
+      default: 0,
+    },
+    total: {
+      type: Number,
+      default: 0,
+    },
+    tally: {
+      type: Number,
+      default: 0,
+    },
   },
   jobTitle: {
     type: String,
@@ -95,12 +104,14 @@ const profileSchema = new Schema({
     ],
     default: "Loving Pet Sitter",
   },
-  notifications: [{
-    title: {type: String},
-    message: {type: String},
-    src: {type: String},
-    link: {type: String}
-  }],
+  notifications: [
+    {
+      title: { type: String },
+      message: { type: String },
+      src: { type: String },
+      link: { type: String },
+    },
+  ],
   address: {
     type: String,
   },
@@ -109,6 +120,17 @@ const profileSchema = new Schema({
     ref: "Conversation"
   }]
 });
+
+profileSchema.statics.applyRating = async function (sitter_id, score) {
+  const sitter = await Profile.findById(sitter_id);
+  const {
+    rating: { total, average, tally },
+  } = sitter;
+  sitter.rating.tally = tally + 1;
+  sitter.rating.total = total + score;
+  sitter.rating.average = sitter.rating.total / sitter.rating.tally;
+  await sitter.save();
+};
 
 profileSchema.pre("save", function (next) {
   if (this.availability) {

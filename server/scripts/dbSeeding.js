@@ -69,7 +69,10 @@ const ratings = [0, 1, 2, 3, 4, 5];
         birthDate: randomBirthDate,
         description: lorem.paragraph(),
         isSitter: i > 1,
-        rating: random.arrayElement(ratings),
+        rating: {
+          total: 0,
+          average: 0,
+        },
         hourlyRate: random.float({
           min: 0,
           max: 50,

@@ -74,7 +74,7 @@ const updateProfile = async (req, res, next) => {
         { email: email.toLowerCase() }
       );
     }
-
+    
     return res.status(200).json(profile);
   } catch (err) {
     if (!err.status) {
@@ -124,7 +124,15 @@ const getMyProfile = (req, res, next) => {
   if (!req.user) {
     next(createError(403));
   }
-  Profile.findById(req.user.profile).populate("requests").populate("conversations")
+  Profile.findById(req.user.profile)
+    .populate("requests")
+    .populate({
+      path: "conversations",
+      populate: {
+        path: "messages",
+        model: "Message",
+      },
+    })
     .then((profile) => {
       res.status(200).json(profile);
     })

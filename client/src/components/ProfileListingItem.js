@@ -25,7 +25,7 @@ const Item = function (props) {
   // go to individual listing from here
   const handleClick = () => history.push(`/profiles/${_id}`);
 
-  return me._id !== _id ? (
+  return !me || me._id !== _id ? (
     <Grid item xs={12} className={classes.card} onClick={handleClick}>
       <Grow in={true}>
         <Grid container spacing={2} direction="column" alignItems="center">

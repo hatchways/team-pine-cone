@@ -16,7 +16,7 @@ import {
 import { makeStyles } from "@material-ui/core/styles";
 import MoreVertIcon from "@material-ui/icons/MoreVert";
 import { useUserContext } from "../contexts/user";
-import { ProfileContext, useProfileContext } from "../contexts/profile";
+import { useProfileContext } from "../contexts/profile";
 
 const useStyles = makeStyles((theme) => ({
   navDisplay: {

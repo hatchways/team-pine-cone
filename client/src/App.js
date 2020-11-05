@@ -37,7 +37,7 @@ function App() {
               <ProfileProvider>
                 <SocketHandler>
                   <Navbar />
-                  <PrivateRoute exact path="/me" component={ProfileSettings} />
+                  <PrivateRoute path="/me" component={ProfileSettings} />
                   <Route exact path="/profiles/" component={ProfileListings} />
                   <Route exact path="/profiles/:id" component={ProfileDetails} />
                   <PrivateRoute exact path="/become-a-sitter" component={BecomeASitter} />

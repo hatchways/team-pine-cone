@@ -4,6 +4,8 @@ const { Request, Profile } = require("../models/");
 const { validationResult } = require("express-validator");
 const stripe = require("stripe")(STRIPE_SECRET);
 const notifier = require("../utils/notification");
+const Conversation = require("../models/Conversation");
+const { io } = require("../utils/socket");
 
 const getRequestsByUser = (req, res, next) => {
   if (!req.user) {
@@ -130,6 +132,38 @@ const updateRequest = (req, res, next) => {
       if (req.body.accepted) {
         request.accept();
         request.save();
+        const conversation = new Conversation({
+          user_id: request.user_id,
+          sitter_id: request.sitter_id,
+          request_id: request._id,
+          messages: [],
+        });
+        conversation.save().then((conversation) => {
+          Profile.findById(conversation.user_id)
+            .populate("requests")
+            .populate({
+              path: "conversations",
+              populate: {
+                path: "messages",
+                model: "Message",
+              },
+            })
+            .then((profile) => {
+              io.to(profile._id.toString()).emit("update", profile);
+            });
+          Profile.findById(conversation.sitter_id)
+            .populate("requests")
+            .populate({
+              path: "conversations",
+              populate: {
+                path: "messages",
+                model: "Message",
+              },
+            })
+            .then((profile) => {
+              io.to(profile._id.toString()).emit("update", profile);
+            });
+        });
       } else if (req.body.declined) {
         Request.findByIdAndRemove(req.params.id)
           .then(() => {
@@ -158,19 +192,28 @@ const updateRequest = (req, res, next) => {
         req.user.profile.toString() === request.user_id.toString()
           ? request.sitter_id
           : request.user_id;
-      Profile.findById(req.user.profile).then((profile) => {
-        notifier.notify(notifyId, {
-          title: `Booking ${req.body.accepted ? "Accepted" : "Declined"}`,
-          message: `${req.body.accepted ? "Yay!" : "Sorry!"} ${
-            profile.firstName
-          } ${profile.lastName} ${
-            req.body.accepted ? "accepted" : "declined"
-          } your booking.`,
-          src: profile.photo,
-          link:
-            req.user.profile === request.user_id ? "/my-jobs" : "my-sitters",
+      Profile.findById(req.user.profile)
+        .populate("requests")
+        .populate({
+          path: "conversations",
+          populate: {
+            path: "messages",
+            model: "Message",
+          },
+        })
+        .then((profile) => {
+          notifier.notify(notifyId, {
+            title: `Booking ${req.body.accepted ? "Accepted" : "Declined"}`,
+            message: `${req.body.accepted ? "Yay!" : "Sorry!"} ${
+              profile.firstName
+            } ${profile.lastName} ${
+              req.body.accepted ? "accepted" : "declined"
+            } your booking.`,
+            src: profile.photo,
+            link:
+              req.user.profile === request.user_id ? "/my-jobs" : "my-sitters",
+          });
         });
-      });
       res.status(200).json(request);
     })
     .catch((e) => {

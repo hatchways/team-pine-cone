@@ -20,7 +20,7 @@ function BecomeASitter() {
     };
     fetch(`/profile/${profile._id}`, options).then(response => {
       response.json().then(result => {
-        setProfile(result.profile);
+        setProfile(result);
         setRedirect(true);
       });
     });

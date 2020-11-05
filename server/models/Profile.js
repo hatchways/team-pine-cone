@@ -115,6 +115,10 @@ const profileSchema = new Schema({
   address: {
     type: String,
   },
+  conversations: [{
+    type: Schema.Types.ObjectId,
+    ref: "Conversation"
+  }]
 });
 
 profileSchema.statics.applyRating = async function (sitter_id, score) {

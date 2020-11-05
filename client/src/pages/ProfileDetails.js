@@ -1,6 +1,6 @@
 import "date-fns";
-import React, { useState } from "react";
 import { Grid, Avatar, Typography, Grow } from "@material-ui/core";
+import React, { useState } from "react";
 import { Rating } from "@material-ui/lab";
 import { makeStyles } from "@material-ui/core/styles";
 import RoomIcon from "@material-ui/icons/Room";
@@ -96,7 +96,8 @@ const ProfileDetails = function () {
     images = [],
     hourlyRate = "$14.25",
     rating: { average = 0 } = {},
-    location = {},
+    address = "CA",
+    jobTitle = "Loving Dog Sitter",
     availability,
   } = profile;
   const fullName = firstName ? firstName + " " + lastName : "";
@@ -169,7 +170,7 @@ const ProfileDetails = function () {
                     className={classes.subtile}
                     paragraph
                   >
-                    Loving Dog Sitter
+                    {jobTitle}
                   </Typography>
                 </Grid>
                 <Grid
@@ -184,7 +185,7 @@ const ProfileDetails = function () {
                   <Grid item>
                     <Typography className={classes.subtile}>
                       {/*TEMP*/}
-                      {location.address || "Toronto, Ontario"}
+                      {address}
                     </Typography>
                   </Grid>
                 </Grid>
@@ -235,7 +236,7 @@ const ProfileDetails = function () {
             >
               <Grid item>
                 <Typography paragraph variant="h4">
-                  {hourlyRate}
+                  {Number(hourlyRate).toFixed(2)}/hr
                 </Typography>
               </Grid>
               <Grid item>

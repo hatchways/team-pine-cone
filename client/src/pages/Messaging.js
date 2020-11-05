@@ -1,7 +1,9 @@
-import { Drawer, Toolbar, makeStyles, List } from '@material-ui/core';
-import React, { Fragment } from 'react';
-import ConversationSidebar from '../components/ConversationSidebar';
-import { useProfileContext } from '../contexts/profile';
+import { Drawer, Toolbar, makeStyles, List, Card } from "@material-ui/core";
+import React from "react";
+import { Route } from "react-router-dom";
+import Conversation from "../components/Conversation";
+import ConversationSidebar from "../components/ConversationSidebar";
+import { useProfileContext } from "../contexts/profile";
 
 const drawerWidth = 300;
 const useStyles = makeStyles((theme) => ({
@@ -51,24 +53,33 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 function Messaging(props) {
-    const {profile} = useProfileContext();
-    const classes = useStyles();
-    return (
-        <div className={classes.root}>
-            <Drawer
-            variant="permanent"
-            className={classes.drawer}
-            classes={{ paper: classes.drawerPaper }}
-            >
-            <Toolbar />
-                <List className={classes.drawerContainer}>
-                    {profile && profile.conversations.map(conversation => (
-                        <ConversationSidebar key={conversation._id} {...conversation} />
-                    ))}
-                </List>
-            </Drawer>
-        </div>
-    );
+  const { profile } = useProfileContext();
+  const classes = useStyles();
+  return (
+    <div className={classes.root}>
+      <Drawer
+        variant="permanent"
+        className={classes.drawer}
+        classes={{ paper: classes.drawerPaper }}
+      >
+        <Toolbar />
+        <List className={classes.drawerContainer}>
+          {profile &&
+            profile.conversations.map((conversation) => (
+              <ConversationSidebar key={conversation._id} {...conversation} />
+            ))}
+        </List>
+      </Drawer>
+      <div className={classes.content}>
+        <Toolbar />
+        <Route exact path="/messages/:id">
+          <Card className={classes.card}>
+            <Conversation />
+          </Card>
+        </Route>
+      </div>
+    </div>
+  );
 }
 
 export default Messaging;

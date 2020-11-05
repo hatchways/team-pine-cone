@@ -1,6 +1,6 @@
 import "date-fns";
 import React, { useState } from "react";
-import { Grid, Typography } from "@material-ui/core/";
+import { Grid } from "@material-ui/core/";
 import { DateTimePicker, MuiPickersUtilsProvider } from "@material-ui/pickers";
 import DateFnsUtils from "@date-io/date-fns";
 import { isSameDay, format } from "date-fns";
@@ -53,10 +53,6 @@ const DateTimePickerRanges = function ({
 }) {
   const [leftError, setLeftError] = useState("");
   const [rightError, setRightError] = useState("");
-  const [minDate, setMindate] = useState(sortDBDates(ranges)[0]);
-  const [maxDate, setMaxDate] = useState(
-    sortDBDates(ranges)[ranges.length - 1]
-  );
 
   const leftHandler = (day) => {
     setRightError("");
@@ -99,13 +95,6 @@ const DateTimePickerRanges = function ({
     <>
       <MuiPickersUtilsProvider utils={DateFnsUtils}>
         <Grid container alignItems="center" direction="column" spacing={2}>
-          <Typography variant="subtitle1" color="primary">
-            From:{ " " }
-            {format(new Date(minDate.start), "MMM do yyyy h:mm a")}
-          </Typography>
-          <Typography variant="subtitle1" color="primary">
-            To: {format(new Date(maxDate.end), "MMM do yyyy h:mm a")}
-          </Typography>
           <Grid item xs={6}>
             <DateTimePicker
               clearable

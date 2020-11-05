@@ -1,4 +1,4 @@
-import { Avatar, Button, Card, makeStyles } from "@material-ui/core";
+import { Avatar, Button, Card, makeStyles, Typography } from "@material-ui/core";
 import React, { Fragment, useEffect, useState } from "react";
 import { useProfileContext } from "../contexts/profile";
 import moment from "moment";
@@ -160,7 +160,7 @@ function Booking({
       setLoading(false);
     })();
   };
-	console.log(isMyJobs);
+	console.log(success,fulfilled);
 
   return (
     <Card variant="outlined" className={classes.booking}>
@@ -174,7 +174,14 @@ function Booking({
         {formatDate(start)} - {formatDate(end)}
       </h3>
       <div className={classes.buttons}>
-        {!isBooking && !isMyJobs ? (
+		 { success || fulfilled === "PENDING" ? (
+			 <div>
+				 <Typography variant="h6">
+					Please Rate the sitter
+				 </Typography>
+			<Rating value={5} />
+			</div>
+		 ) : !isBooking && !isMyJobs ? (
           <Button
             onClick={handleDecline}
             color="primary"
@@ -217,9 +224,6 @@ function Booking({
                 Cancel
               </Button>
             )}
-			  { !isMyJobs && fulfilled === "PENDING" && (
-				  <Rating value={4}/>			
-			  ) }
           </Fragment>
         )}
       </div>

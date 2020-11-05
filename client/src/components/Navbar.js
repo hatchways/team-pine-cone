@@ -42,6 +42,7 @@ function Navigation({
   handleClose,
   profile,
 }) {
+  const reducer = (accumulator, currentValue) => accumulator + currentValue;
   const navLinks = [
     {
       title: "Become A Sitter",
@@ -113,17 +114,46 @@ function Navigation({
         {navLinks.map(({ title, path }) => (
           <NavLink className={classes.linkText} to={path} key={title}>
             <ListItem button>
-              <ListItemText primary={title} />
+              {title === "Messages" ? (
+                <Badge
+                  badgeContent={
+                    profile
+                      ? profile.conversations
+                          .map(
+                            (conversation) =>
+                              conversation.messages.filter(
+                                (x) =>
+                                  !x[
+                                    profile._id === conversation.user_id
+                                      ? "read_by_user"
+                                      : "read_by_sitter"
+                                  ]
+                              ).length
+                          )
+                          .reduce(reducer)
+                      : 0
+                  }
+                  color="primary"
+                >
+                  <ListItemText primary={title} />
+                </Badge>
+              ) : (
+                <ListItemText primary={title} />
+              )}
             </ListItem>
           </NavLink>
         ))}
         <NavLink className={classes.linkText} to="/me">
-          <Badge badgeContent={profile ? profile.notifications.length : 0} className={classes.notification} color="primary">
+          <Badge
+            badgeContent={profile ? profile.notifications.length : 0}
+            className={classes.notification}
+            color="primary"
+          >
             {profile && profile.photo ? (
               <Avatar src={profile.photo} />
-              ) : (
-                <Avatar>{profile ? profile.firstName[0] : "?"}</Avatar>
-                )}
+            ) : (
+              <Avatar>{profile ? profile.firstName[0] : "?"}</Avatar>
+            )}
           </Badge>
         </NavLink>
       </List>

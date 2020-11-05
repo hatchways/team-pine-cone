@@ -19,23 +19,8 @@ const conversationSchema = new Schema({
   },
   messages: [
     {
-      sender: {
-        type: Schema.Types.ObjectId,
-        ref: "Profile",
-        required: true,
-      },
-      body: {
-        type: String,
-        required: true,
-      },
-      read_by_sitter: {
-        type: Boolean,
-        default: false,
-      },
-      read_by_user: {
-        type: Boolean,
-        default: false,
-      },
+      type: Schema.Types.ObjectId,
+      ref: "Message"
     },
   ],
 });

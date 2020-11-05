@@ -10,7 +10,6 @@ const useStyles = makeStyles(theme => ({
         width: "100%",
         marginTop: 30,
         marginBottom: 10,
-        borderTop: "1px solid #cccccc",
         paddingTop: 40
     },
     emptyText: {
@@ -28,7 +27,7 @@ const useStyles = makeStyles(theme => ({
     },
     message: {
         padding: 10,
-        width: "60%",
+        maxWidth: "60%",
         marginBottom: 10,
         borderRadius: 10,
         fontWeight: 700

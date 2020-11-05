@@ -21,6 +21,7 @@ import { STRIPE_PUBLIC_KEY } from "./data/stripe";
 import { Elements } from "@stripe/react-stripe-js";
 import { loadStripe } from "@stripe/stripe-js";
 import Messaging from "./pages/Messaging";
+import Landing from "./pages/Landing";
 
 const stripe = loadStripe(STRIPE_PUBLIC_KEY);
 
@@ -30,13 +31,13 @@ function App() {
       <BrowserRouter>
         <Elements stripe={stripe}>
           <AuthProvider>
+            <ProfileProvider>
+            <Navbar />
             <Switch>
-              <Route exact path="/" component={ProfileListings}/>
+              <Route exact path="/" component={Landing}/>
               <Route exact path="/signup" component={SignUp} />
               <Route exact path="/login" component={Login} />
-              <ProfileProvider>
                 <SocketHandler>
-                  <Navbar />
                   <PrivateRoute path="/me" component={ProfileSettings} />
                   <Route exact path="/profiles/" component={ProfileListings} />
                   <Route exact path="/profiles/:id" component={ProfileDetails} />
@@ -45,8 +46,8 @@ function App() {
                   <PrivateRoute exact path="/my-jobs" component={MyJobs} />
                   <PrivateRoute path="/messages" component={Messaging}/>
                 </SocketHandler>
-              </ProfileProvider>
             </Switch>
+              </ProfileProvider>
           </AuthProvider>
         </Elements>
       </BrowserRouter>

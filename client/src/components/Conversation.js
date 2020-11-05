@@ -90,7 +90,7 @@ function Conversation(props) {
                 <p className={classes.emptyText}>Be the first to say "Hello!"</p>
             )}
             <TextField multiline className={classes.input} placeholder="Send a message..." value={message} onChange={handleChange} />
-            <Button variant="contained" color="primary" onClick={handleSend}>Send</Button>
+            <Button size="large" variant="contained" color="primary" onClick={handleSend}>Send</Button>
         </div>
     );
 }

@@ -1,5 +1,6 @@
-import React, { useState, useEffect } from "react";
-import { Grid, Avatar, Typography, Button, Grow } from "@material-ui/core";
+import "date-fns";
+import { Grid, Avatar, Typography, Grow } from "@material-ui/core";
+import React, { useState } from "react";
 import { Rating } from "@material-ui/lab";
 import { makeStyles } from "@material-ui/core/styles";
 import RoomIcon from "@material-ui/icons/Room";
@@ -8,7 +9,9 @@ import { useParams } from "react-router-dom";
 import DateTimePickerRanges from "../components/DateTimePickerRanges";
 import { useProfileContext } from "../contexts/profile";
 import Splash from "../components/Splash";
+import ButtonLoad from "../components/ButtonLoad";
 import Snackbar from "../components/DefaultSnackbar";
+import { useFetch } from "../hooks/useFetch";
 
 export const useStyles = makeStyles((theme) => ({
   root: {
@@ -24,7 +27,8 @@ export const useStyles = makeStyles((theme) => ({
     },
   },
   banner: {
-    background: `radial-gradient(circle, rgba(255,255,255,1) 0%, rgba(223,27,27,1) 100%);`,
+    background:
+      "radial-gradient(circle, rgba(255,255,255,1) 0%, rgba(223,27,27,1) 100%);",
     width: "100%",
     height: "300px",
     borderRadius: "10px",
@@ -75,18 +79,14 @@ const ProfileDetails = function () {
   const [selectDropOff, setSelectDropOff] = useState(null);
   const classes = useStyles();
   const params = useParams();
-  const { getProfile, pullProfile } = useProfileContext();
-  const [profile, setProfileDetails] = useState({});
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
-  useEffect(() => {
-    getProfile(params.id)
-      .then((result) => {
-        setProfileDetails(result);
-      })
-      .then(() => setLoading(false))
-      .catch((e) => setError(e.message));
-  }, [getProfile, params]);
+  const { pullProfile } = useProfileContext();
+  const [requestLoad, setRequestLoad] = useState(false);
+  const [requestError, setRequestError] = useState(null);
+  const [requestSuccess, setRequestSuccess] = useState(false);
+  const [profile, loading, error] = useFetch({
+    init: {},
+    url: `/profile/${params.id}`,
+  });
 
   const {
     photo,
@@ -95,8 +95,9 @@ const ProfileDetails = function () {
     description,
     images = [],
     hourlyRate = "$14.25",
-    ratings = 0,
-    location = {},
+    rating: { average = 0 } = {},
+    address = "CA",
+    jobTitle = "Loving Dog Sitter",
     availability,
   } = profile;
   const fullName = firstName ? firstName + " " + lastName : "";
@@ -105,6 +106,9 @@ const ProfileDetails = function () {
 
   const handleSubmit = (e) => {
     e.preventDefault();
+    setRequestLoad(true);
+    if (requestSuccess) setRequestSuccess(false);
+    if (requestError) setRequestError(null);
     fetch("/request/create", {
       method: "POST",
       headers: {
@@ -115,16 +119,33 @@ const ProfileDetails = function () {
         start: selectDropIn,
         end: selectDropOff,
       }),
-    }).then(() => {
-      pullProfile();
-    });
+    })
+      .then((res) => {
+        if (!res.ok) throw res;
+        pullProfile();
+      })
+      .then(() => setRequestSuccess(true))
+      .catch(() => setRequestError("Request failed."))
+      .finally(() => setRequestLoad(false));
   };
 
   return (
     <Splash loading={loading}>
+      {requestSuccess && (
+        <Snackbar
+          open={requestSuccess}
+          message="Request Success!"
+          severity="success"
+        />
+      )}
       <Grow in={true}>
         <Grid className={classes.root} container>
-          <Snackbar open={error} />
+          {(error || requestError) && (
+            <Snackbar
+              open={error || requestError}
+              message={error || requestError}
+            />
+          )}
           <Grid item md={7} className={classes.profile}>
             <Grid direction="column" container>
               <Grid item>
@@ -149,7 +170,7 @@ const ProfileDetails = function () {
                     className={classes.subtile}
                     paragraph
                   >
-                    Loving Dog Sitter
+                    {jobTitle}
                   </Typography>
                 </Grid>
                 <Grid
@@ -164,7 +185,7 @@ const ProfileDetails = function () {
                   <Grid item>
                     <Typography className={classes.subtile}>
                       {/*TEMP*/}
-                      {location.address || "Toronto, Ontario"}
+                      {address}
                     </Typography>
                   </Grid>
                 </Grid>
@@ -215,11 +236,11 @@ const ProfileDetails = function () {
             >
               <Grid item>
                 <Typography paragraph variant="h4">
-                  {hourlyRate}
+                  {Number(hourlyRate).toFixed(2)}/hr
                 </Typography>
               </Grid>
               <Grid item>
-                <Rating value={ratings} name="read-only" readOnly />
+                <Rating value={average} name="read-only" readOnly />
               </Grid>
             </Grid>
             <Grid item className={classes.mb3}>
@@ -236,15 +257,16 @@ const ProfileDetails = function () {
               )}
             </Grid>
             <Grid item>
-              <Button
+              <ButtonLoad
                 variant="contained"
                 size="large"
                 type="submit"
                 color="primary"
                 fullWidth
+                loading={requestLoad}
               >
                 Send Request
-              </Button>
+              </ButtonLoad>
             </Grid>
           </Grid>
         </Grid>

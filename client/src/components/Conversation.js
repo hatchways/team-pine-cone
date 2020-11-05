@@ -44,7 +44,7 @@ const useStyles = makeStyles(theme => ({
         fontSize: 10,
         fontStyle: "italic",
         textAlign: "right",
-        margin: 0,
+        margin: 5,
         fontWeight: 400
     }
 }))

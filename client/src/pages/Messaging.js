@@ -3,7 +3,7 @@ import React, { Fragment } from 'react';
 import ConversationSidebar from '../components/ConversationSidebar';
 import { useProfileContext } from '../contexts/profile';
 
-const drawerWidth = 240;
+const drawerWidth = 300;
 const useStyles = makeStyles((theme) => ({
   linkText: {
     textDecoration: "none",

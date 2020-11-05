@@ -3,6 +3,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { useParams } from 'react-router-dom';
 import { useProfileContext } from '../contexts/profile';
 import { socket } from '../services/socket';
+import moment from 'moment';
 
 const useStyles = makeStyles(theme => ({
     input: {
@@ -39,6 +40,13 @@ const useStyles = makeStyles(theme => ({
     },
     notFromUser: {
         backgroundColor: "#cccccc"
+    },
+    date: {
+        fontSize: 10,
+        fontStyle: "italic",
+        textAlign: "right",
+        margin: 0,
+        fontWeight: 400
     }
 }))
 
@@ -93,6 +101,7 @@ function Conversation(props) {
                 conversation.messages.map((message, i) => (
                     <Card className={`${classes.message} ${message.sender === profile._id ? classes.fromUser : classes.notFromUser}`} key={i} variant="outlined">
                         {message.body}
+                        <p className={classes.date}>{moment(message.createdAt).format("MMM D, YYYY H:mm")}</p>
                     </Card>
                 ))
             ) : (

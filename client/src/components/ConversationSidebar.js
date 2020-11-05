@@ -2,6 +2,7 @@ import { Avatar, Badge, Grid, makeStyles } from "@material-ui/core";
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { useProfileContext } from "../contexts/profile";
+import moment from "moment";
 
 const useStyles = makeStyles({
   linkText: {
@@ -20,7 +21,14 @@ const useStyles = makeStyles({
   },
   badge: {
     marginLeft: 20
-  }
+  },
+    date: {
+        fontSize: 10,
+        fontStyle: "italic",
+        textAlign: "right",
+        margin: 10,
+        fontWeight: 400
+    }
 });
 
 function ConversationSidebar({ user_id, sitter_id, _id, messages }) {
@@ -56,6 +64,9 @@ function ConversationSidebar({ user_id, sitter_id, _id, messages }) {
                   ? "You"
                   : name
               }: ${messages[messages.length - 1].body}`}
+          </p>
+          <p className={classes.date}>
+            {moment(messages[messages.length - 1].createdAt).format("MMM D, YYYY H:mm")}
           </p>
         </Grid>
       </Grid>

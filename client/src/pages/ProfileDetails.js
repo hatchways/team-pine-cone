@@ -236,7 +236,7 @@ const ProfileDetails = function () {
             >
               <Grid item>
                 <Typography paragraph variant="h4">
-                  {Number(hourlyRate).toFixed(2)}/hr
+                  ${Number(hourlyRate).toFixed(2)}/hr
                 </Typography>
               </Grid>
               <Grid item>

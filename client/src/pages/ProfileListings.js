@@ -1,7 +1,7 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, Fragment } from "react";
 import { useLocation } from "react-router-dom";
 import { makeStyles } from "@material-ui/core/styles";
-import { Grid, Typography, Button, CircularProgress } from "@material-ui/core/";
+import { Grid, Typography, Button, CircularProgress, Toolbar } from "@material-ui/core/";
 import PetsIcon from "@material-ui/icons/Pets";
 import ProfileListingItem from "../components/ProfileListingItem";
 import Snackbar from "../components/DefaultSnackbar";
@@ -9,6 +9,7 @@ import Splash from "../components/Splash";
 import SearchFilter from "../components/SearchFilter";
 import useForm from "../components/useForm";
 import { useProfileContext } from "../contexts/profile";
+import { useUserContext } from "../contexts/user";
 
 export const useStyle = makeStyles((theme) => ({
   root: {
@@ -87,7 +88,9 @@ const ProfileListings = function () {
   const [data, setData] = useState({ profiles: [] });
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(true);
-  const { profile } = useProfileContext();
+  const profileContext = useProfileContext();
+  const profile = profileContext && profileContext.profile
+  const {user} = useUserContext();
 
   useEffect(() => {
     setLoading(true);
@@ -132,17 +135,25 @@ const ProfileListings = function () {
   return (
     <Grid container direction="column" className={classes.root}>
       <Grid item>
-        <Typography className={classes.title} variant="h3" align="center">
-          Search Results
-        </Typography>
-        <SearchFilter
-          initForm={form}
-          setData={setData}
-          setValues={setValues}
-          values={values}
-          handleInputChange={handleInputChange}
-          handleDateChange={handleDateChange}
-        />
+        {user ? (
+          <Fragment>
+            <Typography className={classes.title} variant="h3" align="center">
+              Search Results
+            </Typography>
+            <SearchFilter
+              initForm={form}
+              setData={setData}
+              setValues={setValues}
+              values={values}
+              handleInputChange={handleInputChange}
+              handleDateChange={handleDateChange}
+            />
+          </Fragment>
+        ) : (
+          <Typography className={classes.title} variant="h3" align="center">
+            Our Sitters
+          </Typography>
+        )}
         <Snackbar open={error} />
       </Grid>
 

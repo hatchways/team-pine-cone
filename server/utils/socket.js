@@ -22,7 +22,6 @@ exports.create = server => {
     socket.on("message", ({conversationId, message}) => {
       Conversation.findById(conversationId).then(conversation => {
         conversation.messages.push(message);
-        console.log(conversation)
         conversation.save().then(() => {
           Profile.findById(conversation.sitter_id)
             .populate("requests")

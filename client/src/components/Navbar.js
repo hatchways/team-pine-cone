@@ -130,7 +130,7 @@ function Navigation({
                                   ]
                               ).length
                           )
-                          .reduce(reducer)
+                          .reduce(reducer, 0)
                       : 0
                   }
                   color="primary"

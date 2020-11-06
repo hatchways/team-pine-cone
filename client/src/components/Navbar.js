@@ -118,7 +118,8 @@ function Navigation({
                 <Badge
                   badgeContent={
                     profile
-                      ? profile.conversations
+                      ? profile.conversations &&
+                        profile.conversations
                           .map(
                             (conversation) =>
                               conversation.messages.filter(

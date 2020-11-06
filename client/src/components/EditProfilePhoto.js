@@ -32,7 +32,7 @@ function EditProfilePhoto() {
 
     setOpenSnackbar(false);
   };
-  const { profile, setProfile } = useProfileContext();
+  const { profile, pullProfile } = useProfileContext();
   const [image, setImage] = useState(profile && profile.photo);
   const [uploading, setUploading] = useState(false);
   const handleChange = e => {
@@ -49,7 +49,7 @@ function EditProfilePhoto() {
       response.json().then(result => {
         setImage(result.url);
         profile.photo = result.url;
-        setProfile(profile);
+        pullProfile();
         setUploading(false);
       }).catch(() => {
         setOpenSnackbar(true);
@@ -66,7 +66,7 @@ function EditProfilePhoto() {
       };
       fetch("/upload/delete", options).then(() => {
         profile.photo = null;
-        setProfile(profile);
+        pullProfile();
         setUploading(false);
       });
     }

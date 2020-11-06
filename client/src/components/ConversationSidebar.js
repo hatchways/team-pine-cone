@@ -66,7 +66,7 @@ function ConversationSidebar({ user_id, sitter_id, _id, messages }) {
               }: ${messages[messages.length - 1].body}`}
           </p>
           <p className={classes.date}>
-            {moment(messages[messages.length - 1].createdAt).format("MMM D, YYYY H:mm")}
+            {messages[messages.length - 1] && moment(messages[messages.length - 1].createdAt).format("MMM D, YYYY H:mm")}
           </p>
         </Grid>
       </Grid>

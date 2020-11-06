@@ -102,8 +102,8 @@ const ProfileEdit = function () {
     setValues((values) => ({
       ...values,
       ...profile,
-      gender: genderCheck(profile.gender),
-      birthDate: new Date(profile.birthDate),
+		gender: genderCheck(profile ? profile.gender : ""),
+      birthDate: new Date(profile && profile.birthDate),
       email: user.email,
     }));
   }, [profile, user.email, setValues]);

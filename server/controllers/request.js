@@ -177,7 +177,7 @@ const updateRequest = (req, res, next) => {
         request.fulfillComplete(Number(req.body.rating));
         Profile.findById(req.user.profile).then((profile) => {
           notifier.notify(request.sitter_id, {
-            title: `Booking Fulfilled`,
+            title: "Booking Fulfilled",
             message: `Your job for ${profile.firstName} ${profile.lastName} is done. Thank you for being a LovingSitter!`,
             src: profile.photo,
             link:

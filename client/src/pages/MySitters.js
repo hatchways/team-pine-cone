@@ -3,21 +3,22 @@ import Bookings from "../components/Bookings";
 import { useProfileContext } from "../contexts/profile";
 
 function MySitters(props) {
-    const { profile, setProfile } = useProfileContext();
+    const { profile, pullProfile } = useProfileContext();
     const readNotifications = useRef(false)
     useEffect(() => {
         if (profile && !readNotifications.current) {
             profile.notifications = profile.notifications.filter(
-              (notification) => notification.link !== "my-sitters"
+              (notification) => notification.link !== "/my-sitters"
             );
-            setProfile(profile);
             fetch(`/profile/${profile._id}`, {
               method: "PUT",
               headers: {
                 "Content-Type": "application/json",
               },
               body: JSON.stringify(profile),
-            });
+            }).then(() => {
+              pullProfile();
+            })
             readNotifications.current = true
         }
     });

@@ -3,7 +3,7 @@ import { useProfileContext } from './profile';
 import { socket } from "../services/socket";
 
 function SocketHandler({children}) {
-    const {profile, setProfile} = useProfileContext()
+    const {profile, setProfile, pullProfile} = useProfileContext()
     const oldProfile = useRef(profile)
     if (profile && (!oldProfile.current || oldProfile.current._id !== profile._id)) {
         socket.emit("profile", profile._id);
@@ -14,8 +14,8 @@ function SocketHandler({children}) {
         setInterval(() => {
             socket.emit("keep-alive")
         },60000)
-        socket.on("update", update => {
-            setProfile(update)
+        socket.on("update", () => {
+            pullProfile()
         })
         oldProfile.current = profile
     }

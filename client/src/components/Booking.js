@@ -87,7 +87,7 @@ function Booking({
   fulfilled,
 }) {
   const classes = useStyles();
-  const { profile, setProfile, getProfile, pullProfile } = useProfileContext();
+  const { profile, getProfile, pullProfile } = useProfileContext();
   const [src, setSrc] = useState(null);
   const [name, setName] = useState("");
   const [loading, setLoading] = useState(false);
@@ -119,7 +119,6 @@ function Booking({
         return (updatedRequest = request);
       }
     });
-    setProfile(newProfile);
     const options = {
       method: "PUT",
       headers: {
@@ -127,7 +126,9 @@ function Booking({
       },
       body: JSON.stringify(updatedRequest),
     };
-    fetch(`/request/update/${updatedRequest._id}`, options);
+    fetch(`/request/update/${updatedRequest._id}`, options).then(() => {
+      pullProfile()
+    })
   };
 
   const handleRating = (_, value) => {

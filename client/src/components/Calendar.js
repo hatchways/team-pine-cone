@@ -143,7 +143,7 @@ const getDefaultTimes = () => [
 function Calendar() {
     const classes = useStyles();
     const today = moment();
-    const { profile, setProfile, pullProfile } = useProfileContext();
+    const { profile, pullProfile } = useProfileContext();
     const [availability, setAvailability] = useState(convertAvailabilityFromDatabase(profile.availability));
     const [quickAvailability, setQuickAvailability] = useState(makeQuickAvailability(profile.availability));
     const [activeDay, setActiveDay] = useState(null);
@@ -398,7 +398,6 @@ function Calendar() {
     function updateProfileAvailability(data) {
         const newProfile = { ...profile };
         newProfile.availability = data;
-        setProfile(newProfile);
         const options = {
             method: "PUT",
             headers: {

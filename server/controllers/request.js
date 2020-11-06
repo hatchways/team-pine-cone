@@ -5,7 +5,7 @@ const { validationResult } = require("express-validator");
 const stripe = require("stripe")(STRIPE_SECRET);
 const notifier = require("../utils/notification");
 const Conversation = require("../models/Conversation");
-const { io } = require("../utils/socket");
+const socket = require("../utils/socket");
 
 const getRequestsByUser = (req, res, next) => {
   if (!req.user) {
@@ -149,7 +149,7 @@ const updateRequest = (req, res, next) => {
               },
             })
             .then((profile) => {
-              io.to(profile._id.toString()).emit("update", profile);
+              socket.io.to(profile._id.toString()).emit("update", profile);
             });
           Profile.findById(conversation.sitter_id)
             .populate("requests")
@@ -161,7 +161,7 @@ const updateRequest = (req, res, next) => {
               },
             })
             .then((profile) => {
-              io.to(profile._id.toString()).emit("update", profile);
+              socket.io.to(profile._id.toString()).emit("update", profile);
             });
         });
       } else if (req.body.declined) {
@@ -181,7 +181,7 @@ const updateRequest = (req, res, next) => {
             message: `Your job for ${profile.firstName} ${profile.lastName} is done. Thank you for being a LovingSitter!`,
             src: profile.photo,
             link:
-              req.user.profile === request.user_id ? "/my-jobs" : "my-sitters",
+              req.user.profile === request.user_id ? "/my-jobs" : "/my-sitters",
           });
         });
         return Request.findByIdAndRemove(request._id).then(() =>
@@ -211,7 +211,7 @@ const updateRequest = (req, res, next) => {
             } your booking.`,
             src: profile.photo,
             link:
-              req.user.profile === request.user_id ? "/my-jobs" : "my-sitters",
+              req.user.profile === request.user_id ? "/my-jobs" : "/my-sitters",
           });
         });
       res.status(200).json(request);

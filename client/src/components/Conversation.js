@@ -28,6 +28,7 @@ const useStyles = makeStyles(theme => ({
     message: {
         padding: 10,
         maxWidth: "60%",
+        width: "fit-content",
         marginBottom: 10,
         borderRadius: 10,
         fontWeight: 700

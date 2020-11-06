@@ -77,7 +77,6 @@ const updateProfile = async (req, res, next) => {
 
     return res.status(200).json(profile);
   } catch (err) {
-    console.log(err)
     if (!err.status) {
       if (checkDateErrors(err)) {
         return next(createError(422, err.message));

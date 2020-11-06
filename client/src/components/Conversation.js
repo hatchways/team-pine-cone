@@ -5,50 +5,57 @@ import { useProfileContext } from '../contexts/profile';
 import { socket } from '../services/socket';
 import moment from 'moment';
 
-const useStyles = makeStyles(theme => ({
-    input: {
-        width: "100%",
-        marginTop: 30,
-        marginBottom: 10,
-        paddingTop: 40
-    },
-    emptyText: {
-        fontStyle: "italic",
-        fontSize: 10,
-        textAlign: "center"
-    },
-    header: {
-        padding: 10,
-        borderBottom: "1px solid #cccccc",
-        marginBottom: 20
-    },
-    avatar: {
-        margin: 10,
-    },
-    message: {
-        padding: 10,
-        maxWidth: "60%",
-        width: "fit-content",
-        marginBottom: 10,
-        borderRadius: 10,
-        fontWeight: 700
-    },
-    fromUser: {
-        backgroundColor: theme.palette.primary.main,
-        color: "#fcfcfc",
-        marginLeft: "auto"
-    },
-    notFromUser: {
-        backgroundColor: "#cccccc"
-    },
-    date: {
-        fontSize: 10,
-        fontStyle: "italic",
-        textAlign: "right",
-        margin: 5,
-        fontWeight: 400
-    }
-}))
+const useStyles = makeStyles((theme) => ({
+  input: {
+    width: "100%",
+    marginTop: 30,
+    marginBottom: 10,
+    paddingTop: 40,
+  },
+  emptyText: {
+    fontStyle: "italic",
+    fontSize: 10,
+    textAlign: "center",
+  },
+  header: {
+    padding: 10,
+    borderBottom: "1px solid #cccccc",
+    marginBottom: 20,
+  },
+  avatar: {
+    margin: 10,
+  },
+  message: {
+    padding: 10,
+    maxWidth: "60%",
+    width: "fit-content",
+    marginBottom: 10,
+    borderRadius: 10,
+    fontWeight: 700,
+  },
+  fromUser: {
+    backgroundColor: theme.palette.primary.main,
+    color: "#fcfcfc",
+    marginLeft: "auto",
+  },
+  notFromUser: {
+    backgroundColor: "#cccccc",
+  },
+  dateUser: {
+    fontSize: 10,
+    fontStyle: "italic",
+    textAlign: "right",
+    margin: 5,
+    fontWeight: 400,
+  },
+  datePartner: {
+    fontSize: 10,
+    fontStyle: "italic",
+    textAlign: "left",
+    margin: 5,
+    fontWeight: 400,
+  },
+}));
 
 function Conversation(props) {
     const {id} = useParams();
@@ -101,7 +108,7 @@ function Conversation(props) {
                 conversation.messages.map((message, i) => (
                     <Card className={`${classes.message} ${message.sender === profile._id ? classes.fromUser : classes.notFromUser}`} key={i} variant="outlined">
                         {message.body}
-                        <p className={classes.date}>{moment(message.createdAt).format("MMM D, YYYY H:mm")}</p>
+                        <p className={message.sender === profile._id ? classes.dateUser : classes.datePartner}>{moment(message.createdAt).format("MMM D, YYYY H:mm")}</p>
                     </Card>
                 ))
             ) : (

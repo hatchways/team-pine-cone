@@ -2,11 +2,20 @@ const Profile = require("../models/Profile");
 const socket = require("./socket");
 
 exports.notify = (id, notification) => {
-  Profile.findById(id).populate("requests").then(profile => {
-    profile.notifications.push(notification);
-    socket.io.to(id.toString()).emit("update", profile);
-    profile.save();
-  });
+  Profile.findById(id)
+    .populate("requests")
+    .populate({
+      path: "conversations",
+      populate: {
+        path: "messages",
+        model: "Message",
+      },
+    })
+    .then((profile) => {
+      profile.notifications.push(notification);
+      socket.io.to(id.toString()).emit("update", profile);
+      profile.save();
+    });
 };
 
 exports.remove = (profileId, notificationId) => {

@@ -7,6 +7,7 @@ import {
   Grid,
 } from "@material-ui/core";
 import React, { Fragment, useEffect, useState } from "react";
+import { useHistory } from "react-router-dom";
 import { useProfileContext } from "../contexts/profile";
 import moment from "moment";
 import { differenceInHours } from "date-fns";
@@ -95,6 +96,7 @@ function Booking({
   const [success, onSuccess] = useState(null);
   const [noAccount, setNoAccount] = useState(false);
   const [hasRated, setHasRated] = useState(false);
+	const history = useHistory();
   const id = isMyJobs ? user_id : sitter_id;
   useEffect(() => {
     const id = isMyJobs ? user_id : sitter_id;
@@ -145,6 +147,10 @@ function Booking({
       .then(() => setError("Oops something went wrong"));
   };
 
+	const handleMessage = () => {
+		history.push('/messages');
+	}
+
   const handlePay = () => {
     onSuccess("");
     setError("");
@@ -167,7 +173,7 @@ function Booking({
           return setNoAccount(true);
         }
 
-        const diffHours = differenceInHours(new Date(end), new Date(start));
+        const diffHours = differenceInHours(new Date(end), new Date(start)) || 1;
         const amount = Number(Number(sitter.hourlyRate * diffHours).toFixed(2));
         const res = await fetch(`/request/${_id}/pay`, {
           method: "POST",
@@ -222,7 +228,7 @@ function Booking({
         ) : (
           <Fragment>
             <Button
-              onClick={isBooking ? null : handleAccept}
+              onClick={isBooking ? handleMessage : handleAccept}
               color="primary"
               variant="contained"
               className={classes.button}
@@ -232,7 +238,7 @@ function Booking({
             {!success && (
               <ButtonLoad
                 onClick={
-                  isBooking ? (paid ? handleDecline : handlePay) : handleDecline
+                  isBooking ? (isMyJobs || paid ? handleDecline : handlePay) : handleDecline
                 }
                 color="primary"
                 variant="contained"

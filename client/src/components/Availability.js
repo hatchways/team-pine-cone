@@ -51,7 +51,7 @@ function Availability() {
               <Card key={key} className={classes.card} variant="outlined">
                 <h3 className={classes.date}>{key}</h3>
                 {availability[key].map(time => (
-                  <p>{time}</p>
+                  <p key={time}>{time}</p>
                 ))}
               </Card>
             ))}

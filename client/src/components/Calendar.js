@@ -143,7 +143,7 @@ const getDefaultTimes = () => [
 function Calendar() {
     const classes = useStyles();
     const today = moment();
-    const { profile, setProfile } = useProfileContext();
+    const { profile, setProfile, pullProfile } = useProfileContext();
     const [availability, setAvailability] = useState(convertAvailabilityFromDatabase(profile.availability));
     const [quickAvailability, setQuickAvailability] = useState(makeQuickAvailability(profile.availability));
     const [activeDay, setActiveDay] = useState(null);
@@ -406,11 +406,9 @@ function Calendar() {
             },
             body: JSON.stringify(newProfile),
         };
-        fetch(`/profile/${profile._id}`, options).then(response => {
-          response.json().then(result => {
-            setProfile(result)
-            setSaving(false)
-          })
+        fetch(`/profile/${profile._id}`, options).then(() => {
+          pullProfile()
+          setSaving(false)
         })
     }
 

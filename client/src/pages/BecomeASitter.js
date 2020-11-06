@@ -5,7 +5,7 @@ import { useProfileContext } from "../contexts/profile";
 
 function BecomeASitter() {
   const [redirect, setRedirect] = useState(false);
-  const { profile, setProfile } = useProfileContext();
+  const { profile, pullProfile } = useProfileContext();
   useEffect(() => {
     const profileUpdate = {
       ...profile,
@@ -20,11 +20,11 @@ function BecomeASitter() {
     };
     fetch(`/profile/${profile._id}`, options).then(response => {
       response.json().then(result => {
-        setProfile(result);
+        pullProfile();
         setRedirect(true);
       });
     });
-  }, [setProfile, setRedirect, profile]);
+  }, [pullProfile, setRedirect, profile]);
   return (
     <Fragment>
       <Toolbar />

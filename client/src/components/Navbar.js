@@ -1,5 +1,5 @@
 import React, { Fragment } from "react";
-import { Link, NavLink } from "react-router-dom";
+import { Link, NavLink, useLocation } from "react-router-dom";
 import {
   AppBar,
   Toolbar,
@@ -16,7 +16,7 @@ import {
 import { makeStyles } from "@material-ui/core/styles";
 import MoreVertIcon from "@material-ui/icons/MoreVert";
 import { useUserContext } from "../contexts/user";
-import { ProfileContext } from "../contexts/profile";
+import { useProfileContext } from "../contexts/profile";
 
 const useStyles = makeStyles((theme) => ({
   navDisplay: {
@@ -164,6 +164,7 @@ function Navigation({
 function Navbar(props) {
   const { user } = useUserContext();
   const classes = useStyles();
+  const pathname = useLocation().pathname
 
   const [anchorEl, setAnchorEl] = React.useState(null);
 
@@ -182,23 +183,56 @@ function Navbar(props) {
     handleClose,
     width: props.width,
   };
+
+  const {profile} = useProfileContext();
   return user ? (
-    <ProfileContext.Consumer>
-      {(value) => (
-        <AppBar position="fixed" className={classes.navbar}>
-          <Toolbar className={classes.navDisplay}>
-            <NavLink to="/">
-              <img
-                alt="Loving Sitter"
-                src={window.origin + "/assets/logo.png"}
-              />
+    <AppBar position="fixed" className={classes.navbar}>
+      <Toolbar className={classes.navDisplay}>
+        <NavLink to="/">
+          <img
+            alt="Loving Sitter"
+            src={window.origin + "/assets/logo.png"}
+          />
+        </NavLink>
+        <Navigation profile={profile} {...navOptions} />
+      </Toolbar>
+    </AppBar>
+  ) : (
+    <AppBar position="fixed" className={classes.navbar}>
+      <Toolbar className={classes.navDisplay}>
+        <NavLink to="/">
+          <img alt="Loving Sitter" src={window.origin + "/assets/logo.png"} />
+        </NavLink>
+        <List
+          className={classes.navDisplay}
+          component="nav"
+          aria-labelledby="main navigation"
+        >
+          {pathname !== "/login" && (
+            <NavLink className={classes.linkText} to="/login">
+              <ListItem button>
+                <ListItemText primary="Log In" />
+              </ListItem>
             </NavLink>
-            <Navigation profile={value.profile} {...navOptions} />
-          </Toolbar>
-        </AppBar>
-      )}
-    </ProfileContext.Consumer>
-  ) : null;
+          )}
+          {pathname !== "/signup" && (
+            <NavLink className={classes.linkText} to="/signup">
+              <ListItem button>
+                <ListItemText primary="Sign Up" />
+              </ListItem>
+            </NavLink>
+          )}
+          {pathname !== "/" && (
+            <NavLink className={classes.linkText} to="/">
+              <ListItem button>
+                <ListItemText primary="Browse Sitters" />
+              </ListItem>
+            </NavLink>
+          )}
+        </List>
+      </Toolbar>
+    </AppBar>
+  );
 }
 
 export default withWidth()(Navbar);

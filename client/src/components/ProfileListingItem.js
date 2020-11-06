@@ -25,7 +25,7 @@ const Item = function (props) {
   // go to individual listing from here
   const handleClick = () => history.push(`/profiles/${_id}`);
 
-  return me && me._id !== _id ? (
+  return !me || me._id !== _id ? (
     <Grid item xs={12} className={classes.card} onClick={handleClick}>
       <Grow in={true}>
         <Grid container spacing={2} direction="column" alignItems="center">
@@ -77,7 +77,7 @@ const Item = function (props) {
               {/*hourlyRate*/}
               <Grid item id="hourlyRate">
                 <Typography variant="body1" className={classes.bold}>
-                  ${"$ " + Number(hourlyRate).toFixed(2)}
+                  {"$ " + Number(hourlyRate).toFixed(2)}
                 </Typography>
               </Grid>
             </Grid>

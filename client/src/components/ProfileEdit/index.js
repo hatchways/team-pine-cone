@@ -83,7 +83,7 @@ const initialForm = {
 
 const ProfileEdit = function () {
   const { user, handleSetUser } = useUserContext();
-  const { profile, setProfile } = useProfileContext();
+  const { profile, pullProfile } = useProfileContext();
   const classes = useStyles();
   const [isSaved, setIsSaved] = useState(false);
   const [disableSubmit, setDisableSubmit] = useState(false);
@@ -165,7 +165,7 @@ const ProfileEdit = function () {
         fetch("/user/me")
           .then((res) => res.json())
           .then(({ user }) => handleSetUser(user))
-          .then(() => setProfile(profile));
+          .then(() => pullProfile());
       })
       .then(() => setIsSaved(true));
   };
